@@ -17,9 +17,8 @@ on:
         required: true
         default: '24'
       zstd_version:
-        description: 'zstandard version tag'
-        required: true
-        default: '0.25.0'
+        description: 'zstandard version tag (optional, uses latest if not specified)'
+        required: false
   push:
     paths:
       - '.github/workflows/build-zstandard-android.yml'
@@ -29,7 +28,7 @@ env:
   PYTHON_VERSION: ${{ github.event.inputs.python_version || '3.11' }}
   NDK_VERSION: ${{ github.event.inputs.ndk_version || 'r26d' }}
   ANDROID_API: ${{ github.event.inputs.android_api || '24' }}
-  ZSTD_VERSION: ${{ github.event.inputs.zstd_version || '0.25.0' }}
+  ZSTD_VERSION: ${{ github.event.inputs.zstd_version }}
 
 jobs:
   build:
