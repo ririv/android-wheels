@@ -1,0 +1,144 @@
+# Optimized workflow to build zstandard Android wheels for Chaquopy
+name: Build zstandard Android wheel for Chaquopy
+
+on:
+  workflow_dispatch:
+    inputs:
+      python_version:
+        description: 'Python version'
+        required: true
+        default: '3.11'
+      ndk_version:
+        description: 'Android NDK version'
+        required: true
+        default: 'r26d'
+      android_api:
+        description: 'Android API level'
+        required: true
+        default: '24'
+      zstd_version:
+        description: 'zstandard version tag'
+        required: true
+        default: '0.25.0'
+  push:
+    paths:
+      - '.github/workflows/build-zstandard-android.yml'
+
+# Centralized environment variables for workflow-level settings
+env:
+  PYTHON_VERSION: ${{ github.event.inputs.python_version || '3.11' }}
+  NDK_VERSION: ${{ github.event.inputs.ndk_version || 'r26d' }}
+  ANDROID_API: ${{ github.event.inputs.android_api || '24' }}
+  ZSTD_VERSION: ${{ github.event.inputs.zstd_version || '0.25.0' }}
+
+jobs:
+  build:
+    name: Build for ${{ matrix.abi }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - abi: "arm64-v8a"
+            target: "aarch64-linux-android"
+          - abi: "x86_64"
+            target: "x86_64-linux-android"
+
+    steps:
+      # The runner context is only available within steps. 
+      # This step sets NDK_PATH for all subsequent steps in the job.
+      - name: Set up environment variables
+        run: echo "NDK_PATH=${{ runner.temp }}/android-ndk" >> $GITHUB_ENV
+
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      # Cache NDK to speed up workflow execution
+      - name: Cache NDK
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.NDK_PATH }}/android-ndk-${{ env.NDK_VERSION }}
+          key: ${{ runner.os }}-ndk-${{ env.NDK_VERSION }}
+
+      # Download and extract NDK only if not found in cache
+      - name: Download and Extract Android NDK
+        if: steps.cache-ndk.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ env.NDK_PATH }}
+          wget https://dl.google.com/android/repository/android-ndk-${{ env.NDK_VERSION }}-linux.zip -O ${{ env.NDK_PATH }}/ndk.zip
+          unzip -q ${{ env.NDK_PATH }}/ndk.zip -d ${{ env.NDK_PATH }}
+          rm ${{ env.NDK_PATH }}/ndk.zip
+
+      - name: Install build tools
+        run: python -m pip install --upgrade pip build
+
+      # Use actions/checkout for cleaner and more reliable source cloning
+      - name: Clone zstandard source
+        uses: actions/checkout@v4
+        with:
+          repository: indygreg/python-zstandard
+          ref: ${{ env.ZSTD_VERSION }}
+          path: python-zstandard
+          submodules: recursive
+
+      # Build step for each ABI in the matrix
+      - name: Build wheel for ${{ matrix.abi }}
+        env:
+          NDK_HOME: "${{ env.NDK_PATH }}/android-ndk-${{ env.NDK_VERSION }}"
+          TOOLCHAIN: "${{ env.NDK_PATH }}/android-ndk-${{ env.NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64"
+        run: |
+          # Set up cross-compilation environment
+          export TARGET=${{ matrix.target }}
+          export API=${{ env.ANDROID_API }}
+          export CC=$TOOLCHAIN/bin/${TARGET}${API}-clang
+          export CXX=$TOOLCHAIN/bin/${TARGET}${API}-clang++
+          export AR=$TOOLCHAIN/bin/llvm-ar
+          export LD=$TOOLCHAIN/bin/ld
+          export STRIP=$TOOLCHAIN/bin/llvm-strip
+          export CFLAGS="--sysroot=$TOOLCHAIN/sysroot"
+          export LDFLAGS="--sysroot=$TOOLCHAIN/sysroot"
+
+          cd python-zstandard
+          python -m build --wheel
+
+          # Dynamically find and rename the generated wheel for Chaquopy
+          WHEEL_PATH=$(find dist -name "zstandard-*.whl")
+          PY_TAG="cp${PYTHON_VERSION//./}"
+          NEW_WHEEL_NAME="zstandard-${ZSTD_VERSION}-${PY_TAG}-${PY_TAG}-android_${API}_${{ matrix.abi }}.whl"
+
+          echo "Original wheel: ${WHEEL_PATH}"
+          echo "New wheel name: ${NEW_WHEEL_NAME}"
+
+          mkdir -p ../output
+          mv "${WHEEL_PATH}" "../output/${NEW_WHEEL_NAME}"
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zstandard-android-wheel-${{ matrix.abi }}
+          path: output/*.whl
+
+  # This job gathers all wheels from the parallel builds and uploads them as a single artifact.
+  upload-wheels:
+    name: Upload wheels
+    needs: build # This job runs after all matrix jobs in 'build' are complete.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all wheel artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: wheels
+          pattern: zstandard-android-wheel-* # Download all artifacts starting with this pattern
+          merge-multiple: true # Merge into a single directory
+
+      - name: Upload final wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zstandard-android-wheels # A single artifact containing all wheels
+          path: wheels
