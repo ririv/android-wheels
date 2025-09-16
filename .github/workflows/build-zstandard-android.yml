@@ -123,21 +123,36 @@ jobs:
           name: zstandard-android-wheel-${{ matrix.abi }}
           path: output/*.whl
 
-  # This job gathers all wheels from the parallel builds and uploads them as a single artifact.
+  # This job gathers all wheels from the parallel builds and uploads them to the 'wheels' branch.
   upload-wheels:
-    name: Upload wheels
-    needs: build # This job runs after all matrix jobs in 'build' are complete.
+    name: Upload Wheels to Branch
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download all wheel artifacts
         uses: actions/download-artifact@v4
         with:
           path: wheels
-          pattern: zstandard-android-wheel-* # Download all artifacts starting with this pattern
-          merge-multiple: true # Merge into a single directory
+          pattern: zstandard-android-wheel-*
+          merge-multiple: true
 
-      - name: Upload final wheel artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: zstandard-android-wheels # A single artifact containing all wheels
-          path: wheels
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Commit wheels to 'wheels' branch
+        run: |
+          set -ex
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan wheels
+          git clean -fdx
+          if [ -d "wheels" ] && [ "$(ls -A wheels)" ]; then
+            mv wheels/* .
+            rmdir wheels
+          else
+            echo "No wheels to commit"
+            exit 0
+          fi
+          git add .
+          git commit -m "Build: Add zstandard Android wheels for zstd ${{ env.ZSTD_VERSION || 'latest' }}"
+          git push -f origin wheels
