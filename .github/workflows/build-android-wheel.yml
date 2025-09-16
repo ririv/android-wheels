@@ -1,0 +1,154 @@
+name: Reusable - Build Android Wheel
+
+on:
+  workflow_call:
+    inputs:
+      library-name:
+        description: 'Name of the library (e.g., zstandard)'
+        required: true
+        type: string
+      git-repository:
+        description: 'Git repository of the library source (e.g., indygreg/python-zstandard)'
+        required: true
+        type: string
+      library-version:
+        description: 'Git ref (tag/branch) of the library version. Uses default branch if empty.'
+        required: false
+        type: string
+      python-version:
+        description: 'Python version'
+        required: false
+        type: string
+        default: '3.11'
+      ndk-version:
+        description: 'Android NDK version'
+        required: false
+        type: string
+        default: 'r26d'
+      android-api:
+        description: 'Android API level'
+        required: false
+        type: string
+        default: '24'
+
+env:
+  PYTHON_VERSION: ${{ inputs.python-version }}
+  NDK_VERSION: ${{ inputs.ndk-version }}
+  ANDROID_API: ${{ inputs.android-api }}
+  LIBRARY_NAME: ${{ inputs.library-name }}
+  LIBRARY_VERSION: ${{ inputs.library-version }}
+  GIT_REPOSITORY: ${{ inputs.git-repository }}
+
+jobs:
+  build:
+    name: Build for ${{ matrix.abi }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - abi: "arm64-v8a"
+            target: "aarch64-linux-android"
+          - abi: "x86_64"
+            target: "x86_64-linux-android"
+    steps:
+      - name: Set up environment variables
+        run: echo "NDK_PATH=${{ runner.temp }}/android-ndk" >> $GITHUB_ENV
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Cache NDK
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.NDK_PATH }}/android-ndk-${{ env.NDK_VERSION }}
+          key: ${{ runner.os }}-ndk-${{ env.NDK_VERSION }}
+      - name: Download and Extract Android NDK
+        if: steps.cache-ndk.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ env.NDK_PATH }}
+          wget https://dl.google.com/android/repository/android-ndk-${{ env.NDK_VERSION }}-linux.zip -O ${{ env.NDK_PATH }}/ndk.zip
+          unzip -q ${{ env.NDK_PATH }}/ndk.zip -d ${{ env.NDK_PATH }}
+          rm ${{ env.NDK_PATH }}/ndk.zip
+      - name: Install build tools
+        run: python -m pip install --upgrade pip build
+      - name: Clone library source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.GIT_REPOSITORY }}
+          ref: ${{ env.LIBRARY_VERSION }}
+          path: library-source
+          submodules: recursive
+      - name: Build wheel for ${{ matrix.abi }}
+        env:
+          NDK_HOME: "${{ env.NDK_PATH }}/android-ndk-${{ env.NDK_VERSION }}"
+          TOOLCHAIN: "${{ env.NDK_PATH }}/android-ndk-${{ env.NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64"
+        run: |
+          set -ex
+          export TARGET=${{ matrix.target }}
+          export API=${{ env.ANDROID_API }}
+          export CC=$TOOLCHAIN/bin/${TARGET}${API}-clang
+          export CXX=$TOOLCHAIN/bin/${TARGET}${API}-clang++
+          export AR=$TOOLCHAIN/bin/llvm-ar
+          export LD=$TOOLCHAIN/bin/ld
+          export STRIP=$TOOLCHAIN/bin/llvm-strip
+          export CFLAGS="--sysroot=$TOOLCHAIN/sysroot"
+          export LDFLAGS="--sysroot=$TOOLCHAIN/sysroot"
+          cd library-source
+          python -m build --wheel
+          WHEEL_PATH=$(find dist -name "${{ env.LIBRARY_NAME }}-*.whl")
+          PY_TAG="cp${PYTHON_VERSION//./}"
+          VERSION_TO_USE=${LIBRARY_VERSION}
+          if [ -z "${VERSION_TO_USE}" ]; then
+            VERSION_TO_USE=$(basename "${WHEEL_PATH}" | cut -d- -f2)
+            echo "library-version not specified, using version from built wheel: ${VERSION_TO_USE}"
+          fi
+          NEW_WHEEL_NAME="${{ env.LIBRARY_NAME }}-${VERSION_TO_USE}-${PY_TAG}-${PY_TAG}-android_${API}_${{ matrix.abi }}.whl"
+          echo "Original wheel: ${WHEEL_PATH}"
+          echo "New wheel name: ${NEW_WHEEL_NAME}"
+          mkdir -p ../output
+          mv "${WHEEL_PATH}" "../output/${NEW_WHEEL_NAME}"
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.LIBRARY_NAME }}-android-wheel-${{ matrix.abi }}
+          path: output/*.whl
+
+  upload-wheels:
+    name: Upload Wheels
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download all wheel artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: wheels
+          pattern: ${{ env.LIBRARY_NAME }}-android-wheel-*
+          merge-multiple: true
+      - name: Upload final wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.LIBRARY_NAME }}-android-wheels
+          path: wheels
+      - name: Commit wheels to 'wheels' branch
+        run: |
+          set -ex
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan wheels
+          git clean -fdx -e wheels
+          if [ -d "wheels" ] && [ "$(ls -A wheels)" ]; then
+            mv wheels/* .
+            rmdir wheels
+          else
+            echo "No wheels to commit"
+            exit 0
+          fi
+          git add .
+          git commit -m "Build: Add ${{ env.LIBRARY_NAME }} Android wheels for version ${{ env.LIBRARY_VERSION || 'latest' }}"
+          git push -f origin wheels
