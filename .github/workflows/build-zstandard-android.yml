@@ -129,6 +129,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Download all wheel artifacts
         uses: actions/download-artifact@v4
         with:
@@ -136,16 +139,13 @@ jobs:
           pattern: zstandard-android-wheel-*
           merge-multiple: true
 
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Commit wheels to 'wheels' branch
         run: |
           set -ex
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout --orphan wheels
-          git clean -fdx
+          git clean -fdx -e wheels
           if [ -d "wheels" ] && [ "$(ls -A wheels)" ]; then
             mv wheels/* .
             rmdir wheels
