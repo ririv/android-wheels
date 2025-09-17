@@ -131,11 +131,6 @@ jobs:
           path: wheels
           pattern: ${{ env.LIBRARY_NAME }}-android-wheel-*
           merge-multiple: true
-      - name: Upload final wheel artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.LIBRARY_NAME }}-android-wheels
-          path: wheels
       - name: Commit wheels to 'wheels' branch
         run: |
           set -ex
