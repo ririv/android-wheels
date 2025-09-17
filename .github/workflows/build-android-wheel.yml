@@ -138,17 +138,32 @@ jobs:
       - name: Commit wheels to 'wheels' branch
         run: |
           set -ex
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout --orphan wheels
-          git clean -fdx -e wheels
-          if [ -d "wheels" ] && [ "$(ls -A wheels)" ]; then
-            mv wheels/* .
-            rmdir wheels
-          else
+          if [ ! -d "wheels" ] || [ -z "$(ls -A wheels)" ]; then
             echo "No wheels to commit"
             exit 0
           fi
+
+          mkdir wheels_repo
+          cd wheels_repo
+
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+
+          if git fetch --depth=1 origin wheels && git checkout wheels; then
+            echo "Checked out existing 'wheels' branch."
+          else
+            echo "Creating new 'wheels' branch."
+            git checkout -b wheels
+          fi
+
+          cp ../wheels/* .
+
           git add .
-          git commit -m "Build: Add ${{ env.LIBRARY_NAME }} Android wheels for version ${{ env.LIBRARY_VERSION || 'latest' }}"
-          git push -f origin wheels
+          if git diff --staged --quiet; then
+            echo "No new or updated wheels to commit."
+            exit 0
+          fi
+          git commit -m "Build: Add/Update ${{ env.LIBRARY_NAME }} wheels for version ${{ env.LIBRARY_VERSION || 'latest' }}"
+          git push --set-upstream origin wheels
