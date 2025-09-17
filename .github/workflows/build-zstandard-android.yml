@@ -28,6 +28,7 @@ jobs:
     uses: ./.github/workflows/build-android-wheel.yml
     permissions:
       contents: write
+      actions: write
     with:
       library-name: 'zstandard'
       git-repository: 'indygreg/python-zstandard'

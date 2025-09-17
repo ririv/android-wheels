@@ -28,6 +28,7 @@ jobs:
     uses: ./.github/workflows/build-android-wheel.yml
     permissions:
       contents: write
+      actions: write
     with:
       library-name: 'xxhash'
       git-repository: 'ifduyue/python-xxhash'
