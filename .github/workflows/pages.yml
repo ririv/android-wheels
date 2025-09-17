@@ -1,0 +1,33 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - wheels
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout wheels branch
+        uses: actions/checkout@v4
+        with:
+          ref: wheels
+
+      - name: Download index script
+        run: |
+          mkdir -p .github/scripts
+          curl -L -o .github/scripts/generate_index.py https://raw.githubusercontent.com/${{ github.repository }}/main/.github/scripts/generate_index.py
+
+      - name: Generate index
+        run: python .github/scripts/generate_index.py
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: public
+          force_orphan: true
