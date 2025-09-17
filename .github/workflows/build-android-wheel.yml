@@ -104,7 +104,8 @@ jobs:
             VERSION_TO_USE=$(basename "${WHEEL_PATH}" | cut -d- -f2)
             echo "library-version not specified, using version from built wheel: ${VERSION_TO_USE}"
           fi
-          NEW_WHEEL_NAME="${{ env.LIBRARY_NAME }}-${VERSION_TO_USE}-${PY_TAG}-${PY_TAG}-android_${API}_${{ matrix.abi }}.whl"
+          PLATFORM_ARCH=$(echo "${{ matrix.abi }}" | tr '-' '_')
+          NEW_WHEEL_NAME="${{ env.LIBRARY_NAME }}-${VERSION_TO_USE}-${PY_TAG}-none-android_${API}_${PLATFORM_ARCH}.whl"
           echo "Original wheel: ${WHEEL_PATH}"
           echo "New wheel name: ${NEW_WHEEL_NAME}"
           mkdir -p ../output
