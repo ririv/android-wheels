@@ -2,6 +2,8 @@
 
 本仓库用于为 Android 构建和托管预编译的 Python wheel 文件，主要用于 [Chaquopy](https://chaquo.com/chaquopy/) 安卓 Python SDK。
 
+索引地址：https://ririv.github.io/android-wheels/
+
 ## 如何使用
 
 使用 `pip` 并指定 `--extra-index-url` 参数指向本仓库的包索引地址，即可安装这些 wheel 文件。
@@ -20,7 +22,7 @@ pip install --extra-index-url https://ririv.github.io/android-wheels/ zstandard
 
 您也可以将索引地址添加到您的 `requirements.txt` 文件中：
 
-```
+```txt
 --extra-index-url https://ririv.github.io/android-wheels/
 
 zstandard
@@ -31,22 +33,27 @@ xxhash
 
 当前可用的包如下：
 
-*   `zstandard`
-*   `xxhash`
+* `zstandard`
+* `xxhash`
 
 支持的 ABI:
-*   `arm64-v8a`
-*   `x86_64`
+
+* `arm64-v8a`
+* `x86_64`
 
 ## 工作原理
 
 本仓库使用 GitHub Actions 实现自动化构建和发布流程：
 
-1.  **构建工作流**: 每个包都有一个对应的工作流文件（例如 `build-zstandard-android.yml`），它会获取库的源码，并使用一个可复用的工作流（`build-android-wheel.yml`）通过 Android NDK为不同的 Android ABI 进行交叉编译。
-2.  **提交到 `wheels` 分支**: 成功构建的 `.whl` 文件会被提交到 `wheels` 分支。
-3.  **部署索引**: 推送到 `wheels` 分支会触发 `pages.yml` 工作流，该工作流会生成一个符合 PEP 503 规范的“简单”包索引，并将其部署到 GitHub Pages。
+1. **构建工作流**: 每个包都有一个对应的工作流文件（例如 `build-zstandard-android.yml`），它会获取库的源码，并使用一个可复用的工作流（`build-android-wheel.yml`）通过 Android NDK为不同的 Android ABI 进行交叉编译。
+2. **提交到 `wheels` 分支**: 成功构建的 `.whl` 文件会被提交到 `wheels` 分支。
+3. **部署索引**: 推送到 `wheels` 分支会触发 `pages.yml` 工作流，该工作流会生成一个符合 PEP 503 规范的“简单”包索引，并将其部署到 GitHub Pages。
 
 这确保了包索引始终与最新成功构建的 wheel 文件保持同步。
+
+## wheel 文件命名规范
+
+wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#recommended-installer-features) 规范，格式通常是：{distribution}-{version}-{python tag}-{abi tag}-{platform tag}.whl。
 
 ## 如何添加新的包
 
