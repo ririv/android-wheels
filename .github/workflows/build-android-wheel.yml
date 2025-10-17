@@ -153,6 +153,9 @@ jobs:
     name: Upload Wheels
     needs: build
     runs-on: ubuntu-latest
+    concurrency:
+      group: wheels-branch-update
+      cancel-in-progress: false
     permissions:
       contents: write
       actions: write
