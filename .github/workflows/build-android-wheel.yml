@@ -98,9 +98,16 @@ jobs:
           cd library-source
           python -m build --wheel
 
-          SEARCH_PATH="dist"  # 默认路径
+          # --- Normalization Step ---
+          # According to PEP 427, wheel names normalize hyphens to underscores.
+          NORMALIZED_LIB_NAME=$(echo "${{ env.LIBRARY_NAME }}" | tr '-' '_')
+          PLATFORM_ARCH=$(echo "${{ matrix.abi }}" | tr '-' '_')
+          echo "Normalized library name for search: ${NORMALIZED_LIB_NAME}"
+          echo "Normalized platform arch for wheel tag: ${PLATFORM_ARCH}"
+
+          # --- Find Wheel Step ---
+          SEARCH_PATH="dist"  # Default path
           if [ -f "pyproject.toml" ]; then
-            # 如果 pyproject.toml 里的 build-backend 是 maturin
             if grep -q 'build-backend.*=.*"maturin"' pyproject.toml; then
               echo "Maturin build backend detected. Searching in target/wheels/"
               SEARCH_PATH="target/wheels"
@@ -108,31 +115,30 @@ jobs:
               echo "Standard build backend detected. Searching in dist/"
             fi
           else
-            # 兼容没有 pyproject.toml 的旧项目
             echo "No pyproject.toml found. Assuming standard build. Searching in dist/"
           fi
 
-          WHEEL_PATH=$(find "${SEARCH_PATH}" -name "${{ env.LIBRARY_NAME }}-*.whl" | head -n 1)
+          WHEEL_PATH=$(find "${SEARCH_PATH}" -name "${NORMALIZED_LIB_NAME}-*.whl" | head -n 1)
 
-          # 如果在预设路径没找到，做一个全局搜索作为最后的保险
           if [ -z "${WHEEL_PATH}" ]; then
             echo "::warning::Could not find wheel in '${SEARCH_PATH}'. Fallback to searching everywhere."
-            WHEEL_PATH=$(find . -name "${{ env.LIBRARY_NAME }}-*.whl" | head -n 1)
+            WHEEL_PATH=$(find . -name "${NORMALIZED_LIB_NAME}-*.whl" | head -n 1)
           fi
 
-          # 如果最终还是没找到，则报错退出
           if [ -z "${WHEEL_PATH}" ]; then
-            echo "::error::Failed to find wheel file anywhere."
+            echo "::error::Failed to find wheel file anywhere for normalized name ${NORMALIZED_LIB_NAME}."
             exit 1
           fi
+
+          # --- Rename Wheel Step ---
           PY_TAG="cp${PYTHON_VERSION//./}"
           VERSION_TO_USE=${LIBRARY_VERSION}
           if [ -z "${VERSION_TO_USE}" ]; then
             VERSION_TO_USE=$(basename "${WHEEL_PATH}" | cut -d- -f2)
             echo "library-version not specified, using version from built wheel: ${VERSION_TO_USE}"
           fi
-          PLATFORM_ARCH=$(echo "${{ matrix.abi }}" | tr '-' '_')
-          NEW_WHEEL_NAME="${{ env.LIBRARY_NAME }}-${VERSION_TO_USE}-${PY_TAG}-none-android_${API}_${PLATFORM_ARCH}.whl"
+          
+          NEW_WHEEL_NAME="${NORMALIZED_LIB_NAME}-${VERSION_TO_USE}-${PY_TAG}-none-android_${API}_${PLATFORM_ARCH}.whl"
           echo "Original wheel: ${WHEEL_PATH}"
           echo "New wheel name: ${NEW_WHEEL_NAME}"
           mkdir -p ../output
