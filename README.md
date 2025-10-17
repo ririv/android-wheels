@@ -51,9 +51,15 @@ xxhash
 
 这确保了包索引始终与最新成功构建的 wheel 文件保持同步。
 
-## wheel 文件命名规范
+## 命名规范
+
+### wheel 文件命名规范
 
 wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#recommended-installer-features) 规范，格式通常是：{distribution}-{version}-{python tag}-{abi tag}-{platform tag}.whl。
+
+### 包索引命名规范
+
+包索引命名遵循 Python 的 [PEP 503](https://peps.python.org/pep-0503/) 规范，需要注意 [Normalized Names](https://peps.python.org/pep-0503/#normalized-names)
 
 ## 如何添加新的包
 
