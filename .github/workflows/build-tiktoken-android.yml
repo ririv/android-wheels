@@ -6,7 +6,7 @@ on:
       python_version:
         description: 'Python version'
         required: false
-        default: '3.11'
+        default: '3.13'
       ndk_version:
         description: 'Android NDK version'
         required: false
@@ -33,6 +33,6 @@ jobs:
       library-name: 'tiktoken'
       git-repository: 'openai/tiktoken'
       library-version: ${{ github.event.inputs.tiktoken_version }}
-      python-version: ${{ github.event.inputs.python_version || '3.11' }}
+      python-version: ${{ github.event.inputs.python_version || '3.13' }}
       ndk-version: ${{ github.event.inputs.ndk_version || 'r26d' }}
       android-api: ${{ github.event.inputs.android_api || '24' }}

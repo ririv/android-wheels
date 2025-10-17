@@ -19,7 +19,7 @@ on:
         description: 'Python version'
         required: false
         type: string
-        default: '3.11'
+        default: '3.13'
       ndk-version:
         description: 'Android NDK version'
         required: false
