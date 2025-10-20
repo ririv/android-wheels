@@ -20,11 +20,6 @@ on:
         required: false
         type: string
         default: '3.13'
-      ndk-version:
-        description: 'Android NDK version'
-        required: false
-        type: string
-        default: 'r26d'
       android-api:
         description: 'Android API level'
         required: false
@@ -33,7 +28,7 @@ on:
 
 env:
   PYTHON_VERSION: ${{ inputs.python-version }}
-  NDK_VERSION: ${{ inputs.ndk-version }}
+  NDK_VERSION: 'r26d'
   ANDROID_API: ${{ inputs.android-api }}
   LIBRARY_NAME: ${{ inputs.library-name }}
   LIBRARY_VERSION: ${{ inputs.library-version }}
@@ -116,28 +111,16 @@ jobs:
             TARGET_FOR_ENV=$(echo ${{ matrix.target }} | tr 'a-z-' 'A-Z_')
             export CARGO_TARGET_${TARGET_FOR_ENV}_LINKER=${CC}
             export CARGO_TARGET_${TARGET_FOR_ENV}_AR=${AR}
-            # Hints for PyO3 cross compilation so it doesn't try to use host libpython
-            export PYO3_CROSS=1
-            export PYO3_CROSS_PYTHON_VERSION=${{ env.PYTHON_VERSION }}
+
             FEATURES=""
             # Check if Cargo.toml has a direct dependency on pyo3 in the [dependencies] section
             if [ -f "Cargo.toml" ] && grep -q '^pyo3 ' Cargo.toml; then
-              echo "Direct pyo3 dependency found. Will enable 'extension-module' and attempt abi3 to avoid linking libpython."
+              echo "Direct pyo3 dependency found. Adding 'extension-module' feature."
               FEATURES="pyo3/extension-module"
             fi
 
             if [ -n "$FEATURES" ]; then
-              # Try abi3 first (broad compatibility), then fall back if unsupported
-              set +e
-              export PYO3_NO_PYTHON=1
-              maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }} --features "$FEATURES pyo3/abi3-py37"
-              BUILD_STATUS=$?
-              set -e
-              if [ $BUILD_STATUS -ne 0 ]; then
-                echo "abi3 build failed, retrying without abi3..."
-                unset PYO3_NO_PYTHON
-                maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }} --features "$FEATURES"
-              fi
+              maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }} --features "$FEATURES"
             else
               maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }}
             fi
@@ -147,7 +130,6 @@ jobs:
           fi
 
           # --- Normalization Step ---
-          # According to PEP 427, wheel names normalize hyphens to underscores.
           NORMALIZED_LIB_NAME=$(echo "${{ env.LIBRARY_NAME }}" | tr '-' '_')
           PLATFORM_ARCH=$(echo "${{ matrix.abi }}" | tr '-' '_')
           echo "Normalized library name for search: ${NORMALIZED_LIB_NAME}"
@@ -175,22 +157,14 @@ jobs:
           fi
 
           # --- Rename Wheel Step ---
-          # Extract Python/ABI tags from the built wheel to preserve abi3 when applicable
-          WHEEL_BASENAME=$(basename "${WHEEL_PATH}")
-          PY_FIELD=$(echo "${WHEEL_BASENAME}" | awk -F- '{print $3}')
-          ABI_FIELD=$(echo "${WHEEL_BASENAME}" | awk -F- '{print $4}')
-          if [ -z "${PY_FIELD}" ] || [ -z "${ABI_FIELD}" ]; then
-            # Fallback to cp tag from requested Python version
-            PY_FIELD="cp${PYTHON_VERSION//./}"
-            ABI_FIELD="${PY_FIELD}"
-          fi
+          PY_TAG="cp${PYTHON_VERSION//./}"
           VERSION_TO_USE=${LIBRARY_VERSION}
           if [ -z "${VERSION_TO_USE}" ]; then
             VERSION_TO_USE=$(basename "${WHEEL_PATH}" | cut -d- -f2)
             echo "library-version not specified, using version from built wheel: ${VERSION_TO_USE}"
           fi
           
-          NEW_WHEEL_NAME="${NORMALIZED_LIB_NAME}-${VERSION_TO_USE}-${PY_FIELD}-${ABI_FIELD}-android_${API}_${PLATFORM_ARCH}.whl"
+          NEW_WHEEL_NAME="${NORMALIZED_LIB_NAME}-${VERSION_TO_USE}-${PY_TAG}-${PY_TAG}-android_${API}_${PLATFORM_ARCH}.whl"
           echo "Original wheel: ${WHEEL_PATH}"
           echo "New wheel name: ${NEW_WHEEL_NAME}"
           mkdir -p $BUILD_ROOT/../output

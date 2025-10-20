@@ -34,5 +34,4 @@ jobs:
       git-repository: 'mrabarnett/mrab-regex'
       library-version: ${{ github.event.inputs.regex_version }}
       python-version: ${{ github.event.inputs.python_version || '3.13' }}
-      ndk-version: ${{ github.event.inputs.ndk_version || 'r26d' }}
       android-api: ${{ github.event.inputs.android_api || '24' }}

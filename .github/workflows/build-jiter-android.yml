@@ -33,6 +33,6 @@ jobs:
       library-name: 'jiter'
       git-repository: 'pydantic/jiter'
       library-version: ${{ github.event.inputs.jiter_version }}
+      source-dir: 'crates/jiter-python'
       python-version: ${{ github.event.inputs.python_version || '3.13' }}
-      ndk-version: ${{ github.event.inputs.ndk_version || 'r26d' }}
       android-api: ${{ github.event.inputs.android_api || '24' }}
