@@ -116,7 +116,31 @@ jobs:
             TARGET_FOR_ENV=$(echo ${{ matrix.target }} | tr 'a-z-' 'A-Z_')
             export CARGO_TARGET_${TARGET_FOR_ENV}_LINKER=${CC}
             export CARGO_TARGET_${TARGET_FOR_ENV}_AR=${AR}
-            maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }}
+            # Hints for PyO3 cross compilation so it doesn't try to use host libpython
+            export PYO3_CROSS=1
+            export PYO3_CROSS_PYTHON_VERSION=${{ env.PYTHON_VERSION }}
+            FEATURES=""
+            # Check if Cargo.toml has a direct dependency on pyo3 in the [dependencies] section
+            if [ -f "Cargo.toml" ] && grep -q '^pyo3 ' Cargo.toml; then
+              echo "Direct pyo3 dependency found. Will enable 'extension-module' and attempt abi3 to avoid linking libpython."
+              FEATURES="pyo3/extension-module"
+            fi
+
+            if [ -n "$FEATURES" ]; then
+              # Try abi3 first (broad compatibility), then fall back if unsupported
+              set +e
+              export PYO3_NO_PYTHON=1
+              maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }} --features "$FEATURES pyo3/abi3-py37"
+              BUILD_STATUS=$?
+              set -e
+              if [ $BUILD_STATUS -ne 0 ]; then
+                echo "abi3 build failed, retrying without abi3..."
+                unset PYO3_NO_PYTHON
+                maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }} --features "$FEATURES"
+              fi
+            else
+              maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }}
+            fi
           else
             echo "Standard build backend detected."
             python -m build --wheel
@@ -151,14 +175,22 @@ jobs:
           fi
 
           # --- Rename Wheel Step ---
-          PY_TAG="cp${PYTHON_VERSION//./}"
+          # Extract Python/ABI tags from the built wheel to preserve abi3 when applicable
+          WHEEL_BASENAME=$(basename "${WHEEL_PATH}")
+          PY_FIELD=$(echo "${WHEEL_BASENAME}" | awk -F- '{print $3}')
+          ABI_FIELD=$(echo "${WHEEL_BASENAME}" | awk -F- '{print $4}')
+          if [ -z "${PY_FIELD}" ] || [ -z "${ABI_FIELD}" ]; then
+            # Fallback to cp tag from requested Python version
+            PY_FIELD="cp${PYTHON_VERSION//./}"
+            ABI_FIELD="${PY_FIELD}"
+          fi
           VERSION_TO_USE=${LIBRARY_VERSION}
           if [ -z "${VERSION_TO_USE}" ]; then
             VERSION_TO_USE=$(basename "${WHEEL_PATH}" | cut -d- -f2)
             echo "library-version not specified, using version from built wheel: ${VERSION_TO_USE}"
           fi
           
-          NEW_WHEEL_NAME="${NORMALIZED_LIB_NAME}-${VERSION_TO_USE}-${PY_TAG}-${PY_TAG}-android_${API}_${PLATFORM_ARCH}.whl"
+          NEW_WHEEL_NAME="${NORMALIZED_LIB_NAME}-${VERSION_TO_USE}-${PY_FIELD}-${ABI_FIELD}-android_${API}_${PLATFORM_ARCH}.whl"
           echo "Original wheel: ${WHEEL_PATH}"
           echo "New wheel name: ${NEW_WHEEL_NAME}"
           mkdir -p $BUILD_ROOT/../output
