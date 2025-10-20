@@ -1,0 +1,38 @@
+name: Build ormsgpack Android wheel for Chaquopy
+
+on:
+  workflow_dispatch:
+    inputs:
+      python_version:
+        description: 'Python version'
+        required: false
+        default: '3.13'
+      ndk_version:
+        description: 'Android NDK version'
+        required: false
+        default: 'r26d'
+      android_api:
+        description: 'Android API level'
+        required: false
+        default: '24'
+      ormsgpack_version:
+        description: 'ormsgpack version tag (optional, uses latest if not specified)'
+        required: false
+  push:
+    paths:
+      - '.github/workflows/build-ormsgpack-android.yml'
+      - '.github/workflows/build-android-wheel.yml'
+
+jobs:
+  build-ormsgpack:
+    uses: ./.github/workflows/build-android-wheel.yml
+    permissions:
+      contents: write
+      actions: write
+    with:
+      library-name: 'ormsgpack'
+      git-repository: 'aviramha/ormsgpack'
+      library-version: ${{ github.event.inputs.ormsgpack_version }}
+      python-version: ${{ github.event.inputs.python_version || '3.13' }}
+      ndk-version: ${{ github.event.inputs.ndk_version || 'r26d' }}
+      android-api: ${{ github.event.inputs.android_api || '24' }}

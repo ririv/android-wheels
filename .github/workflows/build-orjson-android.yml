@@ -1,0 +1,38 @@
+name: Build orjson Android wheel for Chaquopy
+
+on:
+  workflow_dispatch:
+    inputs:
+      python_version:
+        description: 'Python version'
+        required: false
+        default: '3.13'
+      ndk_version:
+        description: 'Android NDK version'
+        required: false
+        default: 'r26d'
+      android_api:
+        description: 'Android API level'
+        required: false
+        default: '24'
+      orjson_version:
+        description: 'orjson version tag (optional, uses latest if not specified)'
+        required: false
+  push:
+    paths:
+      - '.github/workflows/build-orjson-android.yml'
+      - '.github/workflows/build-android-wheel.yml'
+
+jobs:
+  build-orjson:
+    uses: ./.github/workflows/build-android-wheel.yml
+    permissions:
+      contents: write
+      actions: write
+    with:
+      library-name: 'orjson'
+      git-repository: 'ijl/orjson'
+      library-version: ${{ github.event.inputs.orjson_version }}
+      python-version: ${{ github.event.inputs.python_version || '3.13' }}
+      ndk-version: ${{ github.event.inputs.ndk_version || 'r26d' }}
+      android-api: ${{ github.event.inputs.android_api || '24' }}
