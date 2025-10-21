@@ -112,17 +112,21 @@ jobs:
             export CARGO_TARGET_${TARGET_FOR_ENV}_LINKER=${CC}
             export CARGO_TARGET_${TARGET_FOR_ENV}_AR=${AR}
 
-            FEATURES=""
-            # Check if Cargo.toml has a direct dependency on pyo3 in the [dependencies] section
-            if [ -f "Cargo.toml" ] && grep -q '^pyo3 ' Cargo.toml; then
-              echo "Direct pyo3 dependency found. Adding 'extension-module' feature."
-              FEATURES="pyo3/extension-module"
-            fi
-
-            if [ -n "$FEATURES" ]; then
-              maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }} --features "$FEATURES"
+            if [ "${{ env.LIBRARY_NAME }}" = "orjson" ]; then
+              echo "Applying orjson-specific workaround: disabling AVX512."
+              ORJSON_DISABLE_AVX512=1 maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }}
             else
-              maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }}
+              FEATURES=""
+              if [ -f "Cargo.toml" ] && grep -q '^pyo3 ' Cargo.toml; then
+                echo "Direct pyo3 dependency found. Adding 'extension-module' feature."
+                FEATURES="pyo3/extension-module"
+              fi
+
+              if [ -n "$FEATURES" ]; then
+                maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }} --features "$FEATURES"
+              else
+                maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }}
+              fi
             fi
           else
             echo "Standard build backend detected."
