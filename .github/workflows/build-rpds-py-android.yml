@@ -22,6 +22,7 @@ on:
     paths:
       - '.github/workflows/build-rpds-py-android.yml'
       - '.github/workflows/build-android-wheel.yml'
+      - '.github/scripts/build/**'
 
 jobs:
   build-rpds-py:

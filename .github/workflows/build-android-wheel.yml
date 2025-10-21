@@ -63,8 +63,8 @@ jobs:
           CIBW_TARGET_TRIPLET: ${{ matrix.target }}
         run: |
           export PATH="$HOME/.cargo/bin:$PATH"
-          chmod +x .github/scripts/build_android_wheel.py
-          uv run --python 3.11 --with build .github/scripts/build_android_wheel.py
+          chmod +x .github/scripts/build/build_android_wheel.py
+          uv run --python 3.11 --with build .github/scripts/build/build_android_wheel.py
 
   upload-wheels:
     name: Upload Wheels
