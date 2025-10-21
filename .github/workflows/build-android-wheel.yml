@@ -1,4 +1,4 @@
-name: Reusable - Build Android Wheel (Python Script)
+name: Reusable - Build Android Wheel
 
 on:
   workflow_call:
@@ -27,8 +27,38 @@ on:
         default: '24'
 
 jobs:
-  build:
-    name: Build for ${{ matrix.abi }}
+  dispatch:
+    runs-on: ubuntu-latest
+    outputs:
+      build_backend: ${{ steps.check_backend.outputs.build_backend }}
+    steps:
+      - name: Checkout self
+        uses: actions/checkout@v4
+
+      - name: Set up Python for checker script
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Clone library source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.git-repository }}
+          ref: ${{ inputs.library-version }}
+          path: library-source
+          submodules: recursive
+
+      - name: Check build backend
+        id: check_backend
+        run: |
+          chmod +x .github/scripts/build/check_backend.py
+          BACKEND=$(python .github/scripts/build/check_backend.py library-source)
+          echo "build_backend=$BACKEND" >> $GITHUB_OUTPUT
+
+  build_with_maturin:
+    name: Build for ${{ matrix.abi }} with maturin
+    needs: dispatch
+    if: needs.dispatch.outputs.build_backend == 'maturin'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -81,9 +111,60 @@ jobs:
           name: ${{ inputs.library-name }}-android-wheel-${{ matrix.abi }}
           path: output/*.whl
 
+  build_with_cibw:
+    name: Build wheel for ${{ matrix.abi }} with cibw
+    needs: dispatch
+    if: needs.dispatch.outputs.build_backend != 'maturin'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        abi: [arm64_v8a, x86_64]
+
+    steps:
+      - name: Clone library source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.git-repository }}
+          ref: ${{ inputs.library-version }}
+          path: library-source
+          submodules: recursive
+
+      - name: Prepare cibuildwheel environment
+        run: |
+          PYTHON_VERSION_NODOT=$(echo "${{ inputs.python-version }}" | tr -d '.')
+          echo "CIBW_BUILD=cp${PYTHON_VERSION_NODOT}-*" >> $GITHUB_ENV
+
+      - name: Find project directory
+        id: find_proj
+        run: |
+          cd library-source
+          PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
+          PROJECT_DIR=$(dirname "$PROJECT_FILE")
+          echo "project_dir=$PROJECT_DIR" >> $GITHUB_OUTPUT
+
+      - name: Build wheels with cibuildwheel
+        uses: pypa/cibuildwheel@v3.2.1
+        with:
+          package-dir: library-source/${{ steps.find_proj.outputs.project_dir }}
+        env:
+          CIBW_PLATFORM: android
+          CIBW_ARCHS: ${{ matrix.abi }}
+          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android-api }}'
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_BUILD_FRONTEND: build
+          CIBW_TEST_SKIP: "*"
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.library-name }}-android-wheel-${{ matrix.abi }}
+          path: ./wheelhouse/*.whl
+
   upload-wheels:
     name: Upload Wheels
-    needs: build
+    needs: [build_with_maturin, build_with_cibw]
+    if: always() && (needs.build_with_maturin.result == 'success' || needs.build_with_cibw.result == 'success')
     runs-on: ubuntu-latest
     concurrency:
       group: wheels-branch-update

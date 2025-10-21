@@ -26,7 +26,7 @@ on:
 
 jobs:
   build-pyyaml:
-    uses: ./.github/workflows/build-android-cibew.yml
+    uses: ./.github/workflows/build-android-wheel.yml
     permissions:
       contents: write
       actions: write
