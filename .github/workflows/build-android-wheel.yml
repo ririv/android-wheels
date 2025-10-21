@@ -81,11 +81,17 @@ jobs:
       - name: Checkout self
         uses: actions/checkout@v4
 
+      - name: Clone library source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.git-repository }}
+          ref: ${{ inputs.library-version }}
+          path: library-source
+          fetch-depth: 1
+
       - name: Find project directory
         id: find_proj
         run: |
-          # We need to clone the library first to find the project file
-          git clone --depth=1 --branch ${{ inputs.library-version || '' }} https://github.com/${{ inputs.git-repository }}.git library-source
           cd library-source
           PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
           PROJECT_DIR=$(dirname "$PROJECT_FILE")
