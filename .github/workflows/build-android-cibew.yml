@@ -4,15 +4,15 @@ on:
   workflow_call:
     inputs:
       library-name:
-        description: 'Name of the library (e.g., zstandard)'
+        description: 'Name of the library'
         required: true
         type: string
       git-repository:
-        description: 'Git repository of the library source (e.g., indygreg/python-zstandard)'
+        description: 'Git repository of the library source'
         required: true
         type: string
       library-version:
-        description: 'Git ref (tag/branch) of the library version. Uses default branch if empty.'
+        description: 'Git ref (tag/branch) of the library version'
         required: false
         type: string
       source-dir:
@@ -59,18 +59,9 @@ jobs:
         with:
           package-dir: library-source/${{ inputs.source-dir }}
         env:
-          # Tell cibuildwheel to build for Android
           CIBW_PLATFORM: android
-
-          # Set the architectures to build for
           CIBW_ARCHS: ${{ matrix.abi }}
-
-          # CIBW_BUILD is set in the previous step
-
-          # Set the Android API level
           CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android-api }}'
-          
-          # Add verbosity for better debugging
           CIBW_BUILD_VERBOSITY: 1
 
       - name: Upload wheels

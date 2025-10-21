@@ -145,8 +145,7 @@ def build_wheel(
         print(f"Executing build command: {' '.join(build_cmd)}")
         subprocess.run(build_cmd, env=build_env, check=True, cwd=project_path)
     else:
-        print("Standard build backend detected. Using `python -m build`.")
-        subprocess.run([sys.executable, "-m", "build", "--wheel", "--no-isolation", str(project_path)], env=build_env, check=True)
+        raise ValueError("This build script is only intended for maturin-based projects.")
 
     return is_maturin
 
