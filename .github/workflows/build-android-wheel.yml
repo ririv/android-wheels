@@ -1,22 +1,27 @@
-name: Reusable - Build Android Wheel
+name: Reusable - Build Android Wheel (Python Script)
 
 on:
   workflow_call:
     inputs:
       library-name:
-        description: 'Name of the library (e.g., zstandard)'
+        description: 'Name of the library'
         required: true
         type: string
       git-repository:
-        description: 'Git repository of the library source (e.g., indygreg/python-zstandard)'
+        description: 'Git repository of the library source'
         required: true
         type: string
       library-version:
-        description: 'Git ref (tag/branch) of the library version. Uses default branch if empty.'
+        description: 'Git ref (tag/branch) of the library version'
         required: false
         type: string
+      source-dir:
+        description: 'Subdirectory containing pyproject.toml or setup.py'
+        required: false
+        type: string
+        default: '.'
       python-version:
-        description: 'Python version'
+        description: 'Python version (e.g., 3.13)'
         required: false
         type: string
         default: '3.13'
@@ -25,14 +30,6 @@ on:
         required: false
         type: string
         default: '24'
-
-env:
-  PYTHON_VERSION: ${{ inputs.python-version }}
-  NDK_VERSION: 'r26d'
-  ANDROID_API: ${{ inputs.android-api }}
-  LIBRARY_NAME: ${{ inputs.library-name }}
-  LIBRARY_VERSION: ${{ inputs.library-version }}
-  GIT_REPOSITORY: ${{ inputs.git-repository }}
 
 jobs:
   build:
@@ -46,138 +43,28 @@ jobs:
             target: "aarch64-linux-android"
           - abi: "x86_64"
             target: "x86_64-linux-android"
+
     steps:
-      - name: Set up environment variables
-        run: echo "NDK_PATH=${{ runner.temp }}/android-ndk" >> $GITHUB_ENV
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Cache NDK
-        id: cache-ndk
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.NDK_PATH }}/android-ndk-${{ env.NDK_VERSION }}
-          key: ${{ runner.os }}-ndk-${{ env.NDK_VERSION }}
-      - name: Download and Extract Android NDK
-        if: steps.cache-ndk.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p ${{ env.NDK_PATH }}
-          wget https://dl.google.com/android/repository/android-ndk-${{ env.NDK_VERSION }}-linux.zip -O ${{ env.NDK_PATH }}/ndk.zip
-          unzip -q ${{ env.NDK_PATH }}/ndk.zip -d ${{ env.NDK_PATH }}
-          rm ${{ env.NDK_PATH }}/ndk.zip
-      - name: Install build tools
-        run: python -m pip install --upgrade pip build maturin
-      - name: Clone library source
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Checkout self
         uses: actions/checkout@v4
-        with:
-          repository: ${{ env.GIT_REPOSITORY }}
-          ref: ${{ env.LIBRARY_VERSION }}
-          path: library-source
-          submodules: recursive
-      - name: Build wheel for ${{ matrix.abi }}
+
+      - name: Run build script
         env:
-          NDK_HOME: "${{ env.NDK_PATH }}/android-ndk-${{ env.NDK_VERSION }}"
-          TOOLCHAIN: "${{ env.NDK_PATH }}/android-ndk-${{ env.NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64"
+          CIBW_LIBRARY_NAME: ${{ inputs.library-name }}
+          CIBW_GIT_REPOSITORY: ${{ inputs.git-repository }}
+          CIBW_LIBRARY_VERSION: ${{ inputs.library-version }}
+          CIBW_SOURCE_DIR: ${{ inputs.source-dir }}
+          CIBW_PYTHON_VERSION: ${{ inputs.python-version }}
+          CIBW_ANDROID_API: ${{ inputs.android-api }}
+          CIBW_TARGET_ABI: ${{ matrix.abi }}
+          CIBW_TARGET_TRIPLET: ${{ matrix.target }}
         run: |
-          set -ex
-          export TARGET=${{ matrix.target }}
-          export API=${{ env.ANDROID_API }}
-          export CC=$TOOLCHAIN/bin/${TARGET}${API}-clang
-          export CXX=$TOOLCHAIN/bin/${TARGET}${API}-clang++
-          export AR=$TOOLCHAIN/bin/llvm-ar
-          export LD=$TOOLCHAIN/bin/ld
-          export STRIP=$TOOLCHAIN/bin/llvm-strip
-          export CFLAGS="--sysroot=$TOOLCHAIN/sysroot"
-          export LDFLAGS="--sysroot=$TOOLCHAIN/sysroot"
-          BUILD_ROOT=$(pwd)/library-source
-          cd library-source
-
-          # Find the project root (where pyproject.toml or setup.py is)
-          PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
-          if [ -n "$PROJECT_FILE" ]; then
-              PROJECT_DIR=$(dirname "$PROJECT_FILE")
-              cd "$PROJECT_DIR"
-          fi
-
-          IS_MATURIN="false"
-          if [ -f "pyproject.toml" ] && grep -q 'build-backend.*=.*"maturin"' pyproject.toml; then
-            IS_MATURIN="true"
-          fi
-
-          if [ "$IS_MATURIN" = "true" ]; then
-            echo "Maturin build backend detected."
-            rustup target add ${{ matrix.target }}
-            TARGET_FOR_ENV=$(echo ${{ matrix.target }} | tr 'a-z-' 'A-Z_')
-            export CARGO_TARGET_${TARGET_FOR_ENV}_LINKER=${CC}
-            export CARGO_TARGET_${TARGET_FOR_ENV}_AR=${AR}
-
-            if [ "${{ env.LIBRARY_NAME }}" = "orjson" ]; then
-              echo "Applying orjson-specific workaround: disabling AVX512."
-              ORJSON_DISABLE_AVX512=1 maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }}
-            else
-              FEATURES=""
-              if [ -f "Cargo.toml" ] && grep -q '^pyo3 ' Cargo.toml; then
-                echo "Direct pyo3 dependency found. Adding 'extension-module' feature."
-                FEATURES="pyo3/extension-module"
-              fi
-
-              if [ -n "$FEATURES" ]; then
-                maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }} --features "$FEATURES"
-              else
-                maturin build --release --target ${{ matrix.target }} -i python${{ env.PYTHON_VERSION }}
-              fi
-            fi
-          else
-            echo "Standard build backend detected."
-            python -m build --wheel
-          fi
-
-          # --- Normalization Step ---
-          NORMALIZED_LIB_NAME=$(echo "${{ env.LIBRARY_NAME }}" | tr '-' '_')
-          PLATFORM_ARCH=$(echo "${{ matrix.abi }}" | tr '-' '_')
-          echo "Normalized library name for search: ${NORMALIZED_LIB_NAME}"
-          echo "Normalized platform arch for wheel tag: ${PLATFORM_ARCH}"
-
-          # --- Find Wheel Step ---
-          SEARCH_PATH="dist"
-          if [ "$IS_MATURIN" = "true" ]; then
-            echo "Maturin build backend detected. Searching in target/wheels/"
-            SEARCH_PATH="target/wheels"
-          else
-            echo "Standard or no pyproject.toml build backend detected. Searching in dist/"
-          fi
-
-          WHEEL_PATH=$(find "${SEARCH_PATH}" -name "${NORMALIZED_LIB_NAME}-*.whl" | head -n 1)
-
-          if [ -z "${WHEEL_PATH}" ]; then
-            echo "::warning::Could not find wheel in '${SEARCH_PATH}'. Fallback to searching everywhere."
-            WHEEL_PATH=$(find . -name "${NORMALIZED_LIB_NAME}-*.whl" | head -n 1)
-          fi
-
-          if [ -z "${WHEEL_PATH}" ]; then
-            echo "::error::Failed to find wheel file anywhere for normalized name ${NORMALIZED_LIB_NAME}."
-            exit 1
-          fi
-
-          # --- Rename Wheel Step ---
-          PY_TAG="cp${PYTHON_VERSION//./}"
-          VERSION_TO_USE=${LIBRARY_VERSION}
-          if [ -z "${VERSION_TO_USE}" ]; then
-            VERSION_TO_USE=$(basename "${WHEEL_PATH}" | cut -d- -f2)
-            echo "library-version not specified, using version from built wheel: ${VERSION_TO_USE}"
-          fi
-          
-          NEW_WHEEL_NAME="${NORMALIZED_LIB_NAME}-${VERSION_TO_USE}-${PY_TAG}-${PY_TAG}-android_${API}_${PLATFORM_ARCH}.whl"
-          echo "Original wheel: ${WHEEL_PATH}"
-          echo "New wheel name: ${NEW_WHEEL_NAME}"
-          mkdir -p $BUILD_ROOT/../output
-          mv "${WHEEL_PATH}" "$BUILD_ROOT/../output/${NEW_WHEEL_NAME}"
-      - name: Upload wheel artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.LIBRARY_NAME }}-android-wheel-${{ matrix.abi }}
-          path: output/*.whl
+          export PATH="$HOME/.cargo/bin:$PATH"
+          chmod +x .github/scripts/build_android_wheel.py
+          uv run --python 3.11 --with build .github/scripts/build_android_wheel.py
 
   upload-wheels:
     name: Upload Wheels
