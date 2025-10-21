@@ -15,11 +15,6 @@ on:
         description: 'Git ref (tag/branch) of the library version'
         required: false
         type: string
-      source-dir:
-        description: 'Subdirectory containing pyproject.toml or setup.py'
-        required: false
-        type: string
-        default: '.'
       python-version:
         description: 'Python version (e.g., 3.13)'
         required: false
@@ -54,10 +49,18 @@ jobs:
           PYTHON_VERSION_NODOT=$(echo "${{ inputs.python-version }}" | tr -d '.')
           echo "CIBW_BUILD=cp${PYTHON_VERSION_NODOT}-*" >> $GITHUB_ENV
 
+      - name: Find project directory
+        id: find_proj
+        run: |
+          cd library-source
+          PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
+          PROJECT_DIR=$(dirname "$PROJECT_FILE")
+          echo "project_dir=$PROJECT_DIR" >> $GITHUB_OUTPUT
+
       - name: Build wheels with cibuildwheel
         uses: pypa/cibuildwheel@v3.2.1
         with:
-          package-dir: library-source/${{ inputs.source-dir }}
+          package-dir: library-source/${{ steps.find_proj.outputs.project_dir }}
         env:
           CIBW_PLATFORM: android
           CIBW_ARCHS: ${{ matrix.abi }}
