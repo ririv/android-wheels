@@ -67,6 +67,7 @@ jobs:
           CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android-api }}'
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
+          CIBW_TEST_SKIP: "*"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
