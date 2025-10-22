@@ -5,10 +5,23 @@ from pathlib import Path
 
 def get_build_backend(project_path: Path) -> str:
     """Reads pyproject.toml and returns the build backend."""
-    pyproject_path = project_path / "pyproject.toml"
-    if not pyproject_path.is_file():
-        # Assume setuptools for projects without pyproject.toml (e.g., legacy setup.py)
+    # 递归查找pyproject.toml文件
+    pyproject_files = list(project_path.rglob("pyproject.toml"))
+
+    if not pyproject_files:
+        # 如果没有找到pyproject.toml，查找setup.py
+        setup_files = list(project_path.rglob("setup.py"))
+        if not setup_files:
+            print("No pyproject.toml or setup.py found, assuming setuptools", file=sys.stderr)
+            return "setuptools"
+        # 使用setup.py的目录
+        pyproject_path = setup_files[0]
+        print(f"Found setup.py at: {pyproject_path}", file=sys.stderr)
         return "setuptools"
+
+    # 使用找到的第一个pyproject.toml文件
+    pyproject_path = pyproject_files[0]
+    print(f"Found pyproject.toml at: {pyproject_path}", file=sys.stderr)
 
     try:
         import tomllib
@@ -20,7 +33,7 @@ def get_build_backend(project_path: Path) -> str:
     pyproject_content = tomllib.loads(pyproject_path.read_text())
     build_system = pyproject_content.get("build-system", {})
     backend = build_system.get("build-backend", "setuptools") # Default to setuptools
-    
+
     return backend
 
 def main():
