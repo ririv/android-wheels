@@ -132,6 +132,12 @@ def build_wheel(
 
         build_cmd = [str(maturin_executable), "build", "--release", "--target", target_triplet, "-i", f"python{python_version}"]
 
+        # 设置PyO3交叉编译环境变量
+        build_env["PYO3_CROSS"] = "1"
+        build_env["PYO3_CROSS_PYTHON_VERSION"] = python_version
+        # 对于Android，我们不需要链接到系统Python库
+        build_env["PYO3_NO_PYTHON"] = "1"
+
         if library_name == "orjson":
             print("Applying orjson-specific workaround: disabling AVX512.")
             build_env["ORJSON_DISABLE_AVX512"] = "1"
