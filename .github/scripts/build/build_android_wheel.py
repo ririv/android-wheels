@@ -39,7 +39,7 @@ def setup_ndk(ndk_path: Path, ndk_version: str):
     toolchain_bin_path = ndk_path / "toolchains" / "llvm" / "prebuilt" / "linux-x86_64" / "bin"
     for tool in toolchain_bin_path.glob("*"):
         if not tool.is_dir():
-            tool.chmod(tool.stat().st_mode | 0o111) # Add execute permission for user, group, and others
+            tool.chmod(tool.stat().st_mode | 0o111)
 
 
 def clone_library_source(repo_url: str, version: str | None, path: Path):
@@ -130,59 +130,69 @@ def build_wheel(
 
         subprocess.run(["rustup", "target", "add", target_triplet], check=True, cwd=project_path)
 
-        # 对于Android，使用基本的构建命令，不使用compatibility参数
-        build_cmd = [str(maturin_executable), "build", "--release", "--target", target_triplet, "-i", f"python{python_version}"]
+        # 使用虚拟环境中的 Python 解释器
+        python_interpreter = venv_path / "bin" / "python"
+        
+        # 构建命令 - 使用虚拟环境中的 Python 解释器
+        build_cmd = [
+            str(maturin_executable), 
+            "build", 
+            "--release", 
+            "--target", target_triplet, 
+            "-i", str(python_interpreter)
+        ]
 
-        # 设置PyO3交叉编译环境变量
+        # 根据官方文档设置交叉编译环境变量
         build_env["PYO3_CROSS"] = "1"
         build_env["PYO3_CROSS_PYTHON_VERSION"] = python_version
+        
+        # 关键修复：对于 Android 目标，避免设置 PYO3_CROSS_LIB_DIR
+        # 根据文档，对于 Unix 目标可以省略这个变量
+        if "android" in target_triplet:
+            print("Android 目标检测到，使用简化交叉编译配置")
+            # 不设置 PYO3_CROSS_LIB_DIR，让 PyO3 使用默认配置
 
-        # 添加更多调试信息
-        print(f"Build environment variables:")
-        for key, value in build_env.items():
-            if key.startswith("PYO3_"):
+        # 对于orjson的特殊处理
+        if library_name == "orjson":
+            print("使用 orjson 特定的构建配置")
+            
+            # 禁用 yyjson 以避免 C 依赖编译问题
+            print("为 Android 禁用 yyjson 以避免 C 依赖编译问题")
+            build_env["ORJSON_DISABLE_YYJSON"] = "1"
+            
+            # 移除有问题的 RUSTFLAGS，使用默认设置
+            if "RUSTFLAGS" in build_env:
+                del build_env["RUSTFLAGS"]
+            print("使用默认 RUSTFLAGS 设置")
+
+        # 添加调试信息
+        print("最终构建环境变量:")
+        for key, value in sorted(build_env.items()):
+            if any(prefix in key for prefix in ["PYO3", "CARGO", "CC", "CXX", "AR"]):
                 print(f"  {key}={value}")
 
-        if library_name == "orjson":
-            print("Applying orjson-specific workaround: disabling AVX512.")
-            build_env["ORJSON_DISABLE_AVX512"] = "1"
-
-        cargo_path = project_path / "Cargo.toml"
-        if cargo_path.is_file():
-            cargo_content = cargo_path.read_text()
-            if any(line.strip().startswith("pyo3 ") for line in cargo_content.splitlines()):
-                print("Direct pyo3 dependency found. Will enable 'extension-module' and attempt abi3 to avoid linking libpython.")
-                features = "pyo3/extension-module"
-
-                # Try abi3 first (broad compatibility), then fall back if unsupported
-                try:
-                    abi3_build_env = build_env.copy()
-                    abi3_build_env["PYO3_NO_PYTHON"] = "1"
-                    abi3_build_cmd = build_cmd + ["--features", f"{features} pyo3/abi3-py37"]
-
-                    print("Trying abi3 build first...")
-                    print(f"Executing abi3 build command: {' '.join(abi3_build_cmd)}")
-                    subprocess.run(abi3_build_cmd, env=abi3_build_env, check=True, cwd=project_path)
-                    print("abi3 build succeeded!")
-                except subprocess.CalledProcessError:
-                    print("abi3 build failed, retrying without abi3...")
-                    # Remove PYO3_NO_PYTHON from environment for fallback
-                    fallback_build_env = build_env.copy()
-                    if "PYO3_NO_PYTHON" in fallback_build_env:
-                        del fallback_build_env["PYO3_NO_PYTHON"]
-                    fallback_build_cmd = build_cmd + ["--features", features]
-                    print(f"Executing fallback build command: {' '.join(fallback_build_cmd)}")
-                    subprocess.run(fallback_build_cmd, env=fallback_build_env, check=True, cwd=project_path)
-            else:
-                print("No direct pyo3 dependency found. Using standard build.")
-                print(f"Executing build command: {' '.join(build_cmd)}")
-                subprocess.run(build_cmd, env=build_env, check=True, cwd=project_path)
-        else:
-            print("Cargo.toml not found. Using standard build.")
-            print(f"Executing build command: {' '.join(build_cmd)}")
+        # 执行构建命令
+        print(f"执行构建命令: {' '.join(build_cmd)}")
+        try:
             subprocess.run(build_cmd, env=build_env, check=True, cwd=project_path)
+            print("构建成功完成!")
+        except subprocess.CalledProcessError as e:
+            print(f"构建失败，退出码: {e.returncode}")
+            
+            # 尝试使用 --find-interpreter 选项
+            print("尝试使用 --find-interpreter 选项重新构建...")
+            find_interpreter_cmd = [
+                str(maturin_executable), 
+                "build", 
+                "--release", 
+                "--target", target_triplet,
+                "--find-interpreter"
+            ]
+            
+            print(f"执行构建命令: {' '.join(find_interpreter_cmd)}")
+            subprocess.run(find_interpreter_cmd, env=build_env, check=True, cwd=project_path)
     else:
-        raise ValueError("This build script is only intended for maturin-based projects.")
+        raise ValueError("此构建脚本仅适用于基于 maturin 的项目。")
 
     return is_maturin
 
@@ -199,37 +209,42 @@ def process_wheel(
     """Finds, renames, and moves the built wheel to the output directory."""
     print("--- Processing built wheel ---")
 
-    # --- Find Wheel --- #
+    # 查找生成的 wheel 文件
     search_path = project_path / "target" / "wheels" if is_maturin else project_path / "dist"
     print(f"Searching for wheel in: {search_path}")
     
     wheel_files = list(search_path.glob("*.whl"))
     if not wheel_files:
-        # Fallback search
         print("Wheel not found in primary path, searching everywhere...")
         wheel_files = list(Path.cwd().glob("**/*.whl"))
 
-    if len(wheel_files) != 1:
-        raise FileNotFoundError(f"Expected 1 wheel file, but found {len(wheel_files)}: {wheel_files}")
+    if not wheel_files:
+        raise FileNotFoundError(f"No wheel files found after build. Searched in: {search_path}")
+    
+    if len(wheel_files) > 1:
+        print(f"Found multiple wheel files: {wheel_files}. Using the first one.")
     
     wheel_path = wheel_files[0]
     print(f"Found wheel: {wheel_path}")
 
-    # --- Rename Wheel --- #
+    # 重命名 wheel 文件
     normalized_lib_name = library_name.replace("-", "_")
     platform_arch = target_abi.replace("-", "_")
     py_tag = f"cp{python_version.replace('.', '')}"
 
     version_to_use = library_version
     if not version_to_use:
-        # Extract version from wheel filename, e.g., orjson-3.11.3-cp313-cp313-win_amd64.whl
-        version_to_use = wheel_path.name.split("-")[1]
-        print(f"Library version not specified, using version from wheel: {version_to_use}")
+        wheel_name_parts = wheel_path.name.split("-")
+        if len(wheel_name_parts) >= 2:
+            version_to_use = wheel_name_parts[1]
+            print(f"Library version not specified, using version from wheel: {version_to_use}")
+        else:
+            raise ValueError(f"Cannot extract version from wheel filename: {wheel_path.name}")
 
     new_wheel_name = f"{normalized_lib_name}-{version_to_use}-{py_tag}-{py_tag}-android_{android_api}_{platform_arch}.whl"
     print(f"New wheel name: {new_wheel_name}")
 
-    # --- Move Wheel --- #
+    # 移动 wheel 文件到输出目录
     output_dir = Path.cwd().resolve().parent / "output"
     output_dir.mkdir(exist_ok=True)
     final_wheel_path = output_dir / new_wheel_name
@@ -238,10 +253,10 @@ def process_wheel(
 
 
 def main():
-    # --- Read environment variables --- #
+    # 读取环境变量
     library_name = os.environ["CIBW_LIBRARY_NAME"]
     git_repository = os.environ["CIBW_GIT_REPOSITORY"]
-    library_version = os.environ.get("CIBW_LIBRARY_VERSION") # Optional
+    library_version = os.environ.get("CIBW_LIBRARY_VERSION")
     source_dir = os.environ.get("CIBW_SOURCE_DIR", ".")
     python_version = os.environ["CIBW_PYTHON_VERSION"]
     android_api = os.environ["CIBW_ANDROID_API"]
@@ -251,23 +266,22 @@ def main():
     print(f"--- Building {library_name} for Android {target_abi} ---")
     print(f"Python version: {python_version}, Android API: {android_api}")
 
-    # --- Constants --- #
+    # 常量定义
     ndk_version = "r26d"
-    # In GitHub Actions, runner.temp is typically /home/runner/work/_temp
     temp_dir = Path(os.environ.get("RUNNER_TEMP", "/tmp"))
     ndk_path = temp_dir / f"android-ndk-{ndk_version}"
     library_source_path = Path.cwd() / "library-source"
 
-    # --- Setup NDK --- #
+    # 设置 NDK
     setup_ndk(ndk_path, ndk_version)
 
-    # --- Clone library source --- #
+    # 克隆库源码
     clone_library_source(git_repository, library_version, library_source_path)
 
-    # --- Prepare build environment --- #
+    # 准备构建环境
     build_env = prepare_build_environment(ndk_path, target_triplet, android_api)
 
-    # --- Build wheel --- #
+    # 构建 wheel
     is_maturin = build_wheel(
         library_name=library_name,
         library_source_path=library_source_path,
@@ -277,7 +291,7 @@ def main():
         python_version=python_version,
     )
 
-    # --- Process wheel --- #
+    # 处理生成的 wheel 文件
     process_wheel(
         library_name=library_name,
         library_version=library_version,
@@ -287,6 +301,7 @@ def main():
         android_api=android_api,
         target_abi=target_abi,
     )
+
 
 if __name__ == "__main__":
     main()
