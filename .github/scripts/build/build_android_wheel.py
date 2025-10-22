@@ -138,6 +138,12 @@ def build_wheel(
         # 对于Android，我们不需要链接到系统Python库
         build_env["PYO3_NO_PYTHON"] = "1"
 
+        # 添加更多调试信息
+        print(f"Build environment variables:")
+        for key, value in build_env.items():
+            if key.startswith("PYO3_"):
+                print(f"  {key}={value}")
+
         if library_name == "orjson":
             print("Applying orjson-specific workaround: disabling AVX512.")
             build_env["ORJSON_DISABLE_AVX512"] = "1"
@@ -148,7 +154,7 @@ def build_wheel(
             if any(line.strip().startswith("pyo3 ") for line in cargo_content.splitlines()):
                 print("Direct pyo3 dependency found. Adding 'extension-module' feature.")
                 build_cmd.extend(["--features", "pyo3/extension-module"])
-        
+
         print(f"Executing build command: {' '.join(build_cmd)}")
         subprocess.run(build_cmd, env=build_env, check=True, cwd=project_path)
     else:
