@@ -152,12 +152,13 @@ def build_wheel(
             cargo_content = cargo_path.read_text()
             if any(line.strip().startswith("pyo3 ") for line in cargo_content.splitlines()):
                 print("Direct pyo3 dependency found. Will enable 'extension-module' and attempt abi3 to avoid linking libpython.")
+                features = "pyo3/extension-module"
 
-                # 首先尝试abi3构建
+                # Try abi3 first (broad compatibility), then fall back if unsupported
                 try:
                     abi3_build_env = build_env.copy()
                     abi3_build_env["PYO3_NO_PYTHON"] = "1"
-                    abi3_build_cmd = build_cmd + ["--features", "pyo3/extension-module,pyo3/abi3-py37"]
+                    abi3_build_cmd = build_cmd + ["--features", f"{features} pyo3/abi3-py37"]
 
                     print("Trying abi3 build first...")
                     print(f"Executing abi3 build command: {' '.join(abi3_build_cmd)}")
@@ -165,12 +166,13 @@ def build_wheel(
                     print("abi3 build succeeded!")
                 except subprocess.CalledProcessError:
                     print("abi3 build failed, retrying without abi3...")
-                    # 回退到非abi3构建
-                    if "PYO3_NO_PYTHON" in build_env:
-                        del build_env["PYO3_NO_PYTHON"]
-                    build_cmd.extend(["--features", "pyo3/extension-module"])
-                    print(f"Executing fallback build command: {' '.join(build_cmd)}")
-                    subprocess.run(build_cmd, env=build_env, check=True, cwd=project_path)
+                    # Remove PYO3_NO_PYTHON from environment for fallback
+                    fallback_build_env = build_env.copy()
+                    if "PYO3_NO_PYTHON" in fallback_build_env:
+                        del fallback_build_env["PYO3_NO_PYTHON"]
+                    fallback_build_cmd = build_cmd + ["--features", features]
+                    print(f"Executing fallback build command: {' '.join(fallback_build_cmd)}")
+                    subprocess.run(fallback_build_cmd, env=fallback_build_env, check=True, cwd=project_path)
             else:
                 print("No direct pyo3 dependency found. Using standard build.")
                 print(f"Executing build command: {' '.join(build_cmd)}")
