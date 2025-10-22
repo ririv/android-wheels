@@ -99,15 +99,16 @@ def build_wheel(
     print("--- Building wheel ---")
 
     project_path = library_source_path / source_dir
+    print(f"Project path: {project_path}")
 
     is_maturin = False
     build_system = {}
     pyproject_path = Path("pyproject.toml")
     if pyproject_path.is_file():
-
-
+        print("pyproject.toml found. Using it to determine build backend.")
         pyproject_content = tomllib.loads(pyproject_path.read_text())
         build_system = pyproject_content.get("build-system", {})
+        print(f"Build backend: {build_system.get('build-backend')}")
         if build_system.get("build-backend") == "maturin":
             is_maturin = True
 
