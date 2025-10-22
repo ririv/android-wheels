@@ -130,13 +130,12 @@ def build_wheel(
 
         subprocess.run(["rustup", "target", "add", target_triplet], check=True, cwd=project_path)
 
+        # 对于Android，使用基本的构建命令，不使用compatibility参数
         build_cmd = [str(maturin_executable), "build", "--release", "--target", target_triplet, "-i", f"python{python_version}"]
 
         # 设置PyO3交叉编译环境变量
         build_env["PYO3_CROSS"] = "1"
         build_env["PYO3_CROSS_PYTHON_VERSION"] = python_version
-        # 对于Android，我们不需要链接到系统Python库
-        build_env["PYO3_NO_PYTHON"] = "1"
 
         # 添加更多调试信息
         print(f"Build environment variables:")
@@ -152,11 +151,34 @@ def build_wheel(
         if cargo_path.is_file():
             cargo_content = cargo_path.read_text()
             if any(line.strip().startswith("pyo3 ") for line in cargo_content.splitlines()):
-                print("Direct pyo3 dependency found. Adding 'extension-module' feature.")
-                build_cmd.extend(["--features", "pyo3/extension-module"])
+                print("Direct pyo3 dependency found. Will enable 'extension-module' and attempt abi3 to avoid linking libpython.")
 
-        print(f"Executing build command: {' '.join(build_cmd)}")
-        subprocess.run(build_cmd, env=build_env, check=True, cwd=project_path)
+                # 首先尝试abi3构建
+                try:
+                    abi3_build_env = build_env.copy()
+                    abi3_build_env["PYO3_NO_PYTHON"] = "1"
+                    abi3_build_cmd = build_cmd + ["--features", "pyo3/extension-module,pyo3/abi3-py37"]
+
+                    print("Trying abi3 build first...")
+                    print(f"Executing abi3 build command: {' '.join(abi3_build_cmd)}")
+                    subprocess.run(abi3_build_cmd, env=abi3_build_env, check=True, cwd=project_path)
+                    print("abi3 build succeeded!")
+                except subprocess.CalledProcessError:
+                    print("abi3 build failed, retrying without abi3...")
+                    # 回退到非abi3构建
+                    if "PYO3_NO_PYTHON" in build_env:
+                        del build_env["PYO3_NO_PYTHON"]
+                    build_cmd.extend(["--features", "pyo3/extension-module"])
+                    print(f"Executing fallback build command: {' '.join(build_cmd)}")
+                    subprocess.run(build_cmd, env=build_env, check=True, cwd=project_path)
+            else:
+                print("No direct pyo3 dependency found. Using standard build.")
+                print(f"Executing build command: {' '.join(build_cmd)}")
+                subprocess.run(build_cmd, env=build_env, check=True, cwd=project_path)
+        else:
+            print("Cargo.toml not found. Using standard build.")
+            print(f"Executing build command: {' '.join(build_cmd)}")
+            subprocess.run(build_cmd, env=build_env, check=True, cwd=project_path)
     else:
         raise ValueError("This build script is only intended for maturin-based projects.")
 
