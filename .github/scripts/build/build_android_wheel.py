@@ -103,7 +103,7 @@ def build_wheel(
 
     is_maturin = False
     build_system = {}
-    pyproject_path = Path("pyproject.toml")
+    pyproject_path = project_path / "pyproject.toml"
     if pyproject_path.is_file():
         print("pyproject.toml found. Using it to determine build backend.")
         pyproject_content = tomllib.loads(pyproject_path.read_text())
