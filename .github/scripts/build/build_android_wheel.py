@@ -345,6 +345,7 @@ def main():
     ndk_path = temp_dir / f"android-ndk-{ndk_version}"
     library_source_path = Path.cwd() / "library-source"
 
+    setup_ndk(ndk_path, ndk_version)
     clone_library_source(git_repository, library_version, library_source_path)
 
     build_method = os.environ.get("BUILD_METHOD", "native").lower()
@@ -357,6 +358,8 @@ def main():
             source_dir=source_dir,
             target_triplet=target_triplet,
             python_version=python_version,
+            ndk_path=ndk_path,
+            android_api=android_api,
         )
     elif build_method == "cross" and CAN_USE_CROSS:
         print("--- Using cross to build wheel ---")

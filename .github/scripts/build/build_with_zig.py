@@ -98,6 +98,8 @@ def build_wheel_with_zig(
     source_dir: str,
     target_triplet: str,
     python_version: str,
+    ndk_path: Path,
+    android_api: str,
 ) -> bool:
     """Builds the wheel using zig."""
     print(f"=== build_android_wheel.py (zig) SCRIPT_VERSION=2025-10-23.v1 ===")
@@ -125,8 +127,15 @@ def build_wheel_with_zig(
 
     # Build Env
     build_env = os.environ.copy()
+    build_env["ANDROID_NDK_HOME"] = str(ndk_path)
     venv_bin_path = venv_path / "bin"
     build_env["PATH"] = f"{venv_bin_path}:{build_env.get('PATH', '')}"
+
+    # Manually set sysroot for zig, as cargo-zigbuild's auto-detection seems insufficient
+    toolchain = ndk_path / "toolchains" / "llvm" / "prebuilt" / "linux-x86_64"
+    sysroot_flags = f"--sysroot={toolchain}/sysroot"
+    build_env["CFLAGS"] = f"{build_env.get('CFLAGS', '')} {sysroot_flags}"
+    build_env["LDFLAGS"] = f"{build_env.get('LDFLAGS', '')} {sysroot_flags}"
 
     # PyO3 cross-compilation
     build_env["PYO3_CROSS"] = "1"
