@@ -83,27 +83,25 @@ def prepare_build_environment(ndk_path: Path, target_triplet: str, android_api: 
     toolchain = ndk_path / "toolchains" / "llvm" / "prebuilt" / "linux-x86_64"
     env = os.environ.copy()
 
-    env["NDK_HOME"] = str(ndk_path)
-    env["TOOLCHAIN"] = str(toolchain)
+    # Add NDK toolchain to PATH for auto-discovery by rustc and other tools
+    toolchain_bin = toolchain / "bin"
+    env["PATH"] = f"{toolchain_bin}:{os.environ['PATH']}"
 
-    # Set compiler and linker
-    cc = f"{toolchain}/bin/{target_triplet}{android_api}-clang"
-    cxx = f"{toolchain}/bin/{target_triplet}{android_api}-clang++"
-    env["CC"] = cc
-    env["CXX"] = cxx
-    env["AR"] = f"{toolchain}/bin/llvm-ar"
-    env["LD"] = f"{toolchain}/bin/ld"
-    env["STRIP"] = f"{toolchain}/bin/llvm-strip"
+    # Set compiler env vars for C/C++ build scripts (e.g. in dependencies).
+    # Since the toolchain bin is in the PATH, we can just use the names.
+    env["CC"] = f"{target_triplet}{android_api}-clang"
+    env["CXX"] = f"{target_triplet}{android_api}-clang++"
+    env["AR"] = "llvm-ar"
 
-    # Flags
+    # Set sysroot flags for the C/C++ compilers
     sysroot_flags = f"--sysroot={toolchain}/sysroot"
     env["CFLAGS"] = sysroot_flags
     env["LDFLAGS"] = sysroot_flags
 
-    # Cargo target-specific env
+    # Let rustc find the linker from the PATH.
+    # We only need to hint the AR, which is a common practice.
     cargo_prefix = target_triplet.upper().replace("-", "_")
-    env[f"CARGO_TARGET_{cargo_prefix}_LINKER"] = cc
-    env[f"CARGO_TARGET_{cargo_prefix}_AR"] = env["AR"]
+    env[f"CARGO_TARGET_{cargo_prefix}_AR"] = "llvm-ar"
 
     return env
 
