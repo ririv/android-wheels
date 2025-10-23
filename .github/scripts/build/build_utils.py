@@ -1,4 +1,6 @@
 import subprocess
+import tomllib
+import tomli_w
 from pathlib import Path
 
 def run(cmd, **kwargs):
@@ -17,19 +19,35 @@ def patch_pyo3_cargo_toml(project_path: Path):
         print(f"WARNING: Cargo.toml not found at {cargo_toml_path}, skipping patch.")
         return
 
-    content = cargo_toml_path.read_text(encoding="utf-8")
-    # A simple string replacement is used here to avoid re-writing the entire file
-    # and potentially breaking formatting or comments. This is brittle but effective
-    # for the known structure of jiter's Cargo.toml.
-    original_pyo3_dep = 'pyo3 = { version = "0.26.0" }'
-    patched_pyo3_dep = 'pyo3 = { version = "0.26.0", features = ["extension-module"] }'
+    with open(cargo_toml_path, "rb") as f:
+        data = tomllib.load(f)
 
-    if original_pyo3_dep in content:
-        new_content = content.replace(original_pyo3_dep, patched_pyo3_dep)
-        cargo_toml_path.write_text(new_content, encoding="utf-8")
+    dependencies = data.get("dependencies", {})
+    pyo3_dep = dependencies.get("pyo3")
+
+    if not pyo3_dep:
+        print("WARNING: pyo3 dependency not found, skipping patch.")
+        return
+
+    # If pyo3 is just a version string, convert it to a table
+    if isinstance(pyo3_dep, str):
+        pyo3_dep = {"version": pyo3_dep}
+        dependencies["pyo3"] = pyo3_dep
+
+    if not isinstance(pyo3_dep, dict):
+        print(f"WARNING: pyo3 dependency has unsupported format ({type(pyo3_dep)}), skipping patch.")
+        return
+
+    features = pyo3_dep.get("features", [])
+    if "extension-module" not in features:
+        features.append("extension-module")
+        pyo3_dep["features"] = features
+        
+        with open(cargo_toml_path, "wb") as f:
+            tomli_w.dump(data, f)
         print("Successfully patched pyo3 dependency to include 'extension-module'.")
     else:
-        print("WARNING: pyo3 dependency line not found in expected format, skipping patch.")
+        print("pyo3 dependency already includes 'extension-module'.")
 
 def patch_orjson_for_android(project_path: Path):
     """

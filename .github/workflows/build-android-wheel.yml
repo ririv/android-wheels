@@ -76,7 +76,7 @@ jobs:
           python-version: '3.11' # A stable python version to run our script
 
       - name: Install script dependencies
-        run: pip install uv build
+        run: pip install uv build tomli-w
 
       - name: Checkout self
         uses: actions/checkout@v4

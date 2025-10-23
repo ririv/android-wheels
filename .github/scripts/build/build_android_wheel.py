@@ -218,20 +218,7 @@ def build_wheel(
     ]
 
     print(f"将使用解释器名传给 maturin: -i {interpreter_cli}")
-    try:
-        run(build_cmd, env=build_env, cwd=project_path)
-        print("构建成功完成!")
-    except subprocess.CalledProcessError as e:
-        print(f"构建失败，退出码: {e.returncode}")
-        print("尝试使用 --find-interpreter 选项重新构建...")
-        find_interpreter_cmd = [
-            str(maturin_exe),
-            "build",
-            "--release",
-            "--target", target_triplet,
-            "--find-interpreter",
-        ]
-        run(find_interpreter_cmd, env=build_env, cwd=project_path)
+    run(build_cmd, env=build_env, cwd=project_path)
 
     return True
 
