@@ -292,7 +292,7 @@ def main():
     print(f"--- Building {library_name} for Android {target_abi} ---")
     print(f"Python version: {python_version}, Android API: {android_api}")
 
-    ndk_version = "r26d"
+    ndk_version = "r27d"
     temp_dir = Path(os.environ.get("RUNNER_TEMP", "/tmp"))
     ndk_path = temp_dir / f"android-ndk-{ndk_version}"
     library_source_path = Path.cwd() / "library-source"
