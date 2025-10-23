@@ -105,9 +105,6 @@ def create_cargo_config(project_path: Path, target_triplet: str, android_api: st
             target_triplet: {
                 "linker": linker_name
             }
-        },
-        "build": {
-            "rustflags": ["-C", "link-arg=-v"]
         }
     }
 
