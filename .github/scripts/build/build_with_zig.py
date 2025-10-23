@@ -8,15 +8,10 @@ from pathlib import Path
 
 import tomllib
 
-
-def run(cmd, **kwargs):
-    print(f"$ {' '.join(map(str, cmd))}")
-    return subprocess.run(cmd, check=True, **kwargs)
+from build_utils import run, which, patch_orjson_for_android, patch_pyo3_cargo_toml
 
 
-def which(cmd: str) -> bool:
-    from shutil import which as _which
-    return _which(cmd) is not None
+
 
 
 def ensure_maturin_venv_and_zig(project_path: Path) -> tuple[Path, Path]:
@@ -49,47 +44,8 @@ def ensure_maturin_venv_and_zig(project_path: Path) -> tuple[Path, Path]:
     return venv_path, maturin_bin
 
 
-def patch_orjson_for_android(project_path: Path) -> None:
-    """
-    在非 x86 目标上为 orjson 打最小补丁，避免编译 x86/AVX 代码：
-    1) 给 src/str/avx512.rs 整文件加 x86/x86_64 cfg 守卫；
-    2) 给 src/str/pystr.rs 中 is_x86_feature_detected! 调用加 cfg 守卫。
-    """
-    print("--- Patching orjson sources for non-x86 targets ---")
-    str_dir = project_path / "src" / "str"
-    avx512 = str_dir / "avx512.rs"
-    pystr = str_dir / "pystr.rs"
 
-    ok1 = ok2 = False
 
-    if avx512.exists():
-        txt = avx512.read_text(encoding="utf-8")
-        guard = '''#![cfg(any(target_arch = "x86", target_arch = "x86_64"))]'''
-        if guard not in txt:
-            avx512.write_text(guard + "\n" + txt, encoding="utf-8")
-            print("Injected cfg guard into orjson/src/str/avx512.rs")
-        ok1 = guard in avx512.read_text(encoding="utf-8")
-
-    if pystr.exists():
-        txt = pystr.read_text(encoding="utf-8")
-        patched = txt
-        # avx512 检测
-        patched = patched.replace(
-            '''if std::is_x86_feature_detected!(\"avx512vl\") {''',
-            '''#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]\n        if std::is_x86_feature_detected!(\"avx512vl\") {'''
-        )
-        # 若还有 avx2 检测，一并守卫（不存在也无影响）
-        patched = patched.replace(
-            '''if std::is_x86_feature_detected!(\"avx2\") {''',
-            '''#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]\n        if std::is_x86_feature_detected!(\"avx2\") {'''
-        )
-        if patched != txt:
-            pystr.write_text(patched, encoding="utf-8")
-            print("Injected cfg guards into orjson/src/str/pystr.rs")
-        ok2 = '''#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]''' in pystr.read_text(encoding="utf-8")
-
-    if not (ok1 and ok2):
-        print("WARNING: orjson patch verification failed (one of the guards missing). Build may fail on aarch64.")
 
 
 def build_wheel_with_zig(
@@ -106,6 +62,8 @@ def build_wheel_with_zig(
     print("--- Building wheel with zig ---")
     project_path = library_source_path / source_dir
     print(f"Project path: {project_path}")
+
+    patch_pyo3_cargo_toml(project_path)
 
     pyproject_path = project_path / "pyproject.toml"
     if not pyproject_path.is_file():
