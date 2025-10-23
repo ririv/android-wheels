@@ -217,6 +217,7 @@ def build_wheel(
     build_cmd = [
         str(maturin_exe),
         "build",
+        "--verbose",
         "--release",
         "--target", target_triplet,
         "-i", interpreter_cli,
