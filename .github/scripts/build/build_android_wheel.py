@@ -198,6 +198,11 @@ def build_wheel(
         # 可选：减少 C 依赖触发（如果上游支持该开关则生效；不支持也无碍）
         build_env.setdefault("ORJSON_DISABLE_YYJSON", "1")
 
+    # Add verbose linker flag for diagnostics
+    print("--- Adding verbose linker flag for diagnostics ---")
+    verbose_linker_flag = "-C link-arg=-v"
+    build_env["RUSTFLAGS"] = f"{build_env.get('RUSTFLAGS', '')} {verbose_linker_flag}"
+
     # 仅打印关键交叉编译环境
     print("最终构建环境变量（关键信息）：")
     for k, v in sorted(build_env.items()):
