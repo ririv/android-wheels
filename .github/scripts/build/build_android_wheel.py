@@ -22,7 +22,7 @@ try:
 except ImportError:
     CAN_USE_ZIG = False
 
-from build_utils import run, which, patch_pyo3_cargo_toml, patch_orjson_for_android
+from build_utils import run, which, patch_pyo3_cargo_toml, patch_orjson_for_android, create_cargo_config
 
 
 SCRIPT_VERSION = "2025-10-22.v2"  # 用于日志确认脚本是否为最新
@@ -151,6 +151,7 @@ def build_wheel(
     build_env: dict[str, str],
     target_triplet: str,
     python_version: str,
+    android_api: str,
 ) -> bool:
     """Builds the wheel, using a PEP 517-compliant process for maturin."""
     print(f"=== build_android_wheel.py SCRIPT_VERSION={SCRIPT_VERSION} ===")
@@ -159,6 +160,7 @@ def build_wheel(
     print(f"Project path: {project_path}")
 
     patch_pyo3_cargo_toml(project_path)
+    create_cargo_config(project_path, target_triplet, android_api)
 
     pyproject_path = project_path / "pyproject.toml"
     if not pyproject_path.is_file():
@@ -331,6 +333,7 @@ def main():
             build_env=build_env,
             target_triplet=target_triplet,
             python_version=python_version,
+            android_api=android_api,
         )
 
     process_wheel(

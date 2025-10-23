@@ -49,7 +49,7 @@ def patch_pyo3_cargo_toml(project_path: Path):
     else:
         print("pyo3 dependency already includes 'extension-module'.")
 
-def patch_orjson_for_android(project_path: Path):
+def patch_orjson_for_android(project_path: Path) -> None:
     """
     在非 x86 目标上为 orjson 打最小补丁，避免编译 x86/AVX 代码：
     1) 给 src/str/avx512.rs 整文件加 x86/x86_64 cfg 守卫；
@@ -86,7 +86,33 @@ def patch_orjson_for_android(project_path: Path):
         if patched != txt:
             pystr.write_text(patched, encoding="utf-8")
             print("Injected cfg guards into orjson/src/str/pystr.rs")
-        ok2 = '''#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]''' in pystr.read_text(encoding="utf-8")
+        ok2 = '''#[cfg(any(target_arch = \"x86\", target_arch = \"x86_64\"))]''' in pystr.read_text(encoding="utf-8")
 
     if not (ok1 and ok2):
         print("WARNING: orjson patch verification failed (one of the guards missing). Build may fail on aarch64.")
+
+
+def create_cargo_config(project_path: Path, target_triplet: str, android_api: str):
+    """Creates a .cargo/config.toml file to configure the build."""
+    print("--- Creating .cargo/config.toml for cross-compilation ---")
+    cargo_dir = project_path / ".cargo"
+    cargo_dir.mkdir(exist_ok=True)
+
+    linker_name = f"{target_triplet}{android_api}-clang"
+
+    config_data = {
+        "target": {
+            target_triplet: {
+                "linker": linker_name
+            }
+        },
+        "build": {
+            "rustflags": ["-C", "link-arg=-v"]
+        }
+    }
+
+    config_path = cargo_dir / "config.toml"
+    with open(config_path, "wb") as f:
+        tomli_w.dump(config_data, f)
+    
+    print(f"Created {config_path} with linker set to {linker_name}")
