@@ -10,6 +10,13 @@ from pathlib import Path
 
 import tomllib
 
+try:
+    from build_with_cross import build_wheel_with_cross
+    CAN_USE_CROSS = True
+except ImportError:
+    CAN_USE_CROSS = False
+
+
 SCRIPT_VERSION = "2025-10-22.v2"  # 用于日志确认脚本是否为最新
 
 
@@ -332,19 +339,29 @@ def main():
     ndk_path = temp_dir / f"android-ndk-{ndk_version}"
     library_source_path = Path.cwd() / "library-source"
 
-    setup_ndk(ndk_path, ndk_version)
     clone_library_source(git_repository, library_version, library_source_path)
 
-    build_env = prepare_build_environment(ndk_path, target_triplet, android_api)
-
-    is_maturin = build_wheel(
-        library_name=library_name,
-        library_source_path=library_source_path,
-        source_dir=source_dir,
-        build_env=build_env,
-        target_triplet=target_triplet,
-        python_version=python_version,
-    )
+    if os.environ.get("USE_CROSS") in ("1", "true") and CAN_USE_CROSS:
+        print("--- Using cross to build wheel ---")
+        is_maturin = build_wheel_with_cross(
+            library_name=library_name,
+            library_source_path=library_source_path,
+            source_dir=source_dir,
+            target_triplet=target_triplet,
+            python_version=python_version,
+        )
+    else:
+        print("--- Using default build process ---")
+        setup_ndk(ndk_path, ndk_version)
+        build_env = prepare_build_environment(ndk_path, target_triplet, android_api)
+        is_maturin = build_wheel(
+            library_name=library_name,
+            library_source_path=library_source_path,
+            source_dir=source_dir,
+            build_env=build_env,
+            target_triplet=target_triplet,
+            python_version=python_version,
+        )
 
     process_wheel(
         library_name=library_name,
