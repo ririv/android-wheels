@@ -19,37 +19,30 @@ def which(cmd: str) -> bool:
     return _which(cmd) is not None
 
 
-def ensure_maturin_venv_and_cross(project_path: Path) -> tuple[Path, Path]:
+def ensure_maturin_venv_and_zig(project_path: Path) -> tuple[Path, Path]:
     """
-    Create an isolated venv under project and install maturin and cross.
-    Prefer uv, fall back to python -m venv + pip.
-    Returns (venv_path, maturin_exe_path).
+    Create an isolated venv under project and install maturin with zig support.
     """
     venv_path = project_path / ".build_venv"
     python_bin = venv_path / "bin" / "python"
     maturin_bin = venv_path / "bin" / "maturin"
+    maturin_zig_dep = "maturin[zig]>=1,<2"
 
     if not venv_path.exists():
         print(f"Creating isolated build environment at: {venv_path}")
         if which("uv"):
             run(["uv", "venv", str(venv_path)], cwd=project_path)
-            run(["uv", "pip", "install", "--python", str(python_bin), "maturin>=1,<2"], cwd=project_path)
+            run(["uv", "pip", "install", "--python", str(python_bin), maturin_zig_dep], cwd=project_path)
         else:
-            # fallback to stdlib venv + pip
             run([sys.executable, "-m", "venv", str(venv_path)], cwd=project_path)
             run([str(python_bin), "-m", "pip", "install", "--upgrade", "pip"], cwd=project_path)
-            run([str(python_bin), "-m", "pip", "install", "maturin>=1,<2"], cwd=project_path)
+            run([str(python_bin), "-m", "pip", "install", maturin_zig_dep], cwd=project_path)
     else:
-        # ensure maturin present
-        if not maturin_bin.exists():
-            if which("uv"):
-                run(["uv", "pip", "install", "--python", str(python_bin), "maturin>=1,<2"], cwd=project_path)
-            else:
-                run([str(python_bin), "-m", "pip", "install", "maturin>=1,<2"], cwd=project_path)
-
-    # Install cross
-    print("--- Installing cross ---")
-    run(["cargo", "install", "cross", "--git", "https://github.com/cross-rs/cross"], cwd=project_path)
+        # ensure maturin[zig] present
+        if which("uv"):
+            run(["uv", "pip", "install", "--python", str(python_bin), maturin_zig_dep], cwd=project_path)
+        else:
+            run([str(python_bin), "-m", "pip", "install", maturin_zig_dep], cwd=project_path)
 
     print(f"Using CPython interpreter at: {python_bin}")
     print(f"Using maturin at: {maturin_bin}")
@@ -99,22 +92,22 @@ def patch_orjson_for_android(project_path: Path) -> None:
         print("WARNING: orjson patch verification failed (one of the guards missing). Build may fail on aarch64.")
 
 
-def build_wheel_with_cross(
+def build_wheel_with_zig(
     library_name: str,
     library_source_path: Path,
     source_dir: str,
     target_triplet: str,
     python_version: str,
 ) -> bool:
-    """Builds the wheel using cross."""
-    print(f"=== build_android_wheel.py (cross) SCRIPT_VERSION=2025-10-22.v2 ===")
-    print("--- Building wheel with cross ---")
+    """Builds the wheel using zig."""
+    print(f"=== build_android_wheel.py (zig) SCRIPT_VERSION=2025-10-23.v1 ===")
+    print("--- Building wheel with zig ---")
     project_path = library_source_path / source_dir
     print(f"Project path: {project_path}")
 
     pyproject_path = project_path / "pyproject.toml"
     if not pyproject_path.is_file():
-        raise ValueError("此构建脚本仅适用于基于 maturin 的项目（需要 pyproject.toml 且 build-backend = 'maturin'）。")
+        raise ValueError("This build script is only for maturin-based projects.")
 
     pyproject = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
     build_system = pyproject.get("build-system", {})
@@ -122,45 +115,40 @@ def build_wheel_with_cross(
 
     print(f"Build backend: {backend}")
     if backend != "maturin":
-        raise ValueError("检测到非 maturin 后端；此脚本当前仅支持 maturin。")
+        raise ValueError("This script currently only supports maturin.")
 
-    # venv + maturin + cross
-    venv_path, maturin_exe = ensure_maturin_venv_and_cross(project_path)
+    # venv + maturin + zig
+    venv_path, maturin_exe = ensure_maturin_venv_and_zig(project_path)
 
     # rust target
     run(["rustup", "target", "add", target_triplet], cwd=project_path)
 
     # Build Env
     build_env = os.environ.copy()
-    build_env["CARGO"] = "cross"
+    venv_bin_path = venv_path / "bin"
+    build_env["PATH"] = f"{venv_bin_path}:{build_env.get('PATH', '')}"
 
-    # PyO3 交叉编译：明确声明
+    # PyO3 cross-compilation
     build_env["PYO3_CROSS"] = "1"
     build_env["PYO3_CROSS_PYTHON_VERSION"] = python_version
     build_env["PYO3_CROSS_PYTHON_IMPLEMENTATION"] = build_env.get("PYO3_CROSS_PYTHON_IMPLEMENTATION", "CPython")
 
-    # Android 目标：不设置 PYO3_CROSS_LIB_DIR（让 PyO3 自行处理）
     if "android" in target_triplet:
-        print("Android 目标：省略 PYO3_CROSS_LIB_DIR（官方推荐路径）")
+        print("Android target: skipping PYO3_CROSS_LIB_DIR (official recommendation)")
 
-    # orjson 的 aarch64 补丁（构建前强制执行并校验）
     if library_name == "orjson" and ("aarch64" in target_triplet or "arm64" in target_triplet):
         patch_orjson_for_android(project_path)
-        # 避免人为设置的 RUSTFLAGS 里强开 x86 特性
         build_env.pop("RUSTFLAGS", None)
-        # 可选：减少 C 依赖触发（如果上游支持该开关则生效；不支持也无碍）
         build_env.setdefault("ORJSON_DISABLE_YYJSON", "1")
 
-    # 仅打印关键交叉编译环境
-    print("最终构建环境变量（关键信息）：")
+    print("Final build environment (key info):")
     for k, v in sorted(build_env.items()):
-        if any(prefix in k for prefix in ["PYO3", "CARGO_COMMAND", "CARGO_TARGET_", "CC", "CXX", "AR"]):
+        if any(prefix in k for prefix in ["PYO3", "CARGO_TARGET_", "CC", "CXX", "AR"]):
             print(f"  {k}={v}")
 
-    # maturin 构建：❗交叉编译 -i 必须是“解释器名”，不能是绝对路径
-    interpreter_cli = f"python{python_version}"  # e.g. python3.13
+    interpreter_cli = f"python{python_version}"
     if interpreter_cli.startswith("/"):
-        raise RuntimeError(f"内部防护：解释器名被解析成了路径：{interpreter_cli}")
+        raise RuntimeError(f"Interpreter name resolved to a path: {interpreter_cli}")
 
     build_cmd = [
         str(maturin_exe),
@@ -168,10 +156,12 @@ def build_wheel_with_cross(
         "--release",
         "--target", target_triplet,
         "-i", interpreter_cli,
+        "--zig",
+        "--compatibility", "linux",
     ]
 
-    print(f"将使用解释器名传给 maturin: -i {interpreter_cli}")
+    print(f"Using interpreter name for maturin: -i {interpreter_cli}")
     run(build_cmd, env=build_env, cwd=project_path)
-    print("构建成功完成!")
+    print("Build completed successfully!")
 
     return True

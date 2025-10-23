@@ -99,7 +99,7 @@ jobs:
 
       - name: Run build script
         env:
-          USE_CROSS: "1"
+          BUILD_METHOD: "zig"
           CIBW_LIBRARY_NAME: ${{ inputs.library-name }}
           CIBW_GIT_REPOSITORY: ${{ inputs.git-repository }}
           CIBW_LIBRARY_VERSION: ${{ inputs.library-version }}

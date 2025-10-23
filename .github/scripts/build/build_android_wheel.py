@@ -16,6 +16,12 @@ try:
 except ImportError:
     CAN_USE_CROSS = False
 
+try:
+    from build_with_zig import build_wheel_with_zig
+    CAN_USE_ZIG = True
+except ImportError:
+    CAN_USE_ZIG = False
+
 
 SCRIPT_VERSION = "2025-10-22.v2"  # 用于日志确认脚本是否为最新
 
@@ -341,7 +347,18 @@ def main():
 
     clone_library_source(git_repository, library_version, library_source_path)
 
-    if os.environ.get("USE_CROSS") in ("1", "true") and CAN_USE_CROSS:
+    build_method = os.environ.get("BUILD_METHOD", "native").lower()
+
+    if build_method == "zig" and CAN_USE_ZIG:
+        print("--- Using zig to build wheel ---")
+        is_maturin = build_wheel_with_zig(
+            library_name=library_name,
+            library_source_path=library_source_path,
+            source_dir=source_dir,
+            target_triplet=target_triplet,
+            python_version=python_version,
+        )
+    elif build_method == "cross" and CAN_USE_CROSS:
         print("--- Using cross to build wheel ---")
         is_maturin = build_wheel_with_cross(
             library_name=library_name,
@@ -351,7 +368,7 @@ def main():
             python_version=python_version,
         )
     else:
-        print("--- Using default build process ---")
+        print("--- Using default native build process ---")
         setup_ndk(ndk_path, ndk_version)
         build_env = prepare_build_environment(ndk_path, target_triplet, android_api)
         is_maturin = build_wheel(
