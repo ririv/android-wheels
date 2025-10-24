@@ -346,7 +346,7 @@ def build_wheel(
         # "--verbose",
         "--release",
         "--target", target_triplet,
-        "-i", interpreter_cli,
+        # "-i", interpreter_cli,
     ]
 
     print(f"将使用解释器名传给 maturin: -i {interpreter_cli}")
