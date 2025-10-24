@@ -309,12 +309,16 @@ def build_wheel(
     build_env = build_env.copy()
     build_env["PYO3_CROSS"] = "1"
     build_env["PYO3_CROSS_PYTHON_VERSION"] = python_version
-    build_env["PYO3_CROSS_PYTHON_IMPLEMENTATION"] = build_env.get("PYO3_CROSS_PYTHON_IMPLEMENTATION", "CPython")
-
+    
     # 为 Android 目标设置 PYO3_CROSS_LIB_DIR
     if "android" in target_triplet:
         build_env["PYO3_CROSS_LIB_DIR"] = str(python_lib_dir)
         print(f"PYO3_CROSS_LIB_DIR set to: {python_lib_dir}")
+
+        # Also add the python lib dir to the linker search path, as maturin/pyo3 might
+        # modify PYO3_CROSS_LIB_DIR to a subdirectory.
+        build_env["LDFLAGS"] = f"{build_env.get('LDFLAGS', '')} -L{python_lib_dir}"
+        print(f"Adding to LDFLAGS: -L{python_lib_dir}")
 
     # orjson 的 aarch64 补丁（构建前强制执行并校验）
     if library_name == "orjson" and ("aarch64" in target_triplet or "arm64" in target_triplet):
@@ -346,7 +350,7 @@ def build_wheel(
         # "--verbose",
         "--release",
         "--target", target_triplet,
-        # "-i", interpreter_cli,
+        "-i", interpreter_cli,
     ]
 
     print(f"将使用解释器名传给 maturin: -i {interpreter_cli}")
