@@ -103,7 +103,11 @@ def create_cargo_config(project_path: Path, target_triplet: str, android_api: st
     config_data = {
         "target": {
             target_triplet: {
-                "linker": linker_name
+                "linker": linker_name,
+                "rustflags": [
+                    "-C", "link-arg=-Wl,--exclude-libs,ALL",
+                    "-C", "link-arg=-Wl,-z,now",
+                ]
             }
         }
     }

@@ -73,7 +73,7 @@ jobs:
       - name: Set up Python for build script
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # A stable python version to run our script
+          python-version: '3.13' # A stable python version to run our script
 
       - name: Install script dependencies
         run: pip install uv build tomli-w
