@@ -185,6 +185,8 @@ def build_wheel(
     build_env["PYO3_CROSS"] = "1"
     build_env["PYO3_CROSS_PYTHON_VERSION"] = python_version
     build_env["PYO3_CROSS_PYTHON_IMPLEMENTATION"] = build_env.get("PYO3_CROSS_PYTHON_IMPLEMENTATION", "CPython")
+    # Per PyO3 docs, this disables interpreter detection, which is buggy in this cross-compilation scenario.
+    build_env["PYO3_NO_PYTHON"] = "1"
 
     # Android 目标：不设置 PYO3_CROSS_LIB_DIR（让 PyO3 自行处理）
     if "android" in target_triplet:
