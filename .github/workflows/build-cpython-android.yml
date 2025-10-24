@@ -1,0 +1,110 @@
+name: Build CPython for Android
+
+on:
+  workflow_dispatch:
+    inputs:
+      python-version:
+        description: 'Python Version'
+        required: true
+        default: '3.13'
+        type: choice
+        options:
+          - '3.13'
+          - '3.12'
+          - '3.11'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        host: [aarch64-linux-android, x86_64-linux-android]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Clone CPython
+      run: git clone --depth 1 --branch ${{ github.event.inputs.python-version }} https://github.com/python/cpython.git
+
+    - name: Build and Package for aarch64
+      if: matrix.host == 'aarch64-linux-android'
+      run: |
+        cd cpython/Android
+        ./android.py build ${{ matrix.host }}
+        ./android.py package ${{ matrix.host }}
+
+    - name: Build, Package, and Test for x86_64
+      if: matrix.host == 'x86_64-linux-android'
+      run: |
+        cd cpython/Android
+        ./android.py ci --fast-ci ${{ matrix.host }}
+
+    - name: Rename Artifact
+      id: rename_step
+      run: |
+        ARTIFACT_DIR="cpython/cross-build/${{ matrix.host }}/dist"
+        ORIGINAL_PATH=$(find "$ARTIFACT_DIR" -name "python-*.tar.gz")
+        NEW_PATH=$(echo "$ORIGINAL_PATH" | sed -E 's/\+[^-]+//')
+        mv "$ORIGINAL_PATH" "$NEW_PATH"
+        NEW_FILENAME=$(basename "$NEW_PATH")
+        echo "New artifact name: $NEW_FILENAME"
+        echo "artifact_name=$NEW_FILENAME" >> "$GITHUB_OUTPUT"
+
+    - name: Upload CPython build
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.rename_step.outputs.artifact_name }}
+        path: cpython/cross-build/${{ matrix.host }}/dist/*.tar.gz
+        retention-days: 1
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Git and switch to branch
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          if git ls-remote --exit-code --heads origin cpython-android; then
+            echo "Branch 'cpython-android' exists. Switching to it."
+            git switch cpython-android
+          else
+            echo "Branch 'cpython-android' does not exist. Creating a new empty (orphan) branch."
+            git switch --orphan cpython-android
+          fi
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Organize and commit artifacts
+        run: |
+          VERSION=${{ github.event.inputs.python-version }}
+          mkdir -p $VERSION
+          find artifacts -type f -name "*.tar.gz" -exec mv {} $VERSION/ \;
+          
+          git add $VERSION/*.tar.gz
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Add CPython $VERSION builds for $(date -u +'%Y-%m-%d')"
+            git push --set-upstream origin cpython-android
+          fi
