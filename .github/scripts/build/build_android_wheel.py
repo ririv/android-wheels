@@ -309,16 +309,44 @@ def build_wheel(
     build_env = build_env.copy()
     build_env["PYO3_CROSS"] = "1"
     build_env["PYO3_CROSS_PYTHON_VERSION"] = python_version
-    
-    # 为 Android 目标设置 PYO3_CROSS_LIB_DIR
-    if "android" in target_triplet:
-        build_env["PYO3_CROSS_LIB_DIR"] = str(python_lib_dir)
-        print(f"PYO3_CROSS_LIB_DIR set to: {python_lib_dir}")
 
-        # Also add the python lib dir to the linker search path, as maturin/pyo3 might
-        # modify PYO3_CROSS_LIB_DIR to a subdirectory.
-        build_env["LDFLAGS"] = f"{build_env.get('LDFLAGS', '')} -L{python_lib_dir}"
-        print(f"Adding to LDFLAGS: -L{python_lib_dir}")
+    # 为 Android 目标设置所有必要的交叉编译环境变量
+    if "android" in target_triplet:
+        # 1. 确认并设置 MATURIN_PYTHON_SYSCONFIGDATA_DIR
+        #    这个目录必须包含 `_sysconfigdata*.py` 文件。
+        sysconfigdata_dir = python_lib_dir / f"python{python_version}"
+        if not sysconfigdata_dir.is_dir():
+            raise FileNotFoundError(f"Sysconfigdata directory not found at {sysconfigdata_dir}")
+
+        # 检查 _sysconfigdata 文件是否存在
+        sysconfig_files = list(sysconfigdata_dir.glob("_sysconfigdata*.py"))
+        if not sysconfig_files:
+            raise FileNotFoundError(
+                f"No '_sysconfigdata*.py' file found in {sysconfigdata_dir}. "
+                f"This is required by pyo3 for cross-compilation."
+            )
+        sysconfig_file_name = sysconfig_files[0].name
+        print(f"Found sysconfigdata file: {sysconfig_file_name}")
+
+        # 3. 设置 _PYTHON_SYSCONFIGDATA_NAME, 直接告诉 pyo3 配置文件的名字
+        build_env["_PYTHON_SYSCONFIGDATA_NAME"] = sysconfig_file_name.removesuffix(".py")
+        print(f"_PYTHON_SYSCONFIGDATA_NAME set to: {build_env['_PYTHON_SYSCONFIGDATA_NAME']}")
+
+        build_env["MATURIN_PYTHON_SYSCONFIGDATA_DIR"] = str(sysconfigdata_dir)
+        print(f"MATURIN_PYTHON_SYSCONFIGDATA_DIR set to: {sysconfigdata_dir}")
+
+        # 2. 直接通过 RUSTFLAGS 告诉链接器库的位置和名称。
+        #    链接器需要在 `prefix/lib` 目录下寻找 libpythonX.Y.so
+        cargo_rustflags_key = f"CARGO_TARGET_{target_triplet.upper().replace('-', '_')}_RUSTFLAGS"
+        linker_args = [
+            f"-L{python_lib_dir}",
+            f"-lpython{python_version}"
+        ]
+        rustflags = " ".join([f"-C link-arg={arg}" for arg in linker_args])
+
+        existing_rustflags = build_env.get(cargo_rustflags_key, "")
+        build_env[cargo_rustflags_key] = f"{existing_rustflags} {rustflags}".strip()
+        print(f"Set {cargo_rustflags_key}={build_env[cargo_rustflags_key]}")
 
     # orjson 的 aarch64 补丁（构建前强制执行并校验）
     if library_name == "orjson" and ("aarch64" in target_triplet or "arm64" in target_triplet):
