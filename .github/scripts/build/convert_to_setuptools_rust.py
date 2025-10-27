@@ -4,6 +4,16 @@ from pathlib import Path
 import tomli
 import tomli_w
 
+def normalize_pyproject_toml_for_pep621(pyproject: dict):
+    """Normalizes the pyproject.toml to comply with PEP 621 for setuptools."""
+    if "repository" in pyproject.get("project", {}):
+        repo_url = pyproject["project"]["repository"]
+        del pyproject["project"]["repository"]
+        if "urls" not in pyproject["project"]:
+            pyproject["project"]["urls"] = {}
+        pyproject["project"]["urls"]["Repository"] = repo_url
+        print("Moved 'repository' from [project] to [project.urls] for PEP 621 compliance.")
+
 def find_python_package_info(project_path: Path, pyproject: dict) -> tuple[str, str]:
     """
     Finds the Python package name and source directory.
@@ -18,7 +28,6 @@ def find_python_package_info(project_path: Path, pyproject: dict) -> tuple[str, 
         if packages:
             return packages[0], source_dir
     
-    # If no python-source, assume the package is at the root
     project_name = pyproject.get("project", {}).get("name")
     if project_name:
         return project_name, "."
@@ -41,17 +50,16 @@ def convert_project(pyproject_path: Path):
         print(f"Project at {project_path} is not using maturin. No conversion needed.", file=sys.stderr)
         return
 
-    # --- Start Conversion ---
     print(f"---")
     print(f"Converting project at: {project_path}")
 
-    maturin_config = pyproject.get("tool", {}).get("maturin", {})
+    # 1. Normalize for PEP 621 compliance
+    normalize_pyproject_toml_for_pep621(pyproject)
 
-    # Find Python package info
+    maturin_config = pyproject.get("tool", {}).get("maturin", {})
     package_name, source_dir = find_python_package_info(project_path, pyproject)
     print(f"Found Python package '{package_name}' in source directory '{source_dir}'")
 
-    # Get Rust crate name from Cargo.toml
     with open(cargo_path, "rb") as f:
         cargo_toml = tomli.load(f)
     crate_name = cargo_toml.get("lib", {}).get("name")
@@ -59,17 +67,17 @@ def convert_project(pyproject_path: Path):
         raise ValueError("Could not find [lib].name in Cargo.toml")
     print(f"Found Rust crate name: '{crate_name}'")
 
-    # 1. Remove [tool.maturin]
+    # Remove [tool.maturin]
     if "maturin" in pyproject.get("tool", {}):
         del pyproject["tool"]["maturin"]
         print("Removed [tool.maturin] section.")
 
-    # 2. Update [build-system]
+    # Update [build-system] 
     pyproject["build-system"]["requires"] = ["setuptools", "setuptools-rust"]
     pyproject["build-system"]["build-backend"] = "setuptools.build_meta"
     print("Updated [build-system] for setuptools-rust.")
 
-    # 3. Handle dynamic fields
+    # Handle dynamic fields
     if "dynamic" in pyproject.get("project", {}):
         if "tool" not in pyproject:
             pyproject["tool"] = {}
@@ -80,19 +88,15 @@ def convert_project(pyproject_path: Path):
 
         for field in pyproject["project"]["dynamic"]:
             if field == "readme":
-                # Assume README.md. Add content-type as well.
                 pyproject["tool"]["setuptools"]["dynamic"]["readme"] = {
                     "file": ["README.md"],
                     "content-type": "text/markdown"
                 }
                 print(f"Added [tool.setuptools.dynamic.readme] for README.md")
             elif field == "version":
-                # setuptools-rust handles version automatically, so we don't add
-                # a `version` attribute to [tool.setuptools.dynamic].
-                # setuptools will delegate to the backend (setuptools-rust).
                 print("Found dynamic version, will be handled by setuptools-rust automatically.")
 
-    # 4. Add [tool.setuptools.packages.find] for multi-module projects
+    # Add [tool.setuptools.packages.find] for multi-module projects
     if source_dir != ".":
         if "tool" not in pyproject:
             pyproject["tool"] = {}
@@ -101,7 +105,7 @@ def convert_project(pyproject_path: Path):
         pyproject["tool"]["setuptools"]["packages"] = {"find": {"where": [source_dir]}}
         print(f"Added [tool.setuptools.packages.find] with where=['{source_dir}'].")
 
-    # 5. Add [[tool.setuptools-rust.ext-modules]]
+    # Add [[tool.setuptools-rust.ext-modules]] 
     if "module-name" in maturin_config:
         target = maturin_config["module-name"]
     elif source_dir == ".":
@@ -121,12 +125,10 @@ def convert_project(pyproject_path: Path):
     pyproject["tool"]["setuptools-rust"]["ext-modules"] = [ext_module]
     print(f"Added [[tool.setuptools-rust.ext-modules]] with target '{ext_module['target']}'.")
 
-    # Write back the modified pyproject.toml
     with open(pyproject_path, "wb") as f:
         tomli_w.dump(pyproject, f)
 
     print(f"Successfully updated {pyproject_path}")
-
 
 def main():
     if len(sys.argv) != 2:
