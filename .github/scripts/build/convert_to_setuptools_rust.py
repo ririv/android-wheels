@@ -1,3 +1,4 @@
+
 import os
 import sys
 from pathlib import Path
@@ -5,14 +6,26 @@ import tomli
 import tomli_w
 
 def normalize_pyproject_toml_for_pep621(pyproject: dict):
-    """Normalizes the pyproject.toml to comply with PEP 621 for setuptools."""
-    if "repository" in pyproject.get("project", {}):
-        repo_url = pyproject["project"]["repository"]
-        del pyproject["project"]["repository"]
-        if "urls" not in pyproject["project"]:
-            pyproject["project"]["urls"] = {}
-        pyproject["project"]["urls"]["Repository"] = repo_url
-        print("Moved 'repository' from [project] to [project.urls] for PEP 621 compliance.")
+    """Normalizes the pyproject.toml to comply with modern PEP standards for setuptools."""
+    project_table = pyproject.get("project", {})
+
+    # PEP 621: Move `repository` from [project] to [project.urls]
+    if "repository" in project_table:
+        repo_url = project_table["repository"]
+        del project_table["repository"]
+        if "urls" not in project_table:
+            project_table["urls"] = {}
+        project_table["urls"]["Repository"] = repo_url
+        print("Normalized 'repository' field for PEP 621 compliance.")
+
+    # PEP 639: If a license expression is used, remove legacy license classifiers
+    if "license" in project_table and "classifiers" in project_table:
+        original_classifiers = project_table["classifiers"]
+        project_table["classifiers"] = [
+            c for c in original_classifiers if not c.startswith("License ::")
+        ]
+        if len(original_classifiers) > len(project_table["classifiers"]):
+            print("Removed legacy 'License ::' classifiers for PEP 639 compliance.")
 
 def find_python_package_info(project_path: Path, pyproject: dict) -> tuple[str, str]:
     """
@@ -53,7 +66,7 @@ def convert_project(pyproject_path: Path):
     print(f"---")
     print(f"Converting project at: {project_path}")
 
-    # 1. Normalize for PEP 621 compliance
+    # Step 1: Normalize for PEP compliance
     normalize_pyproject_toml_for_pep621(pyproject)
 
     maturin_config = pyproject.get("tool", {}).get("maturin", {})
@@ -67,17 +80,17 @@ def convert_project(pyproject_path: Path):
         raise ValueError("Could not find [lib].name in Cargo.toml")
     print(f"Found Rust crate name: '{crate_name}'")
 
-    # Remove [tool.maturin]
+    # Step 2: Remove [tool.maturin]
     if "maturin" in pyproject.get("tool", {}):
         del pyproject["tool"]["maturin"]
         print("Removed [tool.maturin] section.")
 
-    # Update [build-system] 
+    # Step 3: Update [build-system]
     pyproject["build-system"]["requires"] = ["setuptools", "setuptools-rust"]
     pyproject["build-system"]["build-backend"] = "setuptools.build_meta"
     print("Updated [build-system] for setuptools-rust.")
 
-    # Handle dynamic fields
+    # Step 4: Handle dynamic fields
     if "dynamic" in pyproject.get("project", {}):
         if "tool" not in pyproject:
             pyproject["tool"] = {}
@@ -96,7 +109,7 @@ def convert_project(pyproject_path: Path):
             elif field == "version":
                 print("Found dynamic version, will be handled by setuptools-rust automatically.")
 
-    # Add [tool.setuptools.packages.find] for multi-module projects
+    # Step 5: Add [tool.setuptools.packages.find] for multi-module projects
     if source_dir != ".":
         if "tool" not in pyproject:
             pyproject["tool"] = {}
@@ -105,7 +118,7 @@ def convert_project(pyproject_path: Path):
         pyproject["tool"]["setuptools"]["packages"] = {"find": {"where": [source_dir]}}
         print(f"Added [tool.setuptools.packages.find] with where=['{source_dir}'].")
 
-    # Add [[tool.setuptools-rust.ext-modules]] 
+    # Step 6: Add [[tool.setuptools-rust.ext-modules]]
     if "module-name" in maturin_config:
         target = maturin_config["module-name"]
     elif source_dir == ".":
