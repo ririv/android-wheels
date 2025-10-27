@@ -45,6 +45,8 @@ def convert_project(pyproject_path: Path):
     print(f"---")
     print(f"Converting project at: {project_path}")
 
+    maturin_config = pyproject.get("tool", {}).get("maturin", {})
+
     # Find Python package info
     package_name, source_dir = find_python_package_info(project_path, pyproject)
     print(f"Found Python package '{package_name}' in source directory '{source_dir}'")
@@ -67,7 +69,30 @@ def convert_project(pyproject_path: Path):
     pyproject["build-system"]["build-backend"] = "setuptools.build_meta"
     print("Updated [build-system] for setuptools-rust.")
 
-    # 3. Add [tool.setuptools.packages.find] for multi-module projects
+    # 3. Handle dynamic fields
+    if "dynamic" in pyproject.get("project", {}):
+        if "tool" not in pyproject:
+            pyproject["tool"] = {}
+        if "setuptools" not in pyproject["tool"]:
+            pyproject["tool"]["setuptools"] = {}
+        if "dynamic" not in pyproject["tool"]["setuptools"]:
+            pyproject["tool"]["setuptools"]["dynamic"] = {}
+
+        for field in pyproject["project"]["dynamic"]:
+            if field == "readme":
+                # Assume README.md. Add content-type as well.
+                pyproject["tool"]["setuptools"]["dynamic"]["readme"] = {
+                    "file": ["README.md"],
+                    "content-type": "text/markdown"
+                }
+                print(f"Added [tool.setuptools.dynamic.readme] for README.md")
+            elif field == "version":
+                # setuptools-rust handles version automatically, so we don't add
+                # a `version` attribute to [tool.setuptools.dynamic].
+                # setuptools will delegate to the backend (setuptools-rust).
+                print("Found dynamic version, will be handled by setuptools-rust automatically.")
+
+    # 4. Add [tool.setuptools.packages.find] for multi-module projects
     if source_dir != ".":
         if "tool" not in pyproject:
             pyproject["tool"] = {}
@@ -76,8 +101,10 @@ def convert_project(pyproject_path: Path):
         pyproject["tool"]["setuptools"]["packages"] = {"find": {"where": [source_dir]}}
         print(f"Added [tool.setuptools.packages.find] with where=['{source_dir}'].")
 
-    # 4. Add [[tool.setuptools-rust.ext-modules]]
-    if source_dir == ".":
+    # 5. Add [[tool.setuptools-rust.ext-modules]]
+    if "module-name" in maturin_config:
+        target = maturin_config["module-name"]
+    elif source_dir == ".":
         target = crate_name
     else:
         target = f"{package_name}.{crate_name}"
