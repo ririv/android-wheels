@@ -45,7 +45,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install script dependencies
-        run: pip install tomli tomli-w
+        run: pip install tomli-w
 
       - name: Clone library source
         uses: actions/checkout@v4

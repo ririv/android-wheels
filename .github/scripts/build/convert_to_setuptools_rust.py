@@ -1,7 +1,7 @@
 import os
 import sys
 from pathlib import Path
-import tomli
+import tomllib
 import tomli_w
 
 def normalize_pyproject_toml_for_pep621(pyproject: dict):
@@ -30,7 +30,7 @@ def normalize_cargo_toml_for_setuptools_rust(cargo_path: Path):
     """Ensures Cargo.toml is compatible with setuptools-rust's default behavior."""
     print(f"Normalizing Cargo.toml at: {cargo_path}")
     with open(cargo_path, "rb") as f:
-        cargo_toml = tomli.load(f)
+        cargo_toml = tomllib.load(f)
 
     dependencies = cargo_toml.get("dependencies", {})
     has_direct_pyo3 = "pyo3" in dependencies
@@ -102,7 +102,7 @@ def convert_project(pyproject_path: Path):
         return
 
     with open(pyproject_path, "rb") as f:
-        pyproject = tomli.load(f)
+        pyproject = tomllib.load(f)
 
     if pyproject.get("build-system", {}).get("build-backend") != "maturin":
         print(f"Project at {project_path} is not using maturin. No conversion needed.", file=sys.stderr)
@@ -122,7 +122,7 @@ def convert_project(pyproject_path: Path):
     print(f"Found Python package '{package_name}' in source directory '{source_dir}'")
 
     with open(cargo_path, "rb") as f:
-        cargo_toml = tomli.load(f)
+        cargo_toml = tomllib.load(f)
     crate_name = cargo_toml.get("lib", {}).get("name")
     if not crate_name:
         raise ValueError("Could not find [lib].name in Cargo.toml")
