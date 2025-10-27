@@ -1,4 +1,3 @@
-
 import os
 import sys
 from pathlib import Path
@@ -26,6 +25,52 @@ def normalize_pyproject_toml_for_pep621(pyproject: dict):
         ]
         if len(original_classifiers) > len(project_table["classifiers"]):
             print("Removed legacy 'License ::' classifiers for PEP 639 compliance.")
+
+def normalize_cargo_toml_for_setuptools_rust(cargo_path: Path):
+    """Ensures Cargo.toml is compatible with setuptools-rust's default behavior."""
+    print(f"Normalizing Cargo.toml at: {cargo_path}")
+    with open(cargo_path, "rb") as f:
+        cargo_toml = tomli.load(f)
+
+    dependencies = cargo_toml.get("dependencies", {})
+    has_direct_pyo3 = "pyo3" in dependencies
+    has_pyo3_ffi = "pyo3-ffi" in dependencies
+
+    # If the project uses pyo3-ffi but not pyo3 directly (e.g., orjson),
+    # we need to add a feature-bearing pyo3 dependency for setuptools-rust
+    # to latch onto.
+    if has_pyo3_ffi and not has_direct_pyo3:
+        print("Project uses 'pyo3-ffi' without a direct 'pyo3' dependency.")
+        print("Adding a feature-only 'pyo3' dependency to Cargo.toml.")
+        
+        pyo3_ffi_dep = dependencies["pyo3-ffi"]
+        pyo3_version = ""
+        if isinstance(pyo3_ffi_dep, dict) and "version" in pyo3_ffi_dep:
+            pyo3_version = pyo3_ffi_dep["version"]
+        elif isinstance(pyo3_ffi_dep, str):
+             pyo3_version = pyo3_ffi_dep
+
+        if not pyo3_version:
+            print("Warning: Could not determine version for pyo3-ffi, cannot add pyo3 dependency.", file=sys.stderr)
+            return
+
+        # Add a pyo3 dependency that carries the feature, but doesn't enable default features
+        cargo_toml["dependencies"]["pyo3"] = {
+            "version": pyo3_version,
+            "default-features": False,
+            "features": ["extension-module"]
+        }
+
+        # Remove the 'extension-module' feature from pyo3-ffi to avoid conflicts
+        if isinstance(pyo3_ffi_dep, dict) and "features" in pyo3_ffi_dep:
+            pyo3_ffi_dep["features"] = [
+                f for f in pyo3_ffi_dep["features"] if f != "extension-module"
+            ]
+            print("Removed 'extension-module' feature from 'pyo3-ffi' dependency.")
+
+        with open(cargo_path, "wb") as f:
+            tomli_w.dump(cargo_toml, f)
+            print("Successfully wrote updated Cargo.toml.")
 
 def find_python_package_info(project_path: Path, pyproject: dict) -> tuple[str, str]:
     """
@@ -66,8 +111,11 @@ def convert_project(pyproject_path: Path):
     print(f"---")
     print(f"Converting project at: {project_path}")
 
-    # Step 1: Normalize for PEP compliance
+    # Step 1: Normalize pyproject.toml for PEP compliance
     normalize_pyproject_toml_for_pep621(pyproject)
+    
+    # Step 2: Normalize Cargo.toml for setuptools-rust compatibility
+    normalize_cargo_toml_for_setuptools_rust(cargo_path)
 
     maturin_config = pyproject.get("tool", {}).get("maturin", {})
     package_name, source_dir = find_python_package_info(project_path, pyproject)
@@ -80,17 +128,17 @@ def convert_project(pyproject_path: Path):
         raise ValueError("Could not find [lib].name in Cargo.toml")
     print(f"Found Rust crate name: '{crate_name}'")
 
-    # Step 2: Remove [tool.maturin]
+    # Step 3: Remove [tool.maturin]
     if "maturin" in pyproject.get("tool", {}):
         del pyproject["tool"]["maturin"]
         print("Removed [tool.maturin] section.")
 
-    # Step 3: Update [build-system]
+    # Step 4: Update [build-system]
     pyproject["build-system"]["requires"] = ["setuptools", "setuptools-rust"]
     pyproject["build-system"]["build-backend"] = "setuptools.build_meta"
     print("Updated [build-system] for setuptools-rust.")
 
-    # Step 4: Handle dynamic fields
+    # Step 5: Handle dynamic fields in pyproject.toml
     if "dynamic" in pyproject.get("project", {}):
         if "tool" not in pyproject:
             pyproject["tool"] = {}
@@ -109,7 +157,7 @@ def convert_project(pyproject_path: Path):
             elif field == "version":
                 print("Found dynamic version, will be handled by setuptools-rust automatically.")
 
-    # Step 5: Add [tool.setuptools.packages.find] for multi-module projects
+    # Step 6: Add [tool.setuptools.packages.find] for multi-module projects
     if source_dir != ".":
         if "tool" not in pyproject:
             pyproject["tool"] = {}
@@ -118,7 +166,7 @@ def convert_project(pyproject_path: Path):
         pyproject["tool"]["setuptools"]["packages"] = {"find": {"where": [source_dir]}}
         print(f"Added [tool.setuptools.packages.find] with where=['{source_dir}'].")
 
-    # Step 6: Add [[tool.setuptools-rust.ext-modules]]
+    # Step 7: Add [[tool.setuptools-rust.ext-modules]]
     if "module-name" in maturin_config:
         target = maturin_config["module-name"]
     elif source_dir == ".":
@@ -126,6 +174,8 @@ def convert_project(pyproject_path: Path):
     else:
         target = f"{package_name}.{crate_name}"
 
+    # We no longer add `features = []` here, allowing setuptools-rust to use its default behavior,
+    # because we have normalized Cargo.toml to be compatible.
     ext_module = {
         "target": target,
         "path": "Cargo.toml",
