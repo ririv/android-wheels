@@ -27,101 +27,8 @@ on:
         default: '24'
 
 jobs:
-  dispatch:
-    runs-on: ubuntu-latest
-    outputs:
-      build_backend: ${{ steps.check_backend.outputs.build_backend }}
-    steps:
-      - name: Checkout self
-        uses: actions/checkout@v4
-
-      - name: Set up Python for checker script
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Clone library source
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ inputs.git-repository }}
-          ref: ${{ inputs.library-version }}
-          path: library-source
-          submodules: recursive
-
-      - name: Check build backend
-        id: check_backend
-        run: |
-          chmod +x .github/scripts/build/check_backend.py
-          BACKEND=$(python .github/scripts/build/check_backend.py library-source)
-          echo "build_backend=$BACKEND" >> $GITHUB_OUTPUT
-
-  build_with_maturin:
-    name: Build for ${{ matrix.abi }} with maturin
-    needs: dispatch
-    if: needs.dispatch.outputs.build_backend == 'maturin'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - abi: "arm64-v8a"
-            target: "aarch64-linux-android"
-          - abi: "x86_64"
-            target: "x86_64-linux-android"
-
-    steps:
-      - name: Set up Python for build script
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.13' # A stable python version to run our script
-
-      - name: Install script dependencies
-        run: pip install uv build tomli-w
-
-      - name: Checkout self
-        uses: actions/checkout@v4
-
-      - name: Clone library source
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ inputs.git-repository }}
-          ref: ${{ inputs.library-version }}
-          path: library-source
-          fetch-depth: 1
-
-      - name: Find project directory
-        id: find_proj
-        run: |
-          cd library-source
-          PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
-          PROJECT_DIR=$(dirname "$PROJECT_FILE")
-          echo "project_dir=$PROJECT_DIR" >> $GITHUB_OUTPUT
-
-      - name: Run build script
-        env:
-          BUILD_METHOD: cross
-          CIBW_LIBRARY_NAME: ${{ inputs.library-name }}
-          CIBW_GIT_REPOSITORY: ${{ inputs.git-repository }}
-          CIBW_LIBRARY_VERSION: ${{ inputs.library-version }}
-          CIBW_SOURCE_DIR: ${{ steps.find_proj.outputs.project_dir }}
-          CIBW_PYTHON_VERSION: ${{ inputs.python-version }}
-          CIBW_ANDROID_API: ${{ inputs.android-api }}
-          CIBW_TARGET_ABI: ${{ matrix.abi }}
-          CIBW_TARGET_TRIPLET: ${{ matrix.target }}
-        run: |
-          chmod +x .github/scripts/build/build_android_wheel.py
-          .github/scripts/build/build_android_wheel.py
-
-      - name: Upload wheel artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ inputs.library-name }}-android-wheel-${{ matrix.abi }}
-          path: output/*.whl
-
-  build_with_cibw:
-    name: Build wheel for ${{ matrix.abi }} with cibw
-    needs: dispatch
-    if: needs.dispatch.outputs.build_backend != 'maturin'
+  build:
+    name: Build wheel for ${{ matrix.abi }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -129,6 +36,17 @@ jobs:
         abi: [arm64_v8a, x86_64]
 
     steps:
+      - name: Checkout self
+        uses: actions/checkout@v4
+
+      - name: Set up Python for script
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install script dependencies
+        run: pip install tomli tomli-w
+
       - name: Clone library source
         uses: actions/checkout@v4
         with:
@@ -136,6 +54,18 @@ jobs:
           ref: ${{ inputs.library-version }}
           path: library-source
           submodules: recursive
+
+      - name: Check build backend and convert if needed
+        id: check_and_convert
+        run: |
+          chmod +x .github/scripts/build/check_backend.py
+          BACKEND=$(python .github/scripts/build/check_backend.py library-source)
+          echo "build_backend=$BACKEND" >> $GITHUB_OUTPUT
+          if [ "$BACKEND" == "maturin" ]; then
+            echo "Maturin backend detected, converting to setuptools-rust..."
+            chmod +x .github/scripts/build/convert_to_setuptools_rust.py
+            python .github/scripts/build/convert_to_setuptools_rust.py library-source
+          fi
 
       - name: Prepare cibuildwheel environment
         run: |
@@ -170,8 +100,8 @@ jobs:
 
   upload-wheels:
     name: Upload Wheels
-    needs: [build_with_maturin, build_with_cibw]
-    if: always() && (needs.build_with_maturin.result == 'success' || needs.build_with_cibw.result == 'success')
+    needs: [build]
+    if: always() && needs.build.result == 'success'
     runs-on: ubuntu-latest
     concurrency:
       group: wheels-branch-update
