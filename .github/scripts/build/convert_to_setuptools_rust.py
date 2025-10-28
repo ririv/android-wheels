@@ -4,6 +4,17 @@ from pathlib import Path
 import tomllib
 import tomli_w
 
+def set_github_actions_env_variable(name: str, value: str):
+    """Sets an environment variable for subsequent steps in a GitHub Actions job."""
+    github_env = os.getenv("GITHUB_ENV")
+    if github_env:
+        with open(github_env, "a") as f:
+            f.write(f"{name}={value}\n")
+        print(f"Successfully set environment variable: {name}={value}")
+    else:
+        print(f"Warning: GITHUB_ENV not found. Cannot set environment variable {name}.", file=sys.stderr)
+        print(f"Would set {name}={value}")
+
 def normalize_pyproject_toml_for_pep621(pyproject: dict):
     """Normalizes the pyproject.toml to comply with modern PEP standards for setuptools."""
     project_table = pyproject.get("project", {})
@@ -92,6 +103,38 @@ def find_python_package_info(project_path: Path, pyproject: dict) -> tuple[str, 
 
     raise FileNotFoundError("Could not find Python package information.")
 
+def get_cargo_version(cargo_path: Path) -> str | None:
+    """Gets the version from a Cargo.toml, supporting workspaces."""
+    with open(cargo_path, "rb") as f:
+        cargo_toml = tomllib.load(f)
+
+    package_table = cargo_toml.get("package", {})
+    version_field = package_table.get("version")
+
+    # 1. Check if the version field is a direct version string
+    if isinstance(version_field, str):
+        return version_field
+    
+    # 2. Check if the version field is a workspace reference
+    if isinstance(version_field, dict) and version_field.get("workspace") is True:
+        print("Version is in workspace. Searching for root Cargo.toml...")
+        current_dir = cargo_path.parent
+        # Search upwards for a Cargo.toml that defines the workspace
+        while current_dir != current_dir.parent:
+            root_cargo_path = current_dir / "Cargo.toml"
+            if root_cargo_path.is_file():
+                with open(root_cargo_path, "rb") as rf:
+                    root_cargo_toml = tomllib.load(rf)
+                if "workspace" in root_cargo_toml:
+                    workspace_version = root_cargo_toml.get("workspace", {}).get("package", {}).get("version")
+                    if workspace_version:
+                        print(f"Found workspace version {workspace_version} in {root_cargo_path}")
+                        return workspace_version
+            current_dir = current_dir.parent
+            
+    # 3. If neither is found, return None
+    return None
+
 def convert_project(pyproject_path: Path):
     """Converts a single project defined by a pyproject.toml file."""
     project_path = pyproject_path.parent
@@ -111,10 +154,19 @@ def convert_project(pyproject_path: Path):
     print(f"---")
     print(f"Converting project at: {project_path}")
 
-    # Step 1: Normalize pyproject.toml for PEP compliance
+    # Step 1: Handle dynamic version before any conversion
+    if "version" in pyproject.get("project", {}).get("dynamic", []):
+        print("Dynamic version detected. Setting SETUPTOOLS_SCM_PRETEND_VERSION from Cargo.toml...")
+        cargo_version = get_cargo_version(cargo_path)
+        if cargo_version:
+            set_github_actions_env_variable("SETUPTOOLS_SCM_PRETEND_VERSION", cargo_version)
+        else:
+            print("Warning: Could not find version in Cargo.toml to set environment variable.", file=sys.stderr)
+
+    # Step 2: Normalize pyproject.toml for PEP compliance
     normalize_pyproject_toml_for_pep621(pyproject)
     
-    # Step 2: Normalize Cargo.toml for setuptools-rust compatibility
+    # Step 3: Normalize Cargo.toml for setuptools-rust compatibility
     normalize_cargo_toml_for_setuptools_rust(cargo_path)
 
     maturin_config = pyproject.get("tool", {}).get("maturin", {})
@@ -128,17 +180,17 @@ def convert_project(pyproject_path: Path):
         raise ValueError("Could not find [lib].name in Cargo.toml")
     print(f"Found Rust crate name: '{crate_name}'")
 
-    # Step 3: Remove [tool.maturin]
+    # Step 4: Remove [tool.maturin]
     if "maturin" in pyproject.get("tool", {}):
         del pyproject["tool"]["maturin"]
         print("Removed [tool.maturin] section.")
 
-    # Step 4: Update [build-system]
-    pyproject["build-system"]["requires"] = ["setuptools", "setuptools-rust"]
+    # Step 5: Update [build-system]
+    pyproject["build-system"]["requires"] = ["setuptools", "setuptools-rust", "setuptools_scm[simple]"]
     pyproject["build-system"]["build-backend"] = "setuptools.build_meta"
-    print("Updated [build-system] for setuptools-rust.")
+    print("Updated [build-system] for setuptools-rust and setuptools_scm.")
 
-    # Step 5: Handle dynamic fields in pyproject.toml
+    # Step 6: Handle dynamic fields in pyproject.toml
     if "dynamic" in pyproject.get("project", {}):
         if "tool" not in pyproject:
             pyproject["tool"] = {}
@@ -154,10 +206,8 @@ def convert_project(pyproject_path: Path):
                     "content-type": "text/markdown"
                 }
                 print(f"Added [tool.setuptools.dynamic.readme] for README.md")
-            elif field == "version":
-                print("Found dynamic version, will be handled by setuptools-rust automatically.")
 
-    # Step 6: Add [tool.setuptools.packages.find] for multi-module projects
+    # Step 7: Add [tool.setuptools.packages.find] for multi-module projects
     if source_dir != ".":
         if "tool" not in pyproject:
             pyproject["tool"] = {}
@@ -166,7 +216,7 @@ def convert_project(pyproject_path: Path):
         pyproject["tool"]["setuptools"]["packages"] = {"find": {"where": [source_dir]}}
         print(f"Added [tool.setuptools.packages.find] with where=['{source_dir}'].")
 
-    # Step 7: Add [[tool.setuptools-rust.ext-modules]]
+    # Step 8: Add [[tool.setuptools-rust.ext-modules]]
     if "module-name" in maturin_config:
         target = maturin_config["module-name"]
     elif source_dir == ".":
@@ -174,8 +224,6 @@ def convert_project(pyproject_path: Path):
     else:
         target = f"{package_name}.{crate_name}"
 
-    # We no longer add `features = []` here, allowing setuptools-rust to use its default behavior,
-    # because we have normalized Cargo.toml to be compatible.
     ext_module = {
         "target": target,
         "path": "Cargo.toml",
