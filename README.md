@@ -29,14 +29,7 @@ zstandard
 xxhash
 ```
 
-## 可用包
-
-当前可用的包如下：
-
-* `zstandard`
-* `xxhash`
-
-支持的 ABI:
+## 支持的 ABI:
 
 * `arm64-v8a`
 * `x86_64`
@@ -60,6 +53,12 @@ wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#
 ### 包索引命名规范
 
 包索引命名遵循 Python 的 [PEP 503](https://peps.python.org/pep-0503/) 规范，需要注意 [Normalized Names](https://peps.python.org/pep-0503/#normalized-names)
+
+| API           | 作用                                               |
+| ------------- | ---------------------------------------------------- |
+| PEP 503       | 索引：提供 HTML 索引文件。                          |
+| PEP 691       | 索引：提供 JSON 索引文件。                          |
+| PEP 658       | 索引：提供元数据，加速依赖解析。                    |
 
 ## 如何添加新的包
 
