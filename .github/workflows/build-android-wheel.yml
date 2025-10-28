@@ -94,7 +94,7 @@ jobs:
         env:
           CIBW_PLATFORM: android
           CIBW_ARCHS: ${{ matrix.abi }}
-          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android-api }} CARGO_BUILD_TARGET=${{ matrix.cargo-target }}'
+          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android-api }} CARGO_BUILD_TARGET=${{ matrix.cargo-target }} PYO3_CROSS_PYTHON_VERSION=${{ inputs.python-version }}'
           
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
