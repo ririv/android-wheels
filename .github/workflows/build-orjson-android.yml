@@ -32,7 +32,7 @@ jobs:
       actions: write
     with:
       library-name: 'orjson'
-      git-repository: 'ijl/orjson'
+      git-repository: 'ririv/orjson'
       library-version: ${{ github.event.inputs.orjson_version }}
       python-version: ${{ github.event.inputs.python_version || '3.13' }}
       android-api: ${{ github.event.inputs.android_api || '24' }}
