@@ -309,7 +309,7 @@ def build_wheel(
 def process_wheel(
     library_name: str,
     library_version: str | None,
-    project_path: Path,
+    library_source_path: Path,
     is_maturin: bool,
     python_version: str,
     android_api: str,
@@ -318,13 +318,13 @@ def process_wheel(
     """Finds, renames, and moves the built wheel to the output directory."""
     print("--- Processing built wheel ---", flush=True)
 
-    search_path = project_path / "target" / "wheels" if is_maturin else project_path / "dist"
+    search_path = library_source_path / "target" / "wheels" if is_maturin else library_source_path / "dist"
     print(f"Searching for wheel in: {search_path}", flush=True)
 
     wheel_files = list(search_path.glob("*.whl"))
     if not wheel_files:
         print("Wheel not found in primary path, searching everywhere...", flush=True)
-        wheel_files = list(Path(project_path).glob("**/*.whl"))
+        wheel_files = list(Path(library_source_path).glob("**/*.whl"))
 
     if not wheel_files:
         raise FileNotFoundError(f"No wheel files found after build. Searched in: {search_path}")
@@ -407,7 +407,7 @@ def main():
     process_wheel(
         library_name=library_name,
         library_version=library_version,
-        project_path=library_source_path / source_dir,
+        library_source_path=library_source_path,
         is_maturin=is_maturin,
         python_version=python_version,
         android_api=android_api,
