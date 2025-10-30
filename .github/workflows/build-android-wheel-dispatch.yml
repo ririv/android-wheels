@@ -130,6 +130,9 @@ jobs:
           path: library-source
           submodules: recursive
 
+      - name: Install Rust target
+        run: rustup target add ${{ matrix.target }}
+
       - name: Prepare cibuildwheel environment
         run: |
           PYTHON_VERSION_NODOT=$(echo "${{ inputs.python-version }}" | tr -d '.')
