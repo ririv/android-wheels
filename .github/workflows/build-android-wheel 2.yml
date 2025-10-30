@@ -99,7 +99,6 @@ jobs:
 
       - name: Run build script
         env:
-          BUILD_METHOD: cross
           CIBW_LIBRARY_NAME: ${{ inputs.library-name }}
           CIBW_GIT_REPOSITORY: ${{ inputs.git-repository }}
           CIBW_LIBRARY_VERSION: ${{ inputs.library-version }}
@@ -157,10 +156,30 @@ jobs:
         env:
           CIBW_PLATFORM: android
           CIBW_ARCHS: ${{ matrix.abi }}
-          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android-api }}'
+          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android-api }} CARGO_BUILD_TARGET=${{ matrix.cargo-target }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ inputs.android-api }}-clang CARGO_TARGET_AARCH64_LINUX_ANDROID_AR=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ inputs.android-api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_AR=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar PYO3_CROSS=1 '
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
           CIBW_TEST_SKIP: "*"
+          CARGO_BUILD_TARGET: ${{ matrix.cargo-target }}
+          CIBW_BEFORE_BUILD: |
+            set -e
+            # This command runs inside the cibuildwheel container.
+            # It creates a config file that cargo will automatically read,
+            # bypassing any shell scoping issues with `export`.
+            mkdir -p "{package}/.cargo"
+            CONFIG_PATH="{package}/.cargo/config.toml"
+
+            # Derive the python library path from the VIRTUAL_ENV variable.
+            BASE_DIR=$(dirname "$VIRTUAL_ENV")
+            LIB_PATH="$BASE_DIR/python/prefix/lib"
+
+            # Write the pyo3-specific variables to the config file.
+            echo "[env]" > "$CONFIG_PATH"
+            echo "PYO3_CROSS_LIB_DIR = \"$LIB_PATH\"" >> "$CONFIG_PATH"
+            echo "PYO3_CROSS_PYTHON_VERSION = \"${{ inputs.python-version }}\"" >> "$CONFIG_PATH"
+
+            echo "Cargo config created at $CONFIG_PATH:"
+            cat "$CONFIG_PATH"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4

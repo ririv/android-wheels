@@ -3,8 +3,6 @@
 
 import os
 import json
-import re
-import tarfile
 import shutil
 import subprocess
 import sys
@@ -12,53 +10,52 @@ import urllib.request
 from pathlib import Path
 
 import tomllib
-
-try:
-    from build_with_cross import build_wheel_with_cross
-    CAN_USE_CROSS = True
-except ImportError:
-    CAN_USE_CROSS = False
-
-try:
-    from build_with_zig import build_wheel_with_zig
-    CAN_USE_ZIG = True
-except ImportError:
-    CAN_USE_ZIG = False
-
-from build_utils import run, which, patch_pyo3_cargo_toml, patch_orjson_for_android, create_cargo_config
-
-
-SCRIPT_VERSION = "2025-10-22.v2"  # 用于日志确认脚本是否为最新
+from shutil import which
+from build_utils import patch_pyo3_cargo_toml, create_cargo_config
+import urllib.error
 
 
 
+def run(cmd, **kwargs):
+    print(f"$ {' '.join(map(str, cmd))}", flush=True)
+    return subprocess.run(cmd, check=True, **kwargs)
 
 
+def set_github_env(name: str, value: str):
+    """Sets an environment variable for subsequent steps in a GitHub Actions job."""
+    os.environ[name] = value
 
+    github_env = os.getenv("GITHUB_ENV")
+    if github_env:
+        with open(github_env, "a") as f:
+            f.write(f"{name}={value}\n")
+        print(f"Env var set in $GITHUB_ENV: {name}={value}", flush=True)
+    else:
+        print(f"Warning: GITHUB_ENV not found. Cannot set env var {name}.", file=sys.stderr, flush=True)
 
 
 def setup_ndk(ndk_path: Path, ndk_version: str):
     """Checks if NDK is cached, otherwise downloads and extracts it."""
-    print(f"--- Setting up Android NDK {ndk_version} ---")
+    print(f"--- Setting up Android NDK {ndk_version} ---", flush=True)
     if ndk_path.exists():
-        print("NDK found in cache.")
+        print("NDK found in cache.", flush=True)
         return
 
-    print("NDK not found, downloading...")
+    print("NDK not found, downloading...", flush=True)
     ndk_zip_path = ndk_path.with_suffix(".zip")
     ndk_url = f"https://dl.google.com/android/repository/android-ndk-{ndk_version}-linux.zip"
     urllib.request.urlretrieve(ndk_url, ndk_zip_path)
 
-    print("Extracting NDK...")
+    print("Extracting NDK...", flush=True)
     shutil.unpack_archive(ndk_zip_path, ndk_path.parent)
 
     unpacked_dir = ndk_path.parent / f"android-ndk-{ndk_version}"
     unpacked_dir.rename(ndk_path)
 
-    print("Cleaning up NDK zip...")
+    print("Cleaning up NDK zip...", flush=True)
     ndk_zip_path.unlink(missing_ok=True)
 
-    print("Adding execute permissions to NDK toolchain...")
+    print("Adding execute permissions to NDK toolchain...", flush=True)
     toolchain_bin_path = ndk_path / "toolchains" / "llvm" / "prebuilt" / "linux-x86_64" / "bin"
     for tool in toolchain_bin_path.glob("*"):
         if tool.is_file():
@@ -67,9 +64,9 @@ def setup_ndk(ndk_path: Path, ndk_version: str):
 
 def clone_library_source(repo_url: str, version: str | None, path: Path):
     """Clones the library source code from the given repository."""
-    print(f"--- Cloning {repo_url} ---")
+    print(f"--- Cloning {repo_url} ---", flush=True)
     if path.exists():
-        print("Library source directory already exists. Skipping clone.")
+        print("Library source directory already exists. Skipping clone.", flush=True)
         return
 
     cmd = ["git", "clone", "--depth=1"]
@@ -86,14 +83,14 @@ def get_latest_patch_for_python(python_version: str) -> str:
     by querying the GitHub API for CPython tags, handling pagination.
     Returns the full X.Y.Z version string.
     """
-    print(f"--- Finding latest patch for Python {python_version} from GitHub API ---")
+    print(f"--- Finding latest patch for Python {python_version} from GitHub API ---", flush=True)
 
     patch_versions = []
     # Start with the first page, fetching max items per page
     url = "https://api.github.com/repos/python/cpython/tags?per_page=100"
 
     while url:
-        print(f"Fetching tags from: {url}")
+        print(f"Fetching tags from: {url}", flush=True)
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "android-wheels-script"})
             with urllib.request.urlopen(req, timeout=15) as response:
@@ -122,19 +119,19 @@ def get_latest_patch_for_python(python_version: str) -> str:
                             break
 
         except Exception as e:
-            print(f"Warning: Could not fetch Python tags from GitHub API: {e}")
+            print(f"Warning: Could not fetch Python tags from GitHub API: {e}", flush=True)
             # If we fail at any point, it's safer to fallback than to use partial data
-            print("Falling back to assuming '.0' patch version.")
+            print("Falling back to assuming '.0' patch version.", flush=True)
             return f"{python_version}.0"
 
     if not patch_versions:
-        print(f"Warning: No patch versions found for {python_version} via GitHub API.")
-        print("Falling back to assuming '.0' patch version.")
+        print(f"Warning: No patch versions found for {python_version} via GitHub API.", flush=True)
+        print("Falling back to assuming '.0' patch version.", flush=True)
         return f"{python_version}.0"
 
     latest_patch = max(patch_versions)
     full_version = f"{python_version}.{latest_patch}"
-    print(f"Found latest patch version via API after checking all pages: {full_version}")
+    print(f"Found latest patch version via API after checking all pages: {full_version}", flush=True)
     return full_version
 
 
@@ -144,14 +141,14 @@ def setup_python_cross_build(
     target_triplet: str,  # e.g. aarch64-linux-android
 ) -> Path:
     """Downloads and extracts pre-built CPython for cross-compilation."""
-    print(f"--- Setting up pre-built Python {python_version} for {target_triplet} ---")
+    print(f"--- Setting up pre-built Python {python_version} for {target_triplet} ---", flush=True)
 
     # Per user instruction, the final library path is always in this structure.
     lib_dir = download_path / "prefix" / "lib"
 
     # Caching check: if the final lib directory exists, assume it's valid and skip everything.
     if lib_dir.is_dir():
-        print(f"Found cached pre-built Python lib directory at {lib_dir}")
+        print(f"Found cached pre-built Python lib directory at {lib_dir}", flush=True)
         return lib_dir
 
     # --- If not cached, proceed with download and extraction ---
@@ -166,7 +163,7 @@ def setup_python_cross_build(
     if minor < 13:
         raise ValueError(f"Python < 3.13 is not supported for pre-built downloads. Please build it yourself.")
     elif minor == 13:
-        print("Python 3.13: Using pre-built from ririv/android-wheels.")
+        print("Python 3.13: Using pre-built from ririv/android-wheels.", flush=True)
         python_version_map = {"3.13": "3.13.9"}
         full_python_version = python_version_map.get(python_version)
         if not full_python_version:
@@ -174,48 +171,50 @@ def setup_python_cross_build(
         file_name = f"python-{full_python_version}-{target_triplet}.tar.gz"
         download_url = f"https://raw.githubusercontent.com/ririv/android-wheels/cpython-android/{python_version}/{file_name}"
     else:  # minor >= 14
-        print("Python >= 3.14: Using pre-built from python.org.")
+        print("Python >= 3.14: Using pre-built from python.org.", flush=True)
         full_python_version = get_latest_patch_for_python(python_version)
         file_name = f"python-{full_python_version}-{target_triplet}.tar.gz"
         download_url = f"https://www.python.org/ftp/python/{full_python_version}/{file_name}"
 
     archive_path = download_path / file_name
     if not archive_path.exists():
-        print(f"Downloading from {download_url}...")
+        print(f"Downloading from {download_url}...", flush=True)
         try:
             urllib.request.urlretrieve(download_url, archive_path)
         except urllib.error.HTTPError as e:
-            print(f"Failed to download: {e}")
+            print(f"Failed to download: {e}", flush=True)
             if minor >= 14 and e.code == 404:
-                print(f"Could not find version {full_python_version} on python.org.")
-                print("Please check the python.org FTP for the correct version and update the script if scraping failed.")
+                print(f"Could not find version {full_python_version} on python.org.", flush=True)
+                print("Please check the python.org FTP for the correct version and update the script if scraping failed.", flush=True)
             raise
 
-    print(f"Extracting {archive_path} to {download_path}")
+    print(f"Extracting {archive_path} to {download_path}", flush=True)
     shutil.unpack_archive(archive_path, download_path)
 
     # Final check: The lib directory MUST exist now.
     if not lib_dir.is_dir():
         raise FileNotFoundError(f"Could not locate 'prefix/lib' directory at {lib_dir} after extraction.")
 
-    print(f"Found pre-built Python lib dir: {lib_dir}")
+    print(f"Found pre-built Python lib dir: {lib_dir}", flush=True)
     return lib_dir
 
-def prepare_build_environment(ndk_path: Path, target_triplet: str, android_api: str) -> dict[str, str]:
+def prepare_build_environment(ndk_path: Path, target_triplet: str, android_api: str, python_version, python_lib_dir: Path) -> dict[str, str]:
     """Prepares the environment variables for cross-compilation."""
-    print("--- Preparing cross-compilation environment ---")
+    print("--- Preparing cross-compilation environment ---", flush=True)
     toolchain = ndk_path / "toolchains" / "llvm" / "prebuilt" / "linux-x86_64"
-    env = os.environ.copy()
+    # env = os.environ.copy()
+    env = {}
 
     # Add NDK toolchain to PATH for auto-discovery by rustc and other tools
     toolchain_bin = toolchain / "bin"
-    env["PATH"] = f"{toolchain_bin}:{os.environ['PATH']}"
+    env["PATH"] = f'{toolchain_bin}:{os.environ['PATH']}'
 
     # Set compiler env vars for C/C++ build scripts (e.g. in dependencies).
     # Since the toolchain bin is in the PATH, we can just use the names.
-    env["CC"] = f"{target_triplet}{android_api}-clang"
-    env["CXX"] = f"{target_triplet}{android_api}-clang++"
-    env["AR"] = "llvm-ar"
+    env["CC"] = str(toolchain_bin / f"{target_triplet}{android_api}-clang")
+    env["CXX"] = str(toolchain_bin / f"{target_triplet}{android_api}-clang++")
+    AR = str(toolchain_bin / f"{target_triplet}{android_api}-ar")
+    env["AR"] = AR
 
     # Set sysroot flags for the C/C++ compilers
     sysroot_flags = f"--sysroot={toolchain}/sysroot"
@@ -225,47 +224,65 @@ def prepare_build_environment(ndk_path: Path, target_triplet: str, android_api: 
     # Let rustc find the linker from the PATH.
     # We only need to hint the AR, which is a common practice.
     cargo_prefix = target_triplet.upper().replace("-", "_")
-    env[f"CARGO_TARGET_{cargo_prefix}_AR"] = "llvm-ar"
+    env[f"CARGO_TARGET_{cargo_prefix}_AR"] = AR
+    env["CARGO_BUILD_TARGET"] = target_triplet
 
+    env["PYO3_CROSS"] = "1"
+    # env["PYO3_CROSS_PYTHON_VERSION"] = python_version
+    # env["PYO3_CROSS_LIB_DIR"] = str(python_lib_dir)
+
+    cargo_rustflags_key = f"CARGO_TARGET_{target_triplet.upper().replace('-', '_')}_RUSTFLAGS"
+    linker_args = [
+        f"-L{python_lib_dir}",
+        f"-lpython{python_version}"
+    ]
+    rustflags = " ".join([f"-C link-arg={arg}" for arg in linker_args])
+
+    env[cargo_rustflags_key] = rustflags
+    for k,v in env.items():
+        set_github_env(k, v)
+
+    print("Prepared build environment variables.", flush=True)
     return env
 
 
-def ensure_maturin_venv(project_path: Path) -> tuple[Path, Path]:
+def ensure_maturin_venv(project_path: Path) -> Path:
     """
-    Create an isolated venv under project and install maturin.
-    Prefer uv, fall back to python -m venv + pip.
-    Returns (venv_path, maturin_exe_path).
+    Ensures maturin is installed using pipx.
+    Returns a dummy venv path and the path to the maturin executable.
     """
-    venv_path = project_path / ".build_venv"
-    python_bin = venv_path / "bin" / "python"
-    maturin_bin = venv_path / "bin" / "maturin"
+    print("--- Ensuring maturin is installed via pipx ---", flush=True)
 
-    if not venv_path.exists():
-        print(f"Creating isolated build environment at: {venv_path}")
-        if which("uv"):
-            run(["uv", "venv", str(venv_path)], cwd=project_path)
-            run(["uv", "pip", "install", "--python", str(python_bin), "maturin>=1,<2"], cwd=project_path)
-        else:
-            # fallback to stdlib venv + pip
-            run([sys.executable, "-m", "venv", str(venv_path)], cwd=project_path)
-            run([str(python_bin), "-m", "pip", "install", "--upgrade", "pip"], cwd=project_path)
-            run([str(python_bin), "-m", "pip", "install", "maturin>=1,<2"], cwd=project_path)
-    else:
-        # ensure maturin present
-        if not maturin_bin.exists():
-            if which("uv"):
-                run(["uv", "pip", "install", "--python", str(python_bin), "maturin>=1,<2"], cwd=project_path)
-            else:
-                run([str(python_bin), "-m", "pip", "install", "maturin>=1,<2"], cwd=project_path)
+    if not which("pipx"):
+        raise RuntimeError("pipx is not installed or not in PATH. Please install pipx to continue.")
 
-    print(f"Using CPython interpreter at: {python_bin}")
-    print(f"Using maturin at: {maturin_bin}")
-    return venv_path, maturin_bin
+    # Check if maturin is already installed by pipx
+    result = subprocess.run(["pipx", "list", "--json"], capture_output=True, text=True)
+    maturin_installed = False
+    if result.returncode == 0:
+        try:
+            pipx_list = json.loads(result.stdout)
+            if "maturin" in pipx_list["venvs"]:
+                maturin_installed = True
+                print("maturin is already installed by pipx.", flush=True)
+        except (json.JSONDecodeError, KeyError):
+            print("Warning: Could not parse pipx list output. Assuming maturin is not installed.", flush=True)
 
+    if not maturin_installed:
+        print("Installing maturin with pipx...", flush=True)
+        run(["pipx", "install", "maturin>=1,<2"])
 
+    # Get maturin path
+    maturin_path_str = which("maturin")
+    if not maturin_path_str:
+        raise RuntimeError("Failed to find maturin even after pipx installation.")
 
+    maturin_path = Path(maturin_path_str)
+    print(f"Using maturin at: {maturin_path}", flush=True)
 
-
+    # The first element of the tuple (venv_path) is not used by the caller.
+    # We return the project_path as a placeholder.
+    return maturin_path
 
 
 def build_wheel(
@@ -279,13 +296,12 @@ def build_wheel(
     python_lib_dir: Path,
 ) -> bool:
     """Builds the wheel, using a PEP 517-compliant process for maturin."""
-    print(f"=== build_android_wheel.py SCRIPT_VERSION={SCRIPT_VERSION} ===")
-    print("--- Building wheel ---")
+    print("--- Building wheel ---", flush=True)
     project_path = library_source_path / source_dir
-    print(f"Project path: {project_path}")
+    print(f"Project path: {project_path}", flush=True)
 
-    # patch_pyo3_cargo_toml(project_path)
-    create_cargo_config(project_path, target_triplet, android_api)
+    patch_pyo3_cargo_toml(project_path)
+    create_cargo_config(project_path, target_triplet, android_api, python_lib_dir, python_version)
 
     pyproject_path = project_path / "pyproject.toml"
     if not pyproject_path.is_file():
@@ -295,77 +311,17 @@ def build_wheel(
     build_system = pyproject.get("build-system", {})
     backend = build_system.get("build-backend", "")
 
-    print(f"Build backend: {backend}")
+    print(f"Build backend: {backend}", flush=True)
     if backend != "maturin":
-        raise ValueError("检测到非 maturin 后端；此脚本当前仅支持 maturin。")
+        raise ValueError("检测到非 maturin 后端；此脚本当前仅支持 maturin。" )
 
-    # venv + maturin
-    venv_path, maturin_exe = ensure_maturin_venv(project_path)
+    # maturin
+    maturin_exe = ensure_maturin_venv(project_path)
 
     # rust target
     run(["rustup", "target", "add", target_triplet], cwd=project_path)
 
-    # PyO3 交叉编译：明确声明
-    build_env = build_env.copy()
-    build_env["PYO3_CROSS"] = "1"
-    build_env["PYO3_CROSS_PYTHON_VERSION"] = python_version
 
-    # 为 Android 目标设置所有必要的交叉编译环境变量
-    if "android" in target_triplet:
-        # 1. 确认并设置 MATURIN_PYTHON_SYSCONFIGDATA_DIR
-        #    这个目录必须包含 `_sysconfigdata*.py` 文件。
-        sysconfigdata_dir = python_lib_dir / f"python{python_version}"
-        if not sysconfigdata_dir.is_dir():
-            raise FileNotFoundError(f"Sysconfigdata directory not found at {sysconfigdata_dir}")
-
-        # 检查 _sysconfigdata 文件是否存在
-        sysconfig_files = list(sysconfigdata_dir.glob("_sysconfigdata*.py"))
-        if not sysconfig_files:
-            raise FileNotFoundError(
-                f"No '_sysconfigdata*.py' file found in {sysconfigdata_dir}. "
-                f"This is required by pyo3 for cross-compilation."
-            )
-        sysconfig_file_name = sysconfig_files[0].name
-        print(f"Found sysconfigdata file: {sysconfig_file_name}")
-
-        # 3. 设置 _PYTHON_SYSCONFIGDATA_NAME, 直接告诉 pyo3 配置文件的名字
-        build_env["_PYTHON_SYSCONFIGDATA_NAME"] = sysconfig_file_name.removesuffix(".py")
-        print(f"_PYTHON_SYSCONFIGDATA_NAME set to: {build_env['_PYTHON_SYSCONFIGDATA_NAME']}")
-
-        build_env["MATURIN_PYTHON_SYSCONFIGDATA_DIR"] = str(sysconfigdata_dir)
-        print(f"MATURIN_PYTHON_SYSCONFIGDATA_DIR set to: {sysconfigdata_dir}")
-
-        # 2. 直接通过 RUSTFLAGS 告诉链接器库的位置和名称。
-        #    链接器需要在 `prefix/lib` 目录下寻找 libpythonX.Y.so
-        cargo_rustflags_key = f"CARGO_TARGET_{target_triplet.upper().replace('-', '_')}_RUSTFLAGS"
-        linker_args = [
-            f"-L{python_lib_dir}",
-            f"-lpython{python_version}"
-        ]
-        rustflags = " ".join([f"-C link-arg={arg}" for arg in linker_args])
-
-        existing_rustflags = build_env.get(cargo_rustflags_key, "")
-        build_env[cargo_rustflags_key] = f"{existing_rustflags} {rustflags}".strip()
-        print(f"Set {cargo_rustflags_key}={build_env[cargo_rustflags_key]}")
-
-    # orjson 的 aarch64 补丁（构建前强制执行并校验）
-    if library_name == "orjson" and ("aarch64" in target_triplet or "arm64" in target_triplet):
-        patch_orjson_for_android(project_path)
-        # 避免人为设置的 RUSTFLAGS 里强开 x86 特性
-        build_env.pop("RUSTFLAGS", None)
-        # 可选：减少 C 依赖触发（如果上游支持该开关则生效；不支持也无碍）
-        build_env.setdefault("ORJSON_DISABLE_YYJSON", "1")
-
-    # Add verbose linker flag for diagnostics
-    print("--- Adding verbose linker flag for diagnostics ---")
-    verbose_linker_flag = "-C link-arg=-Wl,-v"
-    build_env["RUSTFLAGS"] = f"{build_env.get('RUSTFLAGS', '')} {verbose_linker_flag}"
-
-    # 仅打印关键交叉编译环境
-    print("最终构建环境变量（关键信息）：")
-    for k, v in sorted(build_env.items()):
-        if any(prefix in k for prefix in ["PYO3", "CARGO_TARGET_", "CC", "CXX", "AR"]):
-            print(f"  {k}={v}")
 
     # maturin 构建：❗交叉编译 -i 必须是“解释器名”，不能是绝对路径
     interpreter_cli = f"python{python_version}"  # e.g. python3.13
@@ -375,13 +331,11 @@ def build_wheel(
     build_cmd = [
         str(maturin_exe),
         "build",
-        # "--verbose",
+        "--verbose",
         "--release",
         "--target", target_triplet,
         "-i", interpreter_cli,
     ]
-
-    print(f"将使用解释器名传给 maturin: -i {interpreter_cli}")
     run(build_cmd, env=build_env, cwd=project_path)
 
     return True
@@ -397,21 +351,21 @@ def process_wheel(
     target_abi: str,
 ):
     """Finds, renames, and moves the built wheel to the output directory."""
-    print("--- Processing built wheel ---")
+    print("--- Processing built wheel ---", flush=True)
 
     search_path = project_path / "target" / "wheels" if is_maturin else project_path / "dist"
-    print(f"Searching for wheel in: {search_path}")
+    print(f"Searching for wheel in: {search_path}", flush=True)
 
     wheel_files = list(search_path.glob("*.whl"))
     if not wheel_files:
-        print("Wheel not found in primary path, searching everywhere...")
+        print("Wheel not found in primary path, searching everywhere...", flush=True)
         wheel_files = list(Path(project_path).glob("**/*.whl"))
 
     if not wheel_files:
         raise FileNotFoundError(f"No wheel files found after build. Searched in: {search_path}")
 
     wheel_path = sorted(wheel_files, key=lambda p: p.stat().st_mtime, reverse=True)[0]
-    print(f"Found wheel: {wheel_path}")
+    print(f"Found wheel: {wheel_path}", flush=True)
 
     normalized_lib_name = library_name.replace("-", "_")
     platform_arch = target_abi.replace("-", "_")
@@ -423,18 +377,18 @@ def process_wheel(
         parts = wheel_path.name.split("-")
         if len(parts) >= 2:
             version_to_use = parts[1]
-            print(f"Library version not specified, using version from wheel: {version_to_use}")
+            print(f"Library version not specified, using version from wheel: {version_to_use}", flush=True)
         else:
             raise ValueError(f"Cannot extract version from wheel filename: {wheel_path.name}")
 
     new_wheel_name = f"{normalized_lib_name}-{version_to_use}-{py_tag}-{py_tag}-android_{android_api}_{platform_arch}.whl"
-    print(f"New wheel name: {new_wheel_name}")
+    print(f"New wheel name: {new_wheel_name}", flush=True)
 
     output_dir = Path.cwd().resolve().parent / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
     final_wheel_path = output_dir / new_wheel_name
     shutil.move(str(wheel_path), final_wheel_path)
-    print(f"Moved wheel to: {final_wheel_path}")
+    print(f"Moved wheel to: {final_wheel_path}", flush=True)
 
 
 def main():
@@ -448,8 +402,8 @@ def main():
     target_abi = os.environ["CIBW_TARGET_ABI"]          # e.g. "arm64-v8a"
     target_triplet = os.environ["CIBW_TARGET_TRIPLET"]  # e.g. "aarch64-linux-android"
 
-    print(f"--- Building {library_name} for Android {target_abi} ---")
-    print(f"Python version: {python_version}, Android API: {android_api}")
+    print(f"--- Building {library_name} for Android {target_abi} ---", flush=True)
+    print(f"Python version: {python_version}, Android API: {android_api}", flush=True)
 
     ndk_version = "r26d"
     temp_dir = Path(os.environ.get("RUNNER_TEMP", "/tmp"))
@@ -461,46 +415,24 @@ def main():
         python_version=python_version,
         target_triplet=target_triplet,
     )
-
-    setup_ndk(ndk_path, ndk_version)
     clone_library_source(git_repository, library_version, library_source_path)
 
-    build_method = os.environ.get("BUILD_METHOD", "native").lower()
+    print("--- Using default native build process ---", flush=True)
+    setup_ndk(ndk_path, ndk_version)
+    build_env = prepare_build_environment(ndk_path, target_triplet, android_api, python_version, python_lib_dir)
 
-    if build_method == "zig" and CAN_USE_ZIG:
-        print("--- Using zig to build wheel ---")
-        is_maturin = build_wheel_with_zig(
-            library_name=library_name,
-            library_source_path=library_source_path,
-            source_dir=source_dir,
-            target_triplet=target_triplet,
-            python_version=python_version,
-            ndk_path=ndk_path,
-            android_api=android_api,
-        )
-    elif build_method == "cross" and CAN_USE_CROSS:
-        print("--- Using cross to build wheel ---")
-        is_maturin = build_wheel_with_cross(
-            library_name=library_name,
-            library_source_path=library_source_path,
-            source_dir=source_dir,
-            target_triplet=target_triplet,
-            python_version=python_version,
-        )
-    else:
-        print("--- Using default native build process ---")
-        setup_ndk(ndk_path, ndk_version)
-        build_env = prepare_build_environment(ndk_path, target_triplet, android_api)
-        is_maturin = build_wheel(
-            library_name=library_name,
-            library_source_path=library_source_path,
-            source_dir=source_dir,
-            build_env=build_env,
-            target_triplet=target_triplet,
-            python_version=python_version,
-            android_api=android_api,
-            python_lib_dir=python_lib_dir,
-        )
+    print("PYO3_CROSS_LIB_DIR =", build_env.get("PYO3_CROSS_LIB_DIR"), flush=True)
+
+    is_maturin = build_wheel(
+        library_name=library_name,
+        library_source_path=library_source_path,
+        source_dir=source_dir,
+        build_env=build_env,
+        target_triplet=target_triplet,
+        python_version=python_version,
+        android_api=android_api,
+        python_lib_dir=python_lib_dir,
+    )
 
     process_wheel(
         library_name=library_name,

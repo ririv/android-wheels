@@ -1,15 +1,11 @@
+import os
+import sys
 import subprocess
 import tomllib
 import tomli_w
 from pathlib import Path
 
-def run(cmd, **kwargs):
-    print(f"$ {' '.join(map(str, cmd))}")
-    return subprocess.run(cmd, check=True, **kwargs)
 
-def which(cmd: str) -> bool:
-    from shutil import which as _which
-    return _which(cmd) is not None
 
 def patch_pyo3_cargo_toml(project_path: Path):
     """Patches the project's Cargo.toml to add `extension-module` feature to pyo3."""
@@ -49,71 +45,41 @@ def patch_pyo3_cargo_toml(project_path: Path):
     else:
         print("pyo3 dependency already includes 'extension-module'.")
 
-def patch_orjson_for_android(project_path: Path) -> None:
-    """
-    在非 x86 目标上为 orjson 打最小补丁，避免编译 x86/AVX 代码：
-    1) 给 src/str/avx512.rs 整文件加 x86/x86_64 cfg 守卫；
-    2) 给 src/str/pystr.rs 中 is_x86_feature_detected! 调用加 cfg 守卫。
-    """
-    print("--- Patching orjson sources for non-x86 targets ---")
-    str_dir = project_path / "src" / "str"
-    avx512 = str_dir / "avx512.rs"
-    pystr = str_dir / "pystr.rs"
-
-    ok1 = ok2 = False
-
-    if avx512.exists():
-        txt = avx512.read_text(encoding="utf-8")
-        guard = '''#![cfg(any(target_arch = "x86", target_arch = "x86_64"))]'''
-        if guard not in txt:
-            avx512.write_text(guard + "\n" + txt, encoding="utf-8")
-            print("Injected cfg guard into orjson/src/str/avx512.rs")
-        ok1 = guard in avx512.read_text(encoding="utf-8")
-
-    if pystr.exists():
-        txt = pystr.read_text(encoding="utf-8")
-        patched = txt
-        # avx512 检测
-        patched = patched.replace(
-            '''if std::is_x86_feature_detected!(\"avx512vl\") {''',
-            '''#[cfg(any(target_arch = \"x86\", target_arch = \"x86_64\"))]\n        if std::is_x86_feature_detected!(\"avx512vl\") {'''
-        )
-        # 若还有 avx2 检测，一并守卫（不存在也无影响）
-        patched = patched.replace(
-            '''if std::is_x86_feature_detected!(\"avx2\") {''',
-            '''#[cfg(any(target_arch = \"x86\", target_arch = \"x86_64\"))]\n        if std::is_x86_feature_detected!(\"avx2\") {'''
-        )
-        if patched != txt:
-            pystr.write_text(patched, encoding="utf-8")
-            print("Injected cfg guards into orjson/src/str/pystr.rs")
-        ok2 = '''#[cfg(any(target_arch = \"x86\", target_arch = \"x86_64\"))]''' in pystr.read_text(encoding="utf-8")
-
-    if not (ok1 and ok2):
-        print("WARNING: orjson patch verification failed (one of the guards missing). Build may fail on aarch64.")
-
-
-def create_cargo_config(project_path: Path, target_triplet: str, android_api: str):
+def create_cargo_config(project_path: Path, target_triplet: str, android_api: str, python_lib_dir: Path, python_version: str):
     """Creates a .cargo/config.toml file to configure the build."""
     print("--- Creating .cargo/config.toml for cross-compilation ---")
     cargo_dir = project_path / ".cargo"
     cargo_dir.mkdir(exist_ok=True)
 
-    linker_name = f"{target_triplet}{android_api}-clang"
+    linker_name = os.environ.get("CC", '')
+    ar_name = os.environ.get("AR", '')
 
+    print(f"Using linker {linker_name} and ar {ar_name}")
+
+    # Correctly configure rustflags to point to the python library
+    # This is more robust than environment variables as it's read directly by cargo.
     config_data = {
         "target": {
             target_triplet: {
                 "linker": linker_name,
-                "rustflags": [
-                    "-C", "link-arg=-Wl,--exclude-libs,ALL",
-                    "-C", "link-arg=-Wl,-z,now",
-                ]
+                "ar": ar_name,
             }
         }
     }
+
+    # config_data["rustflags"] = [
+    #     "-L",
+    #     str(python_lib_dir),
+    #     "-Wl,-rpath,{}".format(python_lib_dir),
+    #     "-Wl,--as-needed",
+    #     "-Wl,--no-undefined",
+    #     "-Wl,--exclude-libs,ALL",
+    #     "-Wl,-Bsymbolic-functions",
+    #     "-Wl,-z,relro",
+    # ]
 
     config_path = cargo_dir / "config.toml"
     with open(config_path, "wb") as f:
         tomli_w.dump(config_data, f)
     
-    print(f"Created {config_path} with linker set to {linker_name}")
+    print(f"Created {config_path} with linker and direct rustflags for python lib.")
