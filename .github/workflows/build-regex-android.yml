@@ -21,12 +21,12 @@ on:
   push:
     paths:
       - '.github/workflows/build-regex-android.yml'
-      - '.github/workflows/build-android-wheel.yml'
+      - '.github/workflows/build-android-wheel-dispatch.yml'
       - '.github/scripts/build/**'
 
 jobs:
   build-regex:
-    uses: ./.github/workflows/build-android-wheel.yml
+    uses: ./.github/workflows/build-android-wheel-dispatch.yml
     permissions:
       contents: write
       actions: write

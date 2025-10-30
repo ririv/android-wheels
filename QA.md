@@ -209,7 +209,7 @@ Error: Process completed with exit code 1.
 
 我将打开相关的工作流 YAML 文件以了解当前构建步骤和环境设置，从而定位为什么在 Android 交叉编译时尝试链接到 libpython3.13 并修复它。 
 
-读取 [](file:///Users/wuhao/my/Proj/android-wheels/.github/workflows/build-android-wheel.yml)
+读取 [](file:///Users/wuhao/my/Proj/android-wheels/.github/workflows/build-android-wheel-dispatch.yml)
 
 已运行 `resolve-library-id`
 Completed with input: {
@@ -234,7 +234,7 @@ Completed with input: {
 ```
 
 
-已检查 [](file:///Users/wuhao/my/Proj/android-wheels/.github/workflows/build-android-wheel.yml)，发现 8 问题
+已检查 [](file:///Users/wuhao/my/Proj/android-wheels/.github/workflows/build-android-wheel-dispatch.yml)，发现 8 问题
 
 已运行 `get-library-docs`
 Completed with input: {

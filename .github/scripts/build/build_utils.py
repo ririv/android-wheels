@@ -63,20 +63,13 @@ def create_cargo_config(project_path: Path, target_triplet: str, android_api: st
             target_triplet: {
                 "linker": linker_name,
                 "ar": ar_name,
+                "rustflags": [
+                    "-L",
+                    str(python_lib_dir),
+                ]
             }
         }
     }
-
-    # config_data["rustflags"] = [
-    #     "-L",
-    #     str(python_lib_dir),
-    #     "-Wl,-rpath,{}".format(python_lib_dir),
-    #     "-Wl,--as-needed",
-    #     "-Wl,--no-undefined",
-    #     "-Wl,--exclude-libs,ALL",
-    #     "-Wl,-Bsymbolic-functions",
-    #     "-Wl,-z,relro",
-    # ]
 
     config_path = cargo_dir / "config.toml"
     with open(config_path, "wb") as f:

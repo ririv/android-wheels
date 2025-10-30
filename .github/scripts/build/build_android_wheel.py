@@ -34,33 +34,6 @@ def set_github_env(name: str, value: str):
         print(f"Warning: GITHUB_ENV not found. Cannot set env var {name}.", file=sys.stderr, flush=True)
 
 
-def setup_ndk(ndk_path: Path, ndk_version: str):
-    """Checks if NDK is cached, otherwise downloads and extracts it."""
-    print(f"--- Setting up Android NDK {ndk_version} ---", flush=True)
-    if ndk_path.exists():
-        print("NDK found in cache.", flush=True)
-        return
-
-    print("NDK not found, downloading...", flush=True)
-    ndk_zip_path = ndk_path.with_suffix(".zip")
-    ndk_url = f"https://dl.google.com/android/repository/android-ndk-{ndk_version}-linux.zip"
-    urllib.request.urlretrieve(ndk_url, ndk_zip_path)
-
-    print("Extracting NDK...", flush=True)
-    shutil.unpack_archive(ndk_zip_path, ndk_path.parent)
-
-    unpacked_dir = ndk_path.parent / f"android-ndk-{ndk_version}"
-    unpacked_dir.rename(ndk_path)
-
-    print("Cleaning up NDK zip...", flush=True)
-    ndk_zip_path.unlink(missing_ok=True)
-
-    print("Adding execute permissions to NDK toolchain...", flush=True)
-    toolchain_bin_path = ndk_path / "toolchains" / "llvm" / "prebuilt" / "linux-x86_64" / "bin"
-    for tool in toolchain_bin_path.glob("*"):
-        if tool.is_file():
-            tool.chmod(tool.stat().st_mode | 0o111)
-
 
 def clone_library_source(repo_url: str, version: str | None, path: Path):
     """Clones the library source code from the given repository."""
@@ -213,7 +186,7 @@ def prepare_build_environment(ndk_path: Path, target_triplet: str, android_api: 
     # Since the toolchain bin is in the PATH, we can just use the names.
     env["CC"] = str(toolchain_bin / f"{target_triplet}{android_api}-clang")
     env["CXX"] = str(toolchain_bin / f"{target_triplet}{android_api}-clang++")
-    AR = str(toolchain_bin / f"{target_triplet}{android_api}-ar")
+    AR = str(toolchain_bin / "llvm-ar")
     env["AR"] = AR
 
     # Set sysroot flags for the C/C++ compilers
@@ -231,14 +204,7 @@ def prepare_build_environment(ndk_path: Path, target_triplet: str, android_api: 
     # env["PYO3_CROSS_PYTHON_VERSION"] = python_version
     # env["PYO3_CROSS_LIB_DIR"] = str(python_lib_dir)
 
-    cargo_rustflags_key = f"CARGO_TARGET_{target_triplet.upper().replace('-', '_')}_RUSTFLAGS"
-    linker_args = [
-        f"-L{python_lib_dir}",
-        f"-lpython{python_version}"
-    ]
-    rustflags = " ".join([f"-C link-arg={arg}" for arg in linker_args])
 
-    env[cargo_rustflags_key] = rustflags
     for k,v in env.items():
         set_github_env(k, v)
 
@@ -321,8 +287,6 @@ def build_wheel(
     # rust target
     run(["rustup", "target", "add", target_triplet], cwd=project_path)
 
-
-
     # maturin 构建：❗交叉编译 -i 必须是“解释器名”，不能是绝对路径
     interpreter_cli = f"python{python_version}"  # e.g. python3.13
     if interpreter_cli.startswith("/"):
@@ -334,6 +298,7 @@ def build_wheel(
         "--verbose",
         "--release",
         "--target", target_triplet,
+        "--auditwheel", "skip", # Android不需要修复轮子
         "-i", interpreter_cli,
     ]
     run(build_cmd, env=build_env, cwd=project_path)
@@ -405,9 +370,15 @@ def main():
     print(f"--- Building {library_name} for Android {target_abi} ---", flush=True)
     print(f"Python version: {python_version}, Android API: {android_api}", flush=True)
 
-    ndk_version = "r26d"
+    # 请直接使用GitHub Actions环境变量提供的NDK
+    # 自己下载的NDK（r26d）可能在链接阶段可能出现问题 clang-17: error: no input file
+    ndk_home = os.environ.get("ANDROID_NDK")
+    if not ndk_home:
+        raise ValueError("ANDROID_NDK environment variable is not set. Cannot proceed.")
+    print(f"--- Using Android NDK from environment variable: {ndk_home} ---", flush=True)
+    ndk_path = Path(ndk_home)
+
     temp_dir = Path(os.environ.get("RUNNER_TEMP", "/tmp"))
-    ndk_path = temp_dir / f"android-ndk-{ndk_version}"
     library_source_path = Path.cwd() / "library-source"
 
     python_lib_dir = setup_python_cross_build(
@@ -418,7 +389,6 @@ def main():
     clone_library_source(git_repository, library_version, library_source_path)
 
     print("--- Using default native build process ---", flush=True)
-    setup_ndk(ndk_path, ndk_version)
     build_env = prepare_build_environment(ndk_path, target_triplet, android_api, python_version, python_lib_dir)
 
     print("PYO3_CROSS_LIB_DIR =", build_env.get("PYO3_CROSS_LIB_DIR"), flush=True)

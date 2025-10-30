@@ -80,7 +80,7 @@ wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#
     ```yaml
     jobs:
       build-new-package:
-        uses: ./.github/workflows/build-android-wheel.yml
+        uses: ./.github/workflows/build-android-wheel-dispatch.yml
         permissions:
           contents: write
         with:
