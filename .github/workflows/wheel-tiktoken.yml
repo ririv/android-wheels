@@ -7,10 +7,6 @@ on:
         description: 'Python version'
         required: false
         default: '3.13'
-      ndk_version:
-        description: 'Android NDK version'
-        required: false
-        default: 'r26d'
       android_api:
         description: 'Android API level'
         required: false
