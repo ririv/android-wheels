@@ -1,6 +1,6 @@
 # Android Wheels
 
-本仓库用于为 Android 构建和托管预编译的 Python wheel 文件，主要用于 [Chaquopy](https://chaquo.com/chaquopy/) 安卓 Python SDK。
+本仓库用于为 Android 构建和托管预编译的 Python wheel 文件，例如用于 [Chaquopy](https://chaquo.com/chaquopy/) 安卓 Python SDK、或手动嵌入方式启动Python，具体请看[在安卓上使用Python](https://docs.python.org/zh-cn/3.14/using/android.html#using-python-on-android)。
 
 索引地址：https://ririv.github.io/android-wheels/
 
@@ -38,7 +38,7 @@ xxhash
 
 本仓库使用 GitHub Actions 实现自动化构建和发布流程：
 
-1. **构建工作流**: 每个包都有一个对应的工作流文件（例如 `build-zstandard-android.yml`），它会获取库的源码，并使用一个可复用的工作流（`build-android-wheel.yml`）通过 Android NDK为不同的 Android ABI 进行交叉编译。
+1. **构建工作流**: 每个包都有一个对应的工作流文件（例如 `wheel-zstandard.yml`），它会获取库的源码，并使用一个可复用的工作流（`build-android-wheel.yml`）通过 Android NDK为不同的 Android ABI 进行交叉编译。
 2. **提交到 `wheels` 分支**: 成功构建的 `.whl` 文件会被提交到 `wheels` 分支。
 3. **部署索引**: 推送到 `wheels` 分支会触发 `pages.yml` 工作流，该工作流会生成一个符合 PEP 503 规范的“简单”包索引，并将其部署到 GitHub Pages。
 
@@ -52,13 +52,15 @@ wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#
 
 ### 包索引命名规范
 
-包索引命名遵循 Python 的 [PEP 503](https://peps.python.org/pep-0503/) 规范，需要注意 [Normalized Names](https://peps.python.org/pep-0503/#normalized-names)
+包索引命名遵循 Python 的 [PEP 503](https://peps.python.org/pep-0503/) 规范和用于[安卓的wheel tag格式](https://peps.python.org/pep-0738/#packaging)
+规范化命名需要注意 [Normalized Names](https://peps.python.org/pep-0503/#normalized-names)
 
-| API           | 作用                                               |
-| ------------- | ---------------------------------------------------- |
+| API           | 作用                                                |
+| ------------- | --------------------------------------------------- |
 | PEP 503       | 索引：提供 HTML 索引文件。                          |
 | PEP 691       | 索引：提供 JSON 索引文件。                          |
 | PEP 658       | 索引：提供元数据，加速依赖解析。                    |
+| PEP 738       | 平台：安卓平台支持，包含Packaging格式               |
 
 ## 如何添加新的包
 
@@ -68,7 +70,7 @@ wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#
     点击页面右上角的 "Fork" 按钮，将此仓库复刻到您自己的 GitHub 账户下。
 
 2.  **创建新的工作流文件**
-    在您的 Fork 中，进入 `.github/workflows/` 目录。复制一个现有的工作流文件（例如 `build-zstandard-android.yml`）并将其重命名为您想添加的包名，例如 `build-<new-package>-android.yml`。
+    在您的 Fork 中，进入 `.github/workflows/` 目录。复制一个现有的工作流文件（例如 `wheel-zstandard.yml`）并将其重命名为您想添加的包名，例如 `wheel-<new-package>.yml`。
 
 3.  **修改工作流文件**
     打开您新创建的文件，并修改 `with:` 部分的参数：

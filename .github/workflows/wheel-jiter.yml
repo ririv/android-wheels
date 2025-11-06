@@ -1,4 +1,4 @@
-name: Build ormsgpack Android wheel for Chaquopy
+name: Wheel jiter
 
 on:
   workflow_dispatch:
@@ -15,24 +15,24 @@ on:
         description: 'Android API level'
         required: false
         default: '24'
-      ormsgpack_version:
-        description: 'ormsgpack version tag (optional, uses latest if not specified)'
+      jiter_version:
+        description: 'jiter version tag (optional, uses latest if not specified)'
         required: false
   push:
     paths:
-      - '.github/workflows/build-ormsgpack-android.yml'
+      - '.github/workflows/wheel-jiter.yml'
       - '.github/workflows/build-android-wheel-dispatch.yml'
       - '.github/scripts/build/**'
 
 jobs:
-  build-ormsgpack:
+  build-jiter:
     uses: ./.github/workflows/build-android-wheel-dispatch.yml
     permissions:
       contents: write
       actions: write
     with:
-      library-name: 'ormsgpack'
-      git-repository: 'aviramha/ormsgpack'
-      library-version: ${{ github.event.inputs.ormsgpack_version }}
+      library-name: 'jiter'
+      git-repository: 'pydantic/jiter'
+      library-version: ${{ github.event.inputs.jiter_version }}
       python-version: ${{ github.event.inputs.python_version || '3.13' }}
       android-api: ${{ github.event.inputs.android_api || '24' }}

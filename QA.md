@@ -218,9 +218,9 @@ Completed with input: {
 
 为了借鉴已存在的 Android Rust 扩展库构建方式，我会打开几个相似的工作流文件（如 orjson、rpds-py 等）看看它们如何避免链接到 libpython。 
 
-读取 [](file:///Users/wuhao/my/Proj/android-wheels/.github/workflows/build-orjson-android.yml)
+读取 [](file:///Users/wuhao/my/Proj/android-wheels/.github/workflows/wheel-orjson.yml)
 
-读取 [](file:///Users/wuhao/my/Proj/android-wheels/.github/workflows/build-jiter-android.yml)
+读取 [](file:///Users/wuhao/my/Proj/android-wheels/.github/workflows/wheel-jiter.yml)
 
 搜索 `PYO3_CROSS|Chaquopy|libpython|android-ndk|maturin build` (`**/*.yml`)、20 结果的文本
 
@@ -294,7 +294,7 @@ Completed with input: {
 
 ## 你接下来可以做什么
 
-- 直接在仓库的 Actions 页面手动触发“Build jiter Android wheel for Chaquopy”工作流，或推送触发。
+- 直接在仓库的 Actions 页面手动触发“Wheel jiter”工作流，或推送触发。
 - 若需要我现在帮你在本地触发一次对应 workflow_dispatch，请告诉我要用的参数（python 版本、ndk 版本、android api、jiter 版本）。我也可以同步触发其它库的构建以验证。
 
 ## 备注与边界情况

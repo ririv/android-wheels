@@ -1,4 +1,4 @@
-name: Build zstandard Android wheel for Chaquopy
+name: Wheel orjson
 
 on:
   workflow_dispatch:
@@ -15,24 +15,24 @@ on:
         description: 'Android API level'
         required: false
         default: '24'
-      zstd_version:
-        description: 'zstandard version tag (optional, uses latest if not specified)'
+      orjson_version:
+        description: 'orjson version tag (optional, uses latest if not specified)'
         required: false
   push:
     paths:
-      - '.github/workflows/build-zstandard-android.yml'
+      - '.github/workflows/wheel-orjson.yml'
       - '.github/workflows/build-android-wheel-dispatch.yml'
       - '.github/scripts/build/**'
 
 jobs:
-  build-zstd:
+  build-orjson:
     uses: ./.github/workflows/build-android-wheel-dispatch.yml
     permissions:
       contents: write
       actions: write
     with:
-      library-name: 'zstandard'
-      git-repository: 'indygreg/python-zstandard'
-      library-version: ${{ github.event.inputs.zstd_version }}
+      library-name: 'orjson'
+      git-repository: 'ririv/orjson'
+      library-version: ${{ github.event.inputs.orjson_version }}
       python-version: ${{ github.event.inputs.python_version || '3.13' }}
       android-api: ${{ github.event.inputs.android_api || '24' }}

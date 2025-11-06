@@ -1,4 +1,4 @@
-name: Build tiktoken Android wheel for Chaquopy
+name: Wheel pydantic-core
 
 on:
   workflow_dispatch:
@@ -15,24 +15,24 @@ on:
         description: 'Android API level'
         required: false
         default: '24'
-      tiktoken_version:
-        description: 'tiktoken version tag (optional, uses latest if not specified)'
+      pydantic_core_version:
+        description: 'pydantic-core version tag (optional, uses latest if not specified)'
         required: false
   push:
     paths:
-      - '.github/workflows/build-tiktoken-android.yml'
+      - '.github/workflows/wheel-pydantic-core.yml'
       - '.github/workflows/build-android-wheel-dispatch.yml'
       - '.github/scripts/build/**'
 
 jobs:
-  build-tiktoken:
+  build-pydantic-core:
     uses: ./.github/workflows/build-android-wheel-dispatch.yml
     permissions:
       contents: write
       actions: write
     with:
-      library-name: 'tiktoken'
-      git-repository: 'openai/tiktoken'
-      library-version: ${{ github.event.inputs.tiktoken_version }}
+      library-name: 'pydantic-core'
+      git-repository: 'pydantic/pydantic-core'
+      library-version: ${{ github.event.inputs.pydantic_core_version }}
       python-version: ${{ github.event.inputs.python_version || '3.13' }}
       android-api: ${{ github.event.inputs.android_api || '24' }}

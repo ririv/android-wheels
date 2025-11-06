@@ -1,4 +1,4 @@
-name: Build pydantic-core Android wheel for Chaquopy
+name: Wheel pyyaml
 
 on:
   workflow_dispatch:
@@ -15,24 +15,24 @@ on:
         description: 'Android API level'
         required: false
         default: '24'
-      pydantic_core_version:
-        description: 'pydantic-core version tag (optional, uses latest if not specified)'
+      pyyaml_version:
+        description: 'pyyaml version tag (optional, uses latest if not specified)'
         required: false
   push:
     paths:
-      - '.github/workflows/build-pydantic-core-android.yml'
+      - '.github/workflows/wheel-pyyaml.yml'
       - '.github/workflows/build-android-wheel-dispatch.yml'
       - '.github/scripts/build/**'
 
 jobs:
-  build-pydantic-core:
+  build-pyyaml:
     uses: ./.github/workflows/build-android-wheel-dispatch.yml
     permissions:
       contents: write
       actions: write
     with:
-      library-name: 'pydantic-core'
-      git-repository: 'pydantic/pydantic-core'
-      library-version: ${{ github.event.inputs.pydantic_core_version }}
+      library-name: 'pyyaml'
+      git-repository: 'yaml/pyyaml'
+      library-version: ${{ github.event.inputs.pyyaml_version }}
       python-version: ${{ github.event.inputs.python_version || '3.13' }}
       android-api: ${{ github.event.inputs.android_api || '24' }}

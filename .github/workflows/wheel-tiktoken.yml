@@ -1,4 +1,4 @@
-name: Build pyyaml Android wheel for Chaquopy
+name: Wheel tiktoken
 
 on:
   workflow_dispatch:
@@ -15,24 +15,24 @@ on:
         description: 'Android API level'
         required: false
         default: '24'
-      pyyaml_version:
-        description: 'pyyaml version tag (optional, uses latest if not specified)'
+      tiktoken_version:
+        description: 'tiktoken version tag (optional, uses latest if not specified)'
         required: false
   push:
     paths:
-      - '.github/workflows/build-pyyaml-android.yml'
+      - '.github/workflows/wheel-tiktoken.yml'
       - '.github/workflows/build-android-wheel-dispatch.yml'
       - '.github/scripts/build/**'
 
 jobs:
-  build-pyyaml:
+  build-tiktoken:
     uses: ./.github/workflows/build-android-wheel-dispatch.yml
     permissions:
       contents: write
       actions: write
     with:
-      library-name: 'pyyaml'
-      git-repository: 'yaml/pyyaml'
-      library-version: ${{ github.event.inputs.pyyaml_version }}
+      library-name: 'tiktoken'
+      git-repository: 'openai/tiktoken'
+      library-version: ${{ github.event.inputs.tiktoken_version }}
       python-version: ${{ github.event.inputs.python_version || '3.13' }}
       android-api: ${{ github.event.inputs.android_api || '24' }}

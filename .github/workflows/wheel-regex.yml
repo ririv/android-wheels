@@ -1,4 +1,4 @@
-name: Build rpds-py Android wheel for Chaquopy
+name: Wheel regex
 
 on:
   workflow_dispatch:
@@ -15,24 +15,24 @@ on:
         description: 'Android API level'
         required: false
         default: '24'
-      rpds_version:
-        description: 'rpds-py version tag (optional, uses latest if not specified)'
+      regex_version:
+        description: 'regex version tag (optional, uses latest if not specified)'
         required: false
   push:
     paths:
-      - '.github/workflows/build-rpds-py-android.yml'
+      - '.github/workflows/wheel-regex.yml'
       - '.github/workflows/build-android-wheel-dispatch.yml'
       - '.github/scripts/build/**'
 
 jobs:
-  build-rpds-py:
+  build-regex:
     uses: ./.github/workflows/build-android-wheel-dispatch.yml
     permissions:
       contents: write
       actions: write
     with:
-      library-name: 'rpds-py'
-      git-repository: 'crate-py/rpds'
-      library-version: ${{ github.event.inputs.rpds_version }}
+      library-name: 'regex'
+      git-repository: 'mrabarnett/mrab-regex'
+      library-version: ${{ github.event.inputs.regex_version }}
       python-version: ${{ github.event.inputs.python_version || '3.13' }}
       android-api: ${{ github.event.inputs.android_api || '24' }}
