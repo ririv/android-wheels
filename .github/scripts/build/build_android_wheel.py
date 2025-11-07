@@ -349,7 +349,7 @@ def process_wheel(
     new_wheel_name = f"{normalized_lib_name}-{version_to_use}-{py_tag}-{py_tag}-android_{android_api}_{platform_arch}.whl"
     print(f"New wheel name: {new_wheel_name}", flush=True)
 
-    output_dir = Path.cwd().resolve().parent / "output"
+    output_dir = Path.cwd() / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
     final_wheel_path = output_dir / new_wheel_name
     shutil.move(str(wheel_path), final_wheel_path)
