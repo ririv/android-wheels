@@ -11,7 +11,7 @@ on:
         description: 'Android API level'
         required: false
         default: '24'
-      pydantic_core_version:
+      version_tag:
         description: 'pydantic-core version tag (optional, uses latest if not specified)'
         required: false
   push:
@@ -27,8 +27,8 @@ jobs:
       contents: write
       actions: write
     with:
-      library-name: 'pydantic-core'
-      git-repository: 'pydantic/pydantic-core'
-      library-version: ${{ github.event.inputs.pydantic_core_version }}
-      python-version: ${{ github.event.inputs.python_version || '3.13' }}
-      android-api: ${{ github.event.inputs.android_api || '24' }}
+      library_name: 'pydantic-core'
+      git_repository: 'pydantic/pydantic-core'
+      version_tag: ${{ github.event.inputs.version_tag}}
+      target_python_version: ${{ github.event.inputs.python_version || '3.13' }}
+      android_api: ${{ github.event.inputs.android_api || '24' }}

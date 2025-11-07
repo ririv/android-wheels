@@ -11,7 +11,7 @@ on:
         description: 'Android API level'
         required: false
         default: '24'
-      xxhash_version:
+      version_tag:
         description: 'xxhash version tag (optional, uses latest if not specified)'
         required: false
   push:
@@ -27,8 +27,8 @@ jobs:
       contents: write
       actions: write
     with:
-      library-name: 'xxhash'
-      git-repository: 'ifduyue/python-xxhash'
-      library-version: ${{ github.event.inputs.xxhash_version }}
-      python-version: ${{ github.event.inputs.python_version || '3.13' }}
-      android-api: ${{ github.event.inputs.android_api || '24' }}
+      library_name: 'xxhash'
+      git_repository: 'ifduyue/python-xxhash'
+      version_tag: ${{ github.event.inputs.version_tag}}
+      target_python_version: ${{ github.event.inputs.python_version || '3.13' }}
+      android_api: ${{ github.event.inputs.android_api || '24' }}

@@ -3,24 +3,24 @@ name: Reusable - Build Android Wheel
 on:
   workflow_call:
     inputs:
-      library-name:
+      library_name:
         description: 'Name of the library'
         required: true
         type: string
-      git-repository:
+      git_repository:
         description: 'Git repository of the library source'
         required: true
         type: string
-      library-version:
+      version_tag:
         description: 'Git ref (tag/branch) of the library version'
         required: false
         type: string
-      python-version:
+      target_python_version:
         description: 'Python version (e.g., 3.13)'
         required: false
         type: string
         default: '3.13'
-      android-api:
+      android_api:
         description: 'Android API level'
         required: false
         type: string
@@ -38,8 +38,8 @@ jobs:
       - name: Clone library source
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.git-repository }}
-          ref: ${{ inputs.library-version }}
+          repository: ${{ inputs.git_repository }}
+          ref: ${{ inputs.version_tag }}
           path: library-source
           submodules: recursive
 
@@ -74,8 +74,8 @@ jobs:
       - name: Clone library source
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.git-repository }}
-          ref: ${{ inputs.library-version }}
+          repository: ${{ inputs.git_repository }}
+          ref: ${{ inputs.version_tag }}
           path: library-source
           fetch-depth: 1
 
@@ -89,12 +89,12 @@ jobs:
 
       - name: Run build script
         env:
-          LIBRARY_NAME: ${{ inputs.library-name }}
-          GIT_REPOSITORY: ${{ inputs.git-repository }}
-          VERSION_TAG: ${{ inputs.library-version }}
+          LIBRARY_NAME: ${{ inputs.library_name }}
+          GIT_REPOSITORY: ${{ inputs.git_repository }}
+          VERSION_TAG: ${{ inputs.version_tag }}
           SOURCE_DIR: ${{ steps.find_proj.outputs.project_dir }}
-          TARGET_PYTHON_VERSION: ${{ inputs.python-version }}
-          ANDROID_API: ${{ inputs.android-api }}
+          TARGET_PYTHON_VERSION: ${{ inputs.target_python_version }}
+          ANDROID_API: ${{ inputs.android_api }}
           TARGET_ABI: ${{ matrix.abi }}
           TARGET_TRIPLET: ${{ matrix.target }}
         run: |
@@ -104,7 +104,7 @@ jobs:
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.library-name }}-android-wheel-${{ matrix.abi }}
+          name: ${{ inputs.library_name }}-android-wheel-${{ matrix.abi }}
           path: output/*.whl
 
   build_with_cibw:
@@ -125,8 +125,8 @@ jobs:
       - name: Clone library source
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.git-repository }}
-          ref: ${{ inputs.library-version }}
+          repository: ${{ inputs.git_repository }}
+          ref: ${{ inputs.version_tag }}
           path: library-source
           submodules: recursive
 
@@ -135,7 +135,7 @@ jobs:
 
       - name: Prepare cibuildwheel environment
         run: |
-          PYTHON_VERSION_NODOT=$(echo "${{ inputs.python-version }}" | tr -d '.')
+          PYTHON_VERSION_NODOT=$(echo "${{ inputs.target_python_version }}" | tr -d '.')
           echo "CIBW_BUILD=cp${PYTHON_VERSION_NODOT}-*" >> $GITHUB_ENV
 
       - name: Find project directory
@@ -153,7 +153,7 @@ jobs:
         env:
           CIBW_PLATFORM: android
           CIBW_ARCHS: ${{ matrix.abi }}
-          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android-api }} CARGO_BUILD_TARGET=${{ matrix.target }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ inputs.android-api }}-clang CARGO_TARGET_AARCH64_LINUX_ANDROID_AR=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ inputs.android-api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_AR=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar PYO3_CROSS=1 '
+          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android_api }} CARGO_BUILD_TARGET=${{ matrix.target }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ inputs.android_api }}-clang CARGO_TARGET_AARCH64_LINUX_ANDROID_AR=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ inputs.android_api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_AR=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar PYO3_CROSS=1 '
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
           CIBW_TEST_SKIP: "*"
@@ -173,7 +173,7 @@ jobs:
             # Write the pyo3-specific variables to the config file.
             echo "[env]" > "$CONFIG_PATH"
             echo "PYO3_CROSS_LIB_DIR = \"$LIB_PATH\"" >> "$CONFIG_PATH"
-            echo "PYO3_CROSS_PYTHON_VERSION = \"${{ inputs.python-version }}\"" >> "$CONFIG_PATH"
+            echo "PYO3_CROSS_PYTHON_VERSION = \"${{ inputs.target_python_version }}\"" >> "$CONFIG_PATH"
 
             echo "Cargo config created at $CONFIG_PATH:"
             cat "$CONFIG_PATH"
@@ -181,7 +181,7 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.library-name }}-android-wheel-${{ matrix.abi }}
+          name: ${{ inputs.library_name }}-android-wheel-${{ matrix.abi }}
           path: ./wheelhouse/*.whl
 
   upload-wheels:
@@ -202,7 +202,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: wheels
-          pattern: ${{ inputs.library-name }}-android-wheel-*
+          pattern: ${{ inputs.library_name }}-android-wheel-*
           merge-multiple: true
       - name: Commit wheels to 'wheels' branch
         run: |
@@ -234,7 +234,7 @@ jobs:
             echo "No new or updated wheels to commit."
             exit 0
           fi
-          git commit -m "Build: Add/Update ${{ inputs.library-name }} wheels for version ${{ inputs.library-version || 'latest' }}"
+          git commit -m "Build: Add/Update ${{ inputs.library_name }} wheels for version ${{ inputs.version_tag || 'latest' }}"
           git push --set-upstream origin wheels
 
       - name: Trigger pages deployment
