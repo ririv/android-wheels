@@ -89,14 +89,14 @@ jobs:
 
       - name: Run build script
         env:
-          CIBW_LIBRARY_NAME: ${{ inputs.library-name }}
-          CIBW_GIT_REPOSITORY: ${{ inputs.git-repository }}
-          CIBW_LIBRARY_VERSION: ${{ inputs.library-version }}
-          CIBW_SOURCE_DIR: ${{ steps.find_proj.outputs.project_dir }}
-          CIBW_PYTHON_VERSION: ${{ inputs.python-version }}
-          CIBW_ANDROID_API: ${{ inputs.android-api }}
-          CIBW_TARGET_ABI: ${{ matrix.abi }}
-          CIBW_TARGET_TRIPLET: ${{ matrix.target }}
+          LIBRARY_NAME: ${{ inputs.library-name }}
+          GIT_REPOSITORY: ${{ inputs.git-repository }}
+          VERSION_TAG: ${{ inputs.library-version }}
+          SOURCE_DIR: ${{ steps.find_proj.outputs.project_dir }}
+          TARGET_PYTHON_VERSION: ${{ inputs.python-version }}
+          ANDROID_API: ${{ inputs.android-api }}
+          TARGET_ABI: ${{ matrix.abi }}
+          TARGET_TRIPLET: ${{ matrix.target }}
         run: |
           chmod +x .github/scripts/build/build_android_wheel.py
           .github/scripts/build/build_android_wheel.py

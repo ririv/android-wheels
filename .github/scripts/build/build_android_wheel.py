@@ -308,7 +308,7 @@ def build_wheel(
 
 def process_wheel(
     library_name: str,
-    library_version: str | None,
+    version_tag: str | None,
     library_source_path: Path,
     is_maturin: bool,
     python_version: str,
@@ -335,18 +335,21 @@ def process_wheel(
     normalized_lib_name = library_name.replace("-", "_")
     platform_arch = target_abi.replace("-", "_")
     py_tag = f"cp{python_version.replace('.', '')}"
+    
+    # name-version-...
+    parts = wheel_path.name.split("-")
+    if len(parts) >= 2:
+        version_from_wheel = parts[1]
+        print(f"Using version from wheel: {version_from_wheel}", flush=True)
+    else:
+        raise ValueError(f"Cannot extract version from wheel filename: {wheel_path.name}")
 
-    version_to_use = library_version
-    if not version_to_use:
-        # name-version-...
-        parts = wheel_path.name.split("-")
-        if len(parts) >= 2:
-            version_to_use = parts[1]
-            print(f"Library version not specified, using version from wheel: {version_to_use}", flush=True)
-        else:
-            raise ValueError(f"Cannot extract version from wheel filename: {wheel_path.name}")
+    if version_tag and version_tag.lstrip("v") == version_from_wheel:
+        print(f"Repo version tag matches wheel version: {version_from_wheel}", flush=True)
+    else:
+        print(f"Repo version tag does not match wheel version: {version_tag} != {version_from_wheel}, please check", flush=True)
 
-    new_wheel_name = f"{normalized_lib_name}-{version_to_use}-{py_tag}-{py_tag}-android_{android_api}_{platform_arch}.whl"
+    new_wheel_name = f"{normalized_lib_name}-{version_from_wheel}-{py_tag}-{py_tag}-android_{android_api}_{platform_arch}.whl"
     print(f"New wheel name: {new_wheel_name}", flush=True)
 
     output_dir = Path.cwd() / "output"
@@ -358,17 +361,17 @@ def process_wheel(
 
 def main():
     # 读取环境变量（与现有 CI 对齐）
-    library_name = os.environ["CIBW_LIBRARY_NAME"]
-    git_repository = os.environ["CIBW_GIT_REPOSITORY"]
-    library_version = os.environ.get("CIBW_LIBRARY_VERSION")
-    source_dir = os.environ.get("CIBW_SOURCE_DIR", ".")
-    python_version = os.environ["CIBW_PYTHON_VERSION"]  # e.g. "3.13"
-    android_api = os.environ["CIBW_ANDROID_API"]        # e.g. "24"
-    target_abi = os.environ["CIBW_TARGET_ABI"]          # e.g. "arm64-v8a"
-    target_triplet = os.environ["CIBW_TARGET_TRIPLET"]  # e.g. "aarch64-linux-android"
+    library_name = os.environ["LIBRARY_NAME"]
+    git_repository = os.environ["GIT_REPOSITORY"]
+    version_tag = os.environ.get("VERSION_TAG")
+    source_dir = os.environ.get("SOURCE_DIR", ".")
+    target_python_version = os.environ["TARGET_PYTHON_VERSION"]  # e.g. "3.13"
+    android_api = os.environ["ANDROID_API"]        # e.g. "24"
+    target_abi = os.environ["TARGET_ABI"]          # e.g. "arm64-v8a"
+    target_triplet = os.environ["TARGET_TRIPLET"]  # e.g. "aarch64-linux-android"
 
     print(f"--- Building {library_name} for Android {target_abi} ---", flush=True)
-    print(f"Python version: {python_version}, Android API: {android_api}", flush=True)
+    print(f"Python version: {target_python_version}, Android API: {android_api}", flush=True)
 
     # 请直接使用GitHub Actions环境变量提供的NDK
     # 自己下载的NDK（r26d）可能在链接阶段可能出现问题 clang-17: error: no input file
@@ -383,13 +386,13 @@ def main():
 
     python_lib_dir = setup_python_cross_build(
         download_path=temp_dir,
-        python_version=python_version,
+        python_version=target_python_version,
         target_triplet=target_triplet,
     )
-    clone_library_source(git_repository, library_version, library_source_path)
+    clone_library_source(git_repository, version_tag, library_source_path)
 
     print("--- Using default native build process ---", flush=True)
-    build_env = prepare_build_environment(ndk_path, target_triplet, android_api, python_version, python_lib_dir)
+    build_env = prepare_build_environment(ndk_path, target_triplet, android_api, target_python_version, python_lib_dir)
 
     print("PYO3_CROSS_LIB_DIR =", build_env.get("PYO3_CROSS_LIB_DIR"), flush=True)
 
@@ -399,17 +402,17 @@ def main():
         source_dir=source_dir,
         build_env=build_env,
         target_triplet=target_triplet,
-        python_version=python_version,
+        python_version=target_python_version,
         android_api=android_api,
         python_lib_dir=python_lib_dir,
     )
 
     process_wheel(
         library_name=library_name,
-        library_version=library_version,
+        version_tag=version_tag,
         library_source_path=library_source_path,
         is_maturin=is_maturin,
-        python_version=python_version,
+        python_version=target_python_version,
         android_api=android_api,
         target_abi=target_abi,
     )
