@@ -74,22 +74,9 @@ wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#
 
 3.  **修改工作流文件**
     打开您新创建的文件，并修改 `with:` 部分的参数：
-    *   `library-name`: 设置为您要构建的包的名称（通常是 PyPI 上的名称）。
-    *   `git-repository`: 设置为该包的源码 Git 仓库地址（例如 `author/repo`）。
-    *   `library-version`: (可选) 您可以指定一个固定的 Git 标签或分支。如果留空，将使用默认分支的最新代码。
-
-    例如：
-    ```yaml
-    jobs:
-      build-new-package:
-        uses: ./.github/workflows/build-android-wheel-dispatch.yml
-        permissions:
-          contents: write
-        with:
-          library-name: 'your-package-name'
-          git-repository: 'github_user/repo_name'
-          library-version: 'v1.2.3' # 可选
-    ```
+    *   `library_name`: 设置为您要构建的包的名称（通常是 PyPI 上的名称）。
+    *   `git_repository`: 设置为该包的源码 Git 仓库地址（例如 `author/repo`）。
+    *   `version_tag`: (可选) 您可以指定一个固定的 Git 标签或分支。如果留空，将使用默认分支的最新代码。
 
 4.  **提交 Pull Request**
     提交您的更改，并向上游仓库（`ririv/android-wheels`）发起一个 Pull Request。
