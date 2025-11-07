@@ -3,7 +3,13 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
+      - main
       - wheels
+    paths:
+      # Trigger when the index script on main changes, or when any wheel on wheels changes.
+      - '.github/scripts/generate_index.py'
+      - '.github/workflows/pages.yml'
+      - '**/*.whl'
   workflow_dispatch:
 
 jobs:
@@ -16,6 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: wheels
+          fetch-depth: 0 # Fetch all history for git log to work correctly
 
       - name: Download index script
         run: |
