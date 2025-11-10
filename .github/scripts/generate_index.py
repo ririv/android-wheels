@@ -44,74 +44,82 @@ def normalize_for_pep503(name):
     """Applies PEP 503 normalization to a project name."""
     return re.sub(r"[-_.]+", "-", name).lower()
 
-# Determine the base URL for wheel links
-repo_base_url = get_github_repo_url()
-if not repo_base_url:
-    sys.exit(1)
+def generate_root_html_lines(packages):
+    """Generator for the root index.html content."""
+    yield "<!DOCTYPE html>\n"
+    yield "<html>\n"
+    yield "<body>\n"
+    yield "  <table>\n"
+    for name in sorted(packages.keys()):
+        wheel_files = packages[name]
+        latest_date = max(get_git_last_modified(wheel) for wheel in wheel_files)
+        yield f'    <tr>\n'
+        yield f'      <td><a href="{name}/">{name}</a></td>\n'
+        yield f'      <td>{latest_date.strftime("%Y-%m-%d %H:%M:%S %Z")}</td>\n'
+        yield f'    </tr>\n'
+    yield "  </table>\n"
+    yield "</body>\n"
+    yield "</html>\n"
 
-root_dir = Path(".")
-public_dir = Path("public")
-if public_dir.exists():
-    shutil.rmtree(public_dir)
-public_dir.mkdir(exist_ok=True)
+def generate_pkg_html_lines(wheel_files, repo_base_url):
+    """Generator for a package's index.html content."""
+    yield "<!DOCTYPE html>\n"
+    yield "<html>\n"
+    yield "<body>\n"
+    yield "  <table>\n"
+    for wheel in sorted(wheel_files, key=lambda f: f.name):
+        last_modified = get_git_last_modified(wheel)
+        wheel_url = f"{repo_base_url}/{wheel.as_posix()}"
+        yield f'    <tr>\n'
+        yield f'      <td><a href="{wheel_url}">{wheel.name}</a></td>\n'
+        yield f'      <td>{last_modified.strftime("%Y-%m-%d %H:%M:%S %Z")}</td>\n'
+        yield f'    </tr>\n'
+    yield "  </table>\n"
+    yield "</body>\n"
+    yield "</html>\n"
 
-# Find all wheel files from the 'wheels' branch checkout
-wheels_root = Path(".")
-all_wheels = list(wheels_root.glob("**/*.whl"))
+def main():
+    # Determine the base URL for wheel links
+    repo_base_url = get_github_repo_url()
+    if not repo_base_url:
+        sys.exit(1)
 
-# Group wheels by their PEP 503 normalized project name
-packages = defaultdict(list)
-for wheel in all_wheels:
-    try:
-        project_name_from_file = wheel.name.split("-")[0]
-        normalized_name = normalize_for_pep503(project_name_from_file)
-        packages[normalized_name].append(wheel)
-    except IndexError:
-        print(f"Could not parse package name from {wheel.name}")
+    root_dir = Path(".")
+    public_dir = Path("public")
+    if public_dir.exists():
+        shutil.rmtree(public_dir)
+    public_dir.mkdir(exist_ok=True)
 
-if not packages:
-    print("No wheels found. Exiting.")
-    (public_dir / "index.html").write_text("<!DOCTYPE html><html><body>No wheels found.</body></html>")
-else:
-    # Create the root index file
-    with open(public_dir / "index.html", "w") as f:
-        f.write("<!DOCTYPE html>\n")
-        f.write("<html>\n")
-        f.write("<body>\n")
-        f.write("  <table>\n")
-        for name in sorted(packages.keys()):
-            # Find the most recent commit date among all wheels for this package
-            wheel_files = packages[name]
-            latest_date = max(get_git_last_modified(wheel) for wheel in wheel_files)
+    # Find all wheel files from the 'wheels' branch checkout
+    wheels_root = Path(".")
+    all_wheels = list(wheels_root.glob("**/*.whl"))
 
-            f.write(f'    <tr>\n')
-            f.write(f'      <td><a href="{name}/">{name}</a></td>\n')
-            f.write(f'      <td>{latest_date.strftime("%Y-%m-%d %H:%M:%S %Z")}</td>\n')
-            f.write(f'    </tr>\n')
-        f.write("  </table>\n")
-        f.write("</body>\n")
-        f.write("</html>\n")
+    # Group wheels by their PEP 503 normalized project name
+    packages = defaultdict(list)
+    for wheel in all_wheels:
+        try:
+            project_name_from_file = wheel.name.split("-")[0]
+            normalized_name = normalize_for_pep503(project_name_from_file)
+            packages[normalized_name].append(wheel)
+        except IndexError:
+            print(f"Could not parse package name from {wheel.name}")
 
-    # Create a directory and index file for each package
-    for name, wheel_files in packages.items():
-        pkg_dir = public_dir / name
-        pkg_dir.mkdir(exist_ok=True)
-        with open(pkg_dir / "index.html", "w") as f:
-            f.write("<!DOCTYPE html>\n")
-            f.write("<html>\n")
-            f.write("<body>\n")
-            f.write("  <table>\n")
-            for wheel in sorted(wheel_files, key=lambda f: f.name):
-                last_modified = get_git_last_modified(wheel)
-                wheel_url = f"{repo_base_url}/{wheel.as_posix()}"
-                f.write(f'    <tr>\n')
-                f.write(f'      <td><a href="{wheel_url}">{wheel.name}</a></td>\n')
-                f.write(f'      <td>{last_modified.strftime("%Y-%m-%d %H:%M:%S %Z")}</td>\n')
-                f.write(f'    </tr>\n')
-            f.write("  </table>\n")
-            f.write("</body>\n")
-            f.write("</html>\n")
+    if not packages:
+        print("No wheels found. Exiting.")
+        (public_dir / "index.html").write_text("<!DOCTYPE html><html><body>No wheels found.</body></html>")
+    else:
+        # Create the root index file using a generator
+        with open(public_dir / "index.html", "w", encoding="utf-8") as f:
+            f.writelines(generate_root_html_lines(packages))
 
-        # No longer need to copy files, as we are linking directly to the 'wheels' branch
+        # Create a directory and index file for each package
+        for name, wheel_files in packages.items():
+            pkg_dir = public_dir / name
+            pkg_dir.mkdir(exist_ok=True)
+            with open(pkg_dir / "index.html", "w", encoding="utf-8") as f:
+                f.writelines(generate_pkg_html_lines(wheel_files, repo_base_url))
 
-print(f"Generated index for {len(packages)} packages.")
+    print(f"Generated index for {len(packages)} packages.")
+
+if __name__ == "__main__":
+    main()
