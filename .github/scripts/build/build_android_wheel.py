@@ -186,18 +186,13 @@ def prepare_build_environment(ndk_path: Path, target_triplet: str, android_api: 
     # Since the toolchain bin is in the PATH, we can just use the names.
     env["CC"] = str(toolchain_bin / f"{target_triplet}{android_api}-clang")
     env["CXX"] = str(toolchain_bin / f"{target_triplet}{android_api}-clang++")
-    AR = str(toolchain_bin / "llvm-ar")
-    env["AR"] = AR
+    env["AR"] = str(toolchain_bin / "llvm-ar")
 
     # Set sysroot flags for the C/C++ compilers
     sysroot_flags = f"--sysroot={toolchain}/sysroot"
     env["CFLAGS"] = sysroot_flags
     env["LDFLAGS"] = sysroot_flags
 
-    # Let rustc find the linker from the PATH.
-    # We only need to hint the AR, which is a common practice.
-    cargo_prefix = target_triplet.upper().replace("-", "_")
-    env[f"CARGO_TARGET_{cargo_prefix}_AR"] = AR
     env["CARGO_BUILD_TARGET"] = target_triplet
 
     env["PYO3_CROSS"] = "1"

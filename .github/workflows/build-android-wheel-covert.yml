@@ -87,7 +87,7 @@ jobs:
         env:
           CIBW_PLATFORM: android
           CIBW_ARCHS: ${{ matrix.abi }}
-          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android_api }} CARGO_BUILD_TARGET=${{ matrix.target }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ inputs.android_api }}-clang CARGO_TARGET_AARCH64_LINUX_ANDROID_AR=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ inputs.android_api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_AR=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar PYO3_CROSS=1 '
+          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android_api }} CARGO_BUILD_TARGET=${{ matrix.target }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ inputs.android_api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ inputs.android_api }}-clang PYO3_CROSS=1'
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
           CIBW_TEST_SKIP: "*"

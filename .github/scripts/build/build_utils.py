@@ -51,10 +51,11 @@ def create_cargo_config(project_path: Path, target_triplet: str, android_api: st
     cargo_dir = project_path / ".cargo"
     cargo_dir.mkdir(exist_ok=True)
 
+    # AR option is deprecated and unused
+    # https://doc.rust-lang.org/cargo/reference/config.html?highlight=linker#targettriplear
     linker_name = os.environ.get("CC", '')
-    ar_name = os.environ.get("AR", '')
-
-    print(f"Using linker {linker_name} and ar {ar_name}")
+    
+    print(f"Using linker {linker_name}")
 
     # Correctly configure rustflags to point to the python library
     # This is more robust than environment variables as it's read directly by cargo.
@@ -62,7 +63,6 @@ def create_cargo_config(project_path: Path, target_triplet: str, android_api: st
         "target": {
             target_triplet: {
                 "linker": linker_name,
-                "ar": ar_name,
                 "rustflags": [
                     "-L",
                     str(python_lib_dir),
