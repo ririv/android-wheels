@@ -1,0 +1,91 @@
+name: cbuildwheel-repair-test
+
+on:
+  workflow_dispatch:
+    inputs:
+      library_name:
+        description: 'Name of the library'
+        required: true
+        type: string
+      git_repository:
+        description: 'Git repository of the library source'
+        required: true
+        type: string
+      version_tag:
+        description: 'Git ref (tag/branch) of the version (optional, uses latest if not specified)'
+        required: false
+        type: string
+      target_python_version:
+        description: 'Python version (e.g., 3.13)'
+        required: false
+        type: string
+        default: '3.13'
+
+jobs:
+  build:
+    name: Build wheel for ${{ matrix.abi }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - abi: arm64_v8a
+            target: aarch64-linux-android
+          - abi: x86_64
+            target: x86_64-linux-android
+
+    steps:
+      - name: Checkout self
+        uses: actions/checkout@v4
+
+      - name: Clone library source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.git_repository }}
+          ref: ${{ inputs.version_tag }}
+          path: library-source
+          submodules: recursive
+
+      - name: Check build backend and convert Maturin to setuptools-rust if needed
+        id: check_and_convert
+        run: |
+          pip install tomli-w
+          chmod +x .github/scripts/build/check_backend.py
+          BACKEND=$(python .github/scripts/build/check_backend.py library-source)
+          echo "build_backend=$BACKEND" >> $GITHUB_OUTPUT
+          if [ "$BACKEND" == "maturin" ]; then
+            echo "Maturin backend detected, converting to setuptools-rust..."
+            chmod +x .github/scripts/build/convert_to_setuptools_rust.py
+            python .github/scripts/build/convert_to_setuptools_rust.py library-source
+          fi
+
+      - name: Find project directory
+        id: find_proj
+        run: |
+          cd library-source
+          PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
+          PROJECT_DIR=$(dirname "$PROJECT_FILE")
+          echo "project_dir=$PROJECT_DIR" >> $GITHUB_OUTPUT
+
+      - name: Choose the Python versions to build
+        run: |
+          PYTHON_TAG=$(echo "${{ inputs.target_python_version }}" | tr -d '.')
+          echo "CIBW_BUILD=cp${PYTHON_TAG}-*" >> $GITHUB_ENV
+
+      - name: Build wheels with cibuildwheel
+        uses: ririv/cibuildwheel@main
+        with:
+          package-dir: library-source/${{ steps.find_proj.outputs.project_dir }}
+        env:
+          CIBW_PLATFORM: android
+          CIBW_ARCHS: ${{ matrix.abi }}
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_BUILD_FRONTEND: build
+          CIBW_TEST_SKIP: "*"
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.library_name }}-android-wheel-${{ matrix.abi }}
+          path: ./wheelhouse/*.whl
+
