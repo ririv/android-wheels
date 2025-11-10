@@ -11,9 +11,42 @@ from pathlib import Path
 
 import tomllib
 from shutil import which
-from build_utils import patch_pyo3_cargo_toml, create_cargo_config
 import urllib.error
+import tomli_w
 
+
+
+def create_cargo_config(project_path: Path, target_triplet: str, python_lib_dir: Path):
+    """Creates a .cargo/config.toml file to configure the build."""
+    print("--- Creating .cargo/config.toml for cross-compilation ---")
+    cargo_dir = project_path / ".cargo"
+    cargo_dir.mkdir(exist_ok=True)
+
+    # AR option is deprecated and unused
+    # https://doc.rust-lang.org/cargo/reference/config.html?highlight=linker#targettriplear
+    linker_name = os.environ.get("CC", '')
+    
+    print(f"Using linker {linker_name}")
+
+    # Correctly configure rustflags to point to the python library
+    # This is more robust than environment variables as it's read directly by cargo.
+    config_data = {
+        "target": {
+            target_triplet: {
+                "linker": linker_name,
+                "rustflags": [
+                    "-L",
+                    str(python_lib_dir),
+                ]
+            }
+        }
+    }
+
+    config_path = cargo_dir / "config.toml"
+    with open(config_path, "wb") as f:
+        tomli_w.dump(config_data, f)
+    
+    print(f"Created {config_path} with linker and direct rustflags for python lib.")
 
 
 def run(cmd, **kwargs):
@@ -247,13 +280,11 @@ def ensure_maturin_venv(project_path: Path) -> Path:
 
 
 def build_wheel(
-    library_name: str,
     library_source_path: Path,
     source_dir: str,
     build_env: dict[str, str],
     target_triplet: str,
     python_version: str,
-    android_api: str,
     python_lib_dir: Path,
 ) -> bool:
     """Builds the wheel, using a PEP 517-compliant process for maturin."""
@@ -261,8 +292,7 @@ def build_wheel(
     project_path = library_source_path / source_dir
     print(f"Project path: {project_path}", flush=True)
 
-    patch_pyo3_cargo_toml(project_path)
-    create_cargo_config(project_path, target_triplet, android_api, python_lib_dir, python_version)
+    create_cargo_config(project_path, target_triplet, python_lib_dir)
 
     pyproject_path = project_path / "pyproject.toml"
     if not pyproject_path.is_file():
@@ -392,13 +422,11 @@ def main():
     print("PYO3_CROSS_LIB_DIR =", build_env.get("PYO3_CROSS_LIB_DIR"), flush=True)
 
     is_maturin = build_wheel(
-        library_name=library_name,
         library_source_path=library_source_path,
         source_dir=source_dir,
         build_env=build_env,
         target_triplet=target_triplet,
         python_version=target_python_version,
-        android_api=android_api,
         python_lib_dir=python_lib_dir,
     )
 
