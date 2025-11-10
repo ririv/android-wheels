@@ -43,14 +43,6 @@ jobs:
       - name: Checkout self
         uses: actions/checkout@v4
 
-      - name: Set up Python for script
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install script dependencies
-        run: pip install tomli-w
-
       - name: Clone library source
         uses: actions/checkout@v4
         with:
@@ -65,6 +57,7 @@ jobs:
       - name: Check build backend and convert if needed
         id: check_and_convert
         run: |
+          pip install tomli-w
           chmod +x .github/scripts/build/check_backend.py
           BACKEND=$(python .github/scripts/build/check_backend.py library-source)
           echo "build_backend=$BACKEND" >> $GITHUB_OUTPUT
@@ -98,7 +91,6 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
           CIBW_TEST_SKIP: "*"
-          CARGO_BUILD_TARGET: ${{ matrix.target }}
           CIBW_BEFORE_BUILD: |
             set -e
             # This command runs inside the cibuildwheel container.

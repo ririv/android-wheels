@@ -65,9 +65,6 @@ jobs:
             target: "x86_64-linux-android"
 
     steps:
-      - name: Install script dependencies
-        run: pip install build tomli-w
-
       - name: Checkout self
         uses: actions/checkout@v4
 
@@ -98,6 +95,7 @@ jobs:
           TARGET_ABI: ${{ matrix.abi }}
           TARGET_TRIPLET: ${{ matrix.target }}
         run: |
+          pip install build tomli-w
           chmod +x .github/scripts/build/build_android_wheel.py
           .github/scripts/build/build_android_wheel.py
 
@@ -157,7 +155,6 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
           CIBW_TEST_SKIP: "*"
-          CARGO_BUILD_TARGET: ${{ matrix.target }}
           CIBW_BEFORE_BUILD: |
             set -e
             # This command runs inside the cibuildwheel container.
