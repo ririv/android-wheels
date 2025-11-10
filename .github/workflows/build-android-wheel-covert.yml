@@ -106,7 +106,6 @@ jobs:
             # Write the pyo3-specific variables to the config file.
             echo "[env]" > "$CONFIG_PATH"
             echo "PYO3_CROSS_LIB_DIR = \"$LIB_PATH\"" >> "$CONFIG_PATH"
-            echo "PYO3_CROSS_PYTHON_VERSION = \"${{ inputs.target_python_version }}\"" >> "$CONFIG_PATH"
 
             echo "Cargo config created at $CONFIG_PATH:"
             cat "$CONFIG_PATH"
