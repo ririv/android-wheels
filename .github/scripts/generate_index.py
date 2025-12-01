@@ -98,7 +98,13 @@ def main():
     packages = defaultdict(list)
     for wheel in all_wheels:
         try:
-            project_name_from_file = wheel.name.split("-")[0]
+            # Use the parent directory name as the project name if available (and not root)
+            # This supports the structure where wheels are organized in package-named folders
+            if wheel.parent != wheels_root:
+                project_name_from_file = wheel.parent.name
+            else:
+                project_name_from_file = wheel.name.split("-")[0]
+
             normalized_name = normalize_for_pep503(project_name_from_file)
             packages[normalized_name].append(wheel)
         except IndexError:

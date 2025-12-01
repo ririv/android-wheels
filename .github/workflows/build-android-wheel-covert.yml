@@ -159,7 +159,9 @@ jobs:
             git checkout -b wheels
           fi
 
-          cp ../wheels/* .
+          PACKAGE_DIR="${{ inputs.library_name }}"
+          mkdir -p "$PACKAGE_DIR"
+          cp ../wheels/* "$PACKAGE_DIR/"
 
           git add .
           if git diff --staged --quiet; then
