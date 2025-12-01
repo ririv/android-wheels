@@ -1,0 +1,40 @@
+name: Manual Build Wheel
+
+on:
+  workflow_dispatch:
+    inputs:
+      library_name:
+        description: 'Name of the library (e.g., my-lib)'
+        required: true
+        type: string
+      git_repository:
+        description: 'Git repository URL (e.g., org/repo)'
+        required: true
+        type: string
+      version_tag:
+        description: 'Git ref (tag/branch) (optional)'
+        required: false
+        type: string
+      target_python_version:
+        description: 'Python version'
+        required: false
+        default: '3.13'
+        type: string
+      android_api:
+        description: 'Android API level'
+        required: false
+        default: '24'
+        type: string
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-android-wheel-dispatch.yml
+    permissions:
+      contents: write
+      actions: write
+    with:
+      library_name: ${{ inputs.library_name }}
+      git_repository: ${{ inputs.git_repository }}
+      version_tag: ${{ inputs.version_tag }}
+      target_python_version: ${{ inputs.target_python_version }}
+      android_api: ${{ inputs.android_api }}
