@@ -7,7 +7,7 @@ on:
       - wheels
     paths:
       # Trigger when the index script on main changes, or when any wheel on wheels changes.
-      - '.github/scripts/generate_index.py'
+      - 'scripts/generate_index.py'
       - '.github/workflows/pages.yml'
       - '**/*.whl'
   workflow_dispatch:

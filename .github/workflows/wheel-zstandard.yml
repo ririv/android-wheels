@@ -18,7 +18,7 @@ on:
     paths:
       - '.github/workflows/wheel-zstandard.yml'
       - '.github/workflows/build-android-wheel-dispatch.yml'
-      - '.github/scripts/build/**'
+      - 'scripts/build/**'
 
 jobs:
   build-zstd:

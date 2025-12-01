@@ -18,7 +18,7 @@ on:
     paths:
       - '.github/workflows/wheel-ormsgpack.yml'
       - '.github/workflows/build-android-wheel-dispatch.yml'
-      - '.github/scripts/build/**'
+      - 'scripts/build/**'
 
 jobs:
   build-ormsgpack:
