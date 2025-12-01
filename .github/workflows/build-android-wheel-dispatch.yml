@@ -35,10 +35,17 @@ jobs:
       - name: Checkout self
         uses: actions/checkout@v4
 
+      - name: Normalize Git Repository Input
+        id: normalize_repo
+        run: |
+          chmod +x .github/scripts/build/normalize_repo_input.py
+          NORMALIZED_REPO=$(python .github/scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
+          echo "repository=$NORMALIZED_REPO" >> $GITHUB_OUTPUT
+
       - name: Clone library source
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.git_repository }}
+          repository: ${{ steps.normalize_repo.outputs.repository }}
           ref: ${{ inputs.version_tag }}
           path: library-source
           submodules: recursive
@@ -68,10 +75,17 @@ jobs:
       - name: Checkout self
         uses: actions/checkout@v4
 
+      - name: Normalize Git Repository Input
+        id: normalize_repo
+        run: |
+          chmod +x .github/scripts/build/normalize_repo_input.py
+          NORMALIZED_REPO=$(python .github/scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
+          echo "repository=$NORMALIZED_REPO" >> $GITHUB_OUTPUT
+
       - name: Clone library source
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.git_repository }}
+          repository: ${{ steps.normalize_repo.outputs.repository }}
           ref: ${{ inputs.version_tag }}
           path: library-source
           fetch-depth: 1
@@ -120,10 +134,20 @@ jobs:
             target: "x86_64-linux-android"
 
     steps:
+      - name: Checkout self
+        uses: actions/checkout@v4
+
+      - name: Normalize Git Repository Input
+        id: normalize_repo
+        run: |
+          chmod +x .github/scripts/build/normalize_repo_input.py
+          NORMALIZED_REPO=$(python .github/scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
+          echo "repository=$NORMALIZED_REPO" >> $GITHUB_OUTPUT
+
       - name: Clone library source
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.git_repository }}
+          repository: ${{ steps.normalize_repo.outputs.repository }}
           ref: ${{ inputs.version_tag }}
           path: library-source
           submodules: recursive
