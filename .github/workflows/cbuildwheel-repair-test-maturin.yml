@@ -1,0 +1,121 @@
+name: cbuildwheel-maturin-source-test
+
+on:
+  workflow_dispatch:
+    inputs:
+      library_name:
+        description: 'Name of the library'
+        required: true
+        type: string
+      git_repository:
+        description: 'Git repository of the library source'
+        required: true
+        type: string
+      version_tag:
+        description: 'Git ref (tag/branch) of the version (optional, uses latest if not specified)'
+        required: false
+        type: string
+      target_python_version:
+        description: 'Python version (e.g., 3.13)'
+        required: false
+        type: string
+        default: '3.13'
+
+jobs:
+  build:
+    name: Build wheel for ${{ matrix.abi }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - abi: arm64_v8a
+            target: aarch64-linux-android
+          - abi: x86_64
+            target: x86_64-linux-android
+
+    steps:
+      - name: Checkout self
+        uses: actions/checkout@v4
+
+      - name: Clone library source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.git_repository }}
+          ref: ${{ inputs.version_tag }}
+          path: library-source
+          submodules: recursive
+
+      - name: Patch pyproject.toml to use Maturin from source
+        run: |
+          pip install tomli tomli-w
+          python3 -c "
+          import os
+          import tomli
+          import tomli_w
+
+          def patch_pyproject(root):
+              for root_dir, _, files in os.walk(root):
+                  if 'pyproject.toml' in files:
+                      path = os.path.join(root_dir, 'pyproject.toml')
+                      print(f'Checking {path}...')
+                      with open(path, 'rb') as f:
+                          try:
+                              data = tomli.load(f)
+                          except Exception as e:
+                              print(f'Failed to parse {path}: {e}')
+                              continue
+                      
+                      build_system = data.get('build-system', {})
+                      requires = build_system.get('requires', [])
+                      
+                      new_requires = []
+                      patched = False
+                      for req in requires:
+                          if req.startswith('maturin'):
+                              # Replace maturin dependency with git source
+                              new_requires.append('maturin @ git+https://github.com/PyO3/maturin')
+                              patched = True
+                              print(f'Found maturin dependency, replacing with git source.')
+                          else:
+                              new_requires.append(req)
+                      
+                      if patched:
+                          data['build-system']['requires'] = new_requires
+                          with open(path, 'wb') as f:
+                              tomli_w.dump(data, f)
+                          print(f'Successfully patched {path}')
+                          return
+          
+          patch_pyproject('library-source')
+          "
+
+      - name: Find project directory
+        id: find_proj
+        run: |
+          cd library-source
+          PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
+          PROJECT_DIR=$(dirname "$PROJECT_FILE")
+          echo "project_dir=$PROJECT_DIR" >> $GITHUB_OUTPUT
+
+      - name: Choose the Python versions to build
+        run: |
+          PYTHON_TAG=$(echo "${{ inputs.target_python_version }}" | tr -d '.')
+          echo "CIBW_BUILD=cp${PYTHON_TAG}-*" >> $GITHUB_ENV
+
+      - name: Build wheels with cibuildwheel
+        uses: ririv/cibuildwheel@main
+        with:
+          package-dir: library-source/${{ steps.find_proj.outputs.project_dir }}
+        env:
+          CIBW_PLATFORM: android
+          CIBW_ARCHS: ${{ matrix.abi }}
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_BUILD_FRONTEND: build
+          CIBW_TEST_SKIP: "*"
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.library_name }}-android-wheel-${{ matrix.abi }}
+          path: ./wheelhouse/*.whl
