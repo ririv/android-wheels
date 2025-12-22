@@ -3,7 +3,7 @@
     {
       "root": ".",
       "extraPaths": [
-        ".github/scripts/build"
+        "scripts/build"
       ]
     }
   ]

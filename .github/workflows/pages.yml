@@ -26,11 +26,11 @@ jobs:
 
       - name: Download index script
         run: |
-          mkdir -p .github/scripts
-          curl -L -o .github/scripts/generate_index.py https://raw.githubusercontent.com/${{ github.repository }}/main/.github/scripts/generate_index.py
+          mkdir -p scripts
+          curl -L -o scripts/generate_index.py https://raw.githubusercontent.com/${{ github.repository }}/main/scripts/generate_index.py
 
       - name: Generate index
-        run: python .github/scripts/generate_index.py
+        run: python scripts/generate_index.py
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

@@ -46,8 +46,8 @@ jobs:
       - name: Normalize Git Repository Input
         id: normalize_repo
         run: |
-          chmod +x .github/scripts/build/normalize_repo_input.py
-          NORMALIZED_REPO=$(python .github/scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
+          chmod +x scripts/build/normalize_repo_input.py
+          NORMALIZED_REPO=$(python scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
           echo "repository=$NORMALIZED_REPO" >> $GITHUB_OUTPUT
 
       - name: Clone library source
@@ -65,13 +65,13 @@ jobs:
         id: check_and_convert
         run: |
           pip install tomli-w
-          chmod +x .github/scripts/build/check_backend.py
-          BACKEND=$(python .github/scripts/build/check_backend.py library-source)
+          chmod +x scripts/build/check_backend.py
+          BACKEND=$(python scripts/build/check_backend.py library-source)
           echo "build_backend=$BACKEND" >> $GITHUB_OUTPUT
           if [ "$BACKEND" == "maturin" ]; then
             echo "Maturin backend detected, converting to setuptools-rust..."
-            chmod +x .github/scripts/build/convert_to_setuptools_rust.py
-            python .github/scripts/build/convert_to_setuptools_rust.py library-source
+            chmod +x scripts/build/convert_to_setuptools_rust.py
+            python scripts/build/convert_to_setuptools_rust.py library-source
           fi
 
       - name: Prepare cibuildwheel environment

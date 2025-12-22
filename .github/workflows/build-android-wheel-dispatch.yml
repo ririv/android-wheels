@@ -38,8 +38,8 @@ jobs:
       - name: Normalize Git Repository Input
         id: normalize_repo
         run: |
-          chmod +x .github/scripts/build/normalize_repo_input.py
-          NORMALIZED_REPO=$(python .github/scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
+          chmod +x scripts/build/normalize_repo_input.py
+          NORMALIZED_REPO=$(python scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
           echo "repository=$NORMALIZED_REPO" >> $GITHUB_OUTPUT
 
       - name: Clone library source
@@ -53,8 +53,8 @@ jobs:
       - name: Check build backend
         id: check_backend
         run: |
-          chmod +x .github/scripts/build/check_backend.py
-          BACKEND=$(python .github/scripts/build/check_backend.py library-source)
+          chmod +x scripts/build/check_backend.py
+          BACKEND=$(python scripts/build/check_backend.py library-source)
           echo "build_backend=$BACKEND" >> $GITHUB_OUTPUT
 
   build_with_maturin:
@@ -78,8 +78,8 @@ jobs:
       - name: Normalize Git Repository Input
         id: normalize_repo
         run: |
-          chmod +x .github/scripts/build/normalize_repo_input.py
-          NORMALIZED_REPO=$(python .github/scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
+          chmod +x scripts/build/normalize_repo_input.py
+          NORMALIZED_REPO=$(python scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
           echo "repository=$NORMALIZED_REPO" >> $GITHUB_OUTPUT
 
       - name: Clone library source
@@ -110,8 +110,8 @@ jobs:
           TARGET_TRIPLET: ${{ matrix.target }}
         run: |
           pip install build tomli-w
-          chmod +x .github/scripts/build/build_android_wheel.py
-          .github/scripts/build/build_android_wheel.py
+          chmod +x scripts/build/build_android_wheel.py
+          scripts/build/build_android_wheel.py
 
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4
@@ -140,8 +140,8 @@ jobs:
       - name: Normalize Git Repository Input
         id: normalize_repo
         run: |
-          chmod +x .github/scripts/build/normalize_repo_input.py
-          NORMALIZED_REPO=$(python .github/scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
+          chmod +x scripts/build/normalize_repo_input.py
+          NORMALIZED_REPO=$(python scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
           echo "repository=$NORMALIZED_REPO" >> $GITHUB_OUTPUT
 
       - name: Clone library source

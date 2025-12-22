@@ -50,13 +50,13 @@ jobs:
         id: check_and_convert
         run: |
           pip install tomli-w
-          chmod +x .github/scripts/build/check_backend.py
-          BACKEND=$(python .github/scripts/build/check_backend.py library-source)
+          chmod +x scripts/build/check_backend.py
+          BACKEND=$(python scripts/build/check_backend.py library-source)
           echo "build_backend=$BACKEND" >> $GITHUB_OUTPUT
           if [ "$BACKEND" == "maturin" ]; then
             echo "Maturin backend detected, converting to setuptools-rust..."
-            chmod +x .github/scripts/build/convert_to_setuptools_rust.py
-            python .github/scripts/build/convert_to_setuptools_rust.py library-source
+            chmod +x scripts/build/convert_to_setuptools_rust.py
+            python scripts/build/convert_to_setuptools_rust.py library-source
           fi
 
       - name: Find project directory
