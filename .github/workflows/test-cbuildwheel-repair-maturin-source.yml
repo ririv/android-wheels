@@ -1,4 +1,4 @@
-name: cbuildwheel-maturin-source-test
+name: test-cbuildwheel-repair-maturin-source
 
 on:
   workflow_dispatch:
@@ -46,7 +46,17 @@ jobs:
           path: library-source
           submodules: recursive
 
+      - name: Check build backend
+        id: check_backend
+        run: |
+          pip install tomli
+          chmod +x scripts/build/check_backend.py
+          BACKEND=$(python scripts/build/check_backend.py library-source)
+          echo "Detected backend: $BACKEND"
+          echo "backend=$BACKEND" >> $GITHUB_OUTPUT
+
       - name: Patch pyproject.toml to use Maturin from source
+        if: contains(steps.check_backend.outputs.backend, 'maturin')
         run: |
           pip install tomli tomli-w
           python3 -c "

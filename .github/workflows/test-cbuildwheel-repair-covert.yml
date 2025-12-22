@@ -1,4 +1,4 @@
-name: cbuildwheel-repair-test
+name: test-cbuildwheel-repair-covert
 
 on:
   workflow_dispatch:
