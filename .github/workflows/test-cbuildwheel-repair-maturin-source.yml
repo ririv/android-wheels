@@ -123,7 +123,7 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
           CIBW_TEST_SKIP: "*"
-          CIBW_CONFIG_SETTINGS: --build-option=--verbose
+          CIBW_CONFIG_SETTINGS: "build-args=--verbose"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
