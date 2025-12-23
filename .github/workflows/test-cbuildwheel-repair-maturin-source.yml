@@ -120,9 +120,10 @@ jobs:
         env:
           CIBW_PLATFORM: android
           CIBW_ARCHS: ${{ matrix.abi }}
-          CIBW_BUILD_VERBOSITY: 3
+          CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
           CIBW_TEST_SKIP: "*"
+          CIBW_CONFIG_SETTINGS: --build-option=--verbose
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
