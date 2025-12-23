@@ -120,7 +120,7 @@ jobs:
         env:
           CIBW_PLATFORM: android
           CIBW_ARCHS: ${{ matrix.abi }}
-          CIBW_BUILD_VERBOSITY: 2
+          CIBW_BUILD_VERBOSITY: 3
           CIBW_BUILD_FRONTEND: build
           CIBW_TEST_SKIP: "*"
 
