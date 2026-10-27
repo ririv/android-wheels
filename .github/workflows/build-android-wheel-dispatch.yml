@@ -219,9 +219,9 @@ jobs:
     needs: [build_with_maturin, build_with_cibw]
     if: always() && (needs.build_with_maturin.result == 'success' || needs.build_with_cibw.result == 'success')
     runs-on: ubuntu-latest
-    concurrency:
-      group: wheels-branch-update
-      cancel-in-progress: false
+    # No shared concurrency group: GitHub keeps only one pending job per group and cancels the
+    # rest, which dropped uploads when several libraries finished together. Concurrent pushes
+    # to 'wheels' are handled by the retry loop below instead.
     permissions:
       contents: write
       actions: write
@@ -250,24 +250,39 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
 
-          if git fetch --depth=1 origin wheels && git checkout wheels; then
-            echo "Checked out existing 'wheels' branch."
-          else
-            echo "Creating new 'wheels' branch."
-            git checkout -b wheels
-          fi
-
           PACKAGE_DIR="${{ inputs.library_name }}"
-          mkdir -p "$PACKAGE_DIR"
-          cp ../wheels/* "$PACKAGE_DIR/"
 
-          git add .
-          if git diff --staged --quiet; then
-            echo "No new or updated wheels to commit."
-            exit 0
-          fi
-          git commit -m "Build: Add/Update ${{ inputs.library_name }} wheels for version ${{ inputs.version_tag || 'latest' }}"
-          git push --set-upstream origin wheels
+          # Other libraries may push to 'wheels' at the same time. When our push is rejected,
+          # re-apply this library's wheels on top of the latest remote branch and try again.
+          for attempt in $(seq 1 10); do
+            if git fetch --depth=1 origin wheels; then
+              echo "Checked out existing 'wheels' branch."
+              git checkout -f -B wheels FETCH_HEAD
+            elif [ "$attempt" -eq 1 ]; then
+              echo "Creating new 'wheels' branch."
+              git checkout -b wheels
+            else
+              sleep $((attempt * 3 + RANDOM % 10))
+              continue
+            fi
+
+            mkdir -p "$PACKAGE_DIR"
+            cp ../wheels/* "$PACKAGE_DIR/"
+
+            git add .
+            if git diff --staged --quiet; then
+              echo "No new or updated wheels to commit."
+              exit 0
+            fi
+            git commit -m "Build: Add/Update ${{ inputs.library_name }} wheels for version ${{ inputs.version_tag || 'latest' }}"
+            if git push --set-upstream origin wheels; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt); retrying on top of the latest 'wheels'..."
+            sleep $((attempt * 3 + RANDOM % 10))
+          done
+          echo "::error::Failed to push wheels after 10 attempts"
+          exit 1
 
       - name: Trigger pages deployment
         env:
