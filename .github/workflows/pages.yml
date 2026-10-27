@@ -12,6 +12,13 @@ on:
       - '**/*.whl'
   workflow_dispatch:
 
+# Wheel uploads run in parallel and each triggers a deploy. Every deploy rebuilds from the latest
+# 'wheels' head, so serialize them and let a newer pending deploy replace an older one; this keeps
+# an older snapshot from finishing last and overwriting the site.
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
