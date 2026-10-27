@@ -213,7 +213,13 @@ def prepare_build_environment(ndk_path: Path, target_triplet: str, android_api: 
 
     # Add NDK toolchain to PATH for auto-discovery by rustc and other tools
     toolchain_bin = toolchain / "bin"
-    env["PATH"] = f'{toolchain_bin}:{os.environ['PATH']}'
+    path_entries = [str(toolchain_bin)]
+    # Host interpreter (e.g. from actions/setup-python) that maturin resolves via `-i python{version}`
+    host_python = os.environ.get("HOST_PYTHON")
+    if host_python:
+        path_entries.append(str(Path(host_python).parent))
+    path_entries.append(os.environ["PATH"])
+    env["PATH"] = ":".join(path_entries)
 
     # Set compiler env vars for C/C++ build scripts (e.g. in dependencies).
     # Since the toolchain bin is in the PATH, we can just use the names.
@@ -229,8 +235,8 @@ def prepare_build_environment(ndk_path: Path, target_triplet: str, android_api: 
     env["CARGO_BUILD_TARGET"] = target_triplet
 
     env["PYO3_CROSS"] = "1"
-    # env["PYO3_CROSS_PYTHON_VERSION"] = python_version
-    # env["PYO3_CROSS_LIB_DIR"] = str(python_lib_dir)
+    env["PYO3_CROSS_PYTHON_VERSION"] = python_version
+    env["PYO3_CROSS_LIB_DIR"] = str(python_lib_dir)
 
 
     for k,v in env.items():
@@ -316,6 +322,9 @@ def build_wheel(
     interpreter_cli = f"python{python_version}"  # e.g. python3.13
     if interpreter_cli.startswith("/"):
         raise RuntimeError(f"内部防护：解释器名被解析成了路径：{interpreter_cli}")
+    # 设置了 PYO3_CROSS_LIB_DIR 时，maturin 会在宿主 PATH 中查找该解释器，用于解析目标的 sysconfigdata
+    if not which(interpreter_cli, path=build_env["PATH"]):
+        raise RuntimeError(f"宿主 PATH 中找不到 {interpreter_cli}；请通过 HOST_PYTHON 指定（CI 中由 actions/setup-python 提供）")
 
     build_cmd = [
         str(maturin_exe),
