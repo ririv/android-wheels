@@ -12,7 +12,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         original_repo = sys.argv[1]
         normalized_repo = normalize_repo_input(original_repo)
-        print(f"repository={normalized_repo}")
+        print(normalized_repo)
     else:
         print("Usage: python normalize_repo_input.py <git_repository_input>", file=sys.stderr)
         sys.exit(1)
