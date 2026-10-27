@@ -98,6 +98,15 @@ jobs:
           PROJECT_DIR=$(dirname "$PROJECT_FILE")
           echo "project_dir=$PROJECT_DIR" >> $GITHUB_OUTPUT
 
+      # maturin needs a host python{X.Y} to parse the target's sysconfigdata in PYO3_CROSS_LIB_DIR.
+      # update-environment: false keeps the build script itself on the runner's system Python.
+      - name: Set up host Python matching target
+        id: host_python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ inputs.target_python_version }}
+          update-environment: false
+
       - name: Run build script
         env:
           LIBRARY_NAME: ${{ inputs.library_name }}
@@ -108,6 +117,7 @@ jobs:
           ANDROID_API: ${{ inputs.android_api }}
           TARGET_ABI: ${{ matrix.abi }}
           TARGET_TRIPLET: ${{ matrix.target }}
+          HOST_PYTHON: ${{ steps.host_python.outputs.python-path }}
         run: |
           pip install build tomli-w
           chmod +x scripts/build/build_android_wheel.py
