@@ -33,7 +33,6 @@ class RecipeTests(unittest.TestCase):
         )
 
     def test_migrated_recipes_keep_sources_and_special_directories(self):
-        self.assertEqual(len(self.recipes), 10)
         by_name = {recipe.name: recipe for recipe in self.recipes}
         self.assertEqual(by_name["jiter"].directory, "crates/jiter-python")
         self.assertEqual(by_name["regex"].ref, "hg")
@@ -56,10 +55,10 @@ class RecipeTests(unittest.TestCase):
         self.assertTrue(all(job.python == PythonVersion.PY313 for job in jobs))
         self.assertEqual(
             len(build_jobs(RecipeBuilds(select_recipes(self.recipes, AllRecipes())))),
-            10,
+            len(self.recipes),
         )
 
-    def test_multiple_python_versions_keep_artifact_scopes_unique(self):
+    def test_multiple_python_versions_expand_independent_jobs(self):
         selected = select_recipes(
             self.recipes, SelectedRecipes(Choices("pydantic-core", ("xxhash",)))
         )

@@ -1,0 +1,815 @@
+{
+  "ranking_url": "https://hugovk.dev/top-pypi-packages/top-pypi-packages.min.json",
+  "ranking_last_update": "2026-10-01 12:40:51",
+  "ranking_source": "ClickHouse",
+  "checked_on": "2026-10-28",
+  "examined_packages": 300,
+  "native_packages_detected": 66,
+  "definition": "按包下载量排序；当前发行版至少一个 wheel 的 ABI 不为 none 且平台不为 any，作为 CPython 原生扩展候选；取前 50。候选准入再核验源码与 ELF。",
+  "native_top50": [
+    {
+      "native_rank": 1,
+      "pypi_rank": 8,
+      "package": "charset-normalizer",
+      "downloads": 1186581556,
+      "pypi_version": "3.5.2",
+      "native_wheel_sample": "charset_normalizer-3.5.2-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [
+        "charset_normalizer-3.5.0-cp313-cp313-android_24_arm64_v8a.whl",
+        "charset_normalizer-3.5.0-cp313-cp313-android_24_x86_64.whl",
+        "charset_normalizer-3.5.0-cp314-cp314-android_24_arm64_v8a.whl",
+        "charset_normalizer-3.5.0-cp314-cp314-android_24_x86_64.whl",
+        "charset_normalizer-3.5.1-cp313-cp313-android_24_arm64_v8a.whl",
+        "charset_normalizer-3.5.1-cp313-cp313-android_24_x86_64.whl",
+        "charset_normalizer-3.5.1-cp314-cp314-android_24_arm64_v8a.whl",
+        "charset_normalizer-3.5.1-cp314-cp314-android_24_x86_64.whl",
+        "charset_normalizer-3.5.2-cp313-cp313-android_24_arm64_v8a.whl",
+        "charset_normalizer-3.5.2-cp313-cp313-android_24_x86_64.whl",
+        "charset_normalizer-3.5.2-cp314-cp314-android_24_arm64_v8a.whl",
+        "charset_normalizer-3.5.2-cp314-cp314-android_24_x86_64.whl"
+      ],
+      "decision": "official_android_available"
+    },
+    {
+      "native_rank": 2,
+      "pypi_rank": 9,
+      "package": "cryptography",
+      "downloads": 1070154291,
+      "pypi_version": "50.0.2",
+      "native_wheel_sample": "cryptography-50.0.2-cp311-abi3-macosx_11_0_arm64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 3,
+      "pypi_rank": 11,
+      "package": "cffi",
+      "downloads": 949615436,
+      "pypi_version": "2.1.1",
+      "native_wheel_sample": "cffi-2.1.1-cp310-cp310-macosx_10_15_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 4,
+      "pypi_rank": 13,
+      "package": "pyyaml",
+      "downloads": 910851659,
+      "pypi_version": "6.0.3",
+      "native_wheel_sample": "pyyaml-6.0.3-cp310-cp310-macosx_10_13_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "already_in_repository"
+    },
+    {
+      "native_rank": 5,
+      "pypi_rank": 21,
+      "package": "pydantic-core",
+      "downloads": 808518099,
+      "pypi_version": "2.50.1",
+      "native_wheel_sample": "pydantic_core-2.50.1-cp310-cp310-macosx_10_12_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "already_in_repository"
+    },
+    {
+      "native_rank": 6,
+      "pypi_rank": 23,
+      "package": "numpy",
+      "downloads": 801552837,
+      "pypi_version": "2.5.4",
+      "native_wheel_sample": "numpy-2.5.4-cp312-cp312-macosx_10_13_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 7,
+      "pypi_rank": 32,
+      "package": "protobuf",
+      "downloads": 619205877,
+      "pypi_version": "7.36.2",
+      "native_wheel_sample": "protobuf-7.36.2-cp310-abi3-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 8,
+      "pypi_rank": 34,
+      "package": "markupsafe",
+      "downloads": 614567882,
+      "pypi_version": "3.0.4",
+      "native_wheel_sample": "markupsafe-3.0.4-cp310-cp310-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [
+        "markupsafe-3.0.4-cp313-cp313-android_24_arm64_v8a.whl",
+        "markupsafe-3.0.4-cp313-cp313-android_24_x86_64.whl",
+        "markupsafe-3.0.4-cp314-cp314-android_24_arm64_v8a.whl",
+        "markupsafe-3.0.4-cp314-cp314-android_24_x86_64.whl",
+        "markupsafe-3.0.4-cp315-cp315-android_24_arm64_v8a.whl",
+        "markupsafe-3.0.4-cp315-cp315-android_24_x86_64.whl"
+      ],
+      "decision": "official_android_available"
+    },
+    {
+      "native_rank": 9,
+      "pypi_rank": 40,
+      "package": "pandas",
+      "downloads": 547072268,
+      "pypi_version": "3.1.0",
+      "native_wheel_sample": "pandas-3.1.0-cp311-cp311-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 10,
+      "pypi_rank": 47,
+      "package": "multidict",
+      "downloads": 472045565,
+      "pypi_version": "7.2.1",
+      "native_wheel_sample": "multidict-7.2.1-cp311-cp311-macosx_10_9_universal2.whl",
+      "official_android_wheels": [
+        "multidict-6.8.0-cp313-cp313-android_24_x86_64.whl",
+        "multidict-6.8.0-cp314-cp314-android_24_x86_64.whl",
+        "multidict-6.8.0-cp315-cp315-android_24_x86_64.whl",
+        "multidict-6.9.0-cp313-cp313-android_24_x86_64.whl",
+        "multidict-6.9.0-cp314-cp314-android_24_x86_64.whl",
+        "multidict-6.9.0-cp315-cp315-android_24_x86_64.whl",
+        "multidict-6.9.1-cp313-cp313-android_24_x86_64.whl",
+        "multidict-6.9.1-cp314-cp314-android_24_x86_64.whl",
+        "multidict-6.9.1-cp315-cp315-android_24_x86_64.whl",
+        "multidict-7.0.0-cp313-cp313-android_24_x86_64.whl",
+        "multidict-7.0.0-cp314-cp314-android_24_x86_64.whl",
+        "multidict-7.0.0-cp315-cp315-android_24_x86_64.whl",
+        "multidict-7.1.0-cp313-cp313-android_24_x86_64.whl",
+        "multidict-7.1.0-cp314-cp314-android_24_x86_64.whl",
+        "multidict-7.1.0-cp315-cp315-android_24_x86_64.whl",
+        "multidict-7.2.0-cp313-cp313-android_24_x86_64.whl",
+        "multidict-7.2.0-cp314-cp314-android_24_x86_64.whl",
+        "multidict-7.2.0-cp315-cp315-android_24_x86_64.whl",
+        "multidict-7.2.1-cp313-cp313-android_24_x86_64.whl",
+        "multidict-7.2.1-cp314-cp314-android_24_x86_64.whl",
+        "multidict-7.2.1-cp315-cp315-android_24_x86_64.whl"
+      ],
+      "decision": "official_android_available"
+    },
+    {
+      "native_rank": 11,
+      "pypi_rank": 49,
+      "package": "rpds-py",
+      "downloads": 463583334,
+      "pypi_version": "2026.9.1",
+      "native_wheel_sample": "rpds_py-2026.9.1-cp311-cp311-macosx_10_12_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "already_in_repository"
+    },
+    {
+      "native_rank": 12,
+      "pypi_rank": 50,
+      "package": "yarl",
+      "downloads": 459889343,
+      "pypi_version": "1.25.1",
+      "native_wheel_sample": "yarl-1.25.1-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "backend_not_enabled"
+    },
+    {
+      "native_rank": 13,
+      "pypi_rank": 51,
+      "package": "aiohttp",
+      "downloads": 455690685,
+      "pypi_version": "3.14.5",
+      "native_wheel_sample": "aiohttp-3.14.5-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [
+        "aiohttp-3.14.0-cp313-cp313-android_21_arm64_v8a.whl",
+        "aiohttp-3.14.0-cp313-cp313-android_21_x86_64.whl",
+        "aiohttp-3.14.0-cp314-cp314-android_24_arm64_v8a.whl",
+        "aiohttp-3.14.0-cp314-cp314-android_24_x86_64.whl",
+        "aiohttp-3.14.1-cp313-cp313-android_21_arm64_v8a.whl",
+        "aiohttp-3.14.1-cp313-cp313-android_21_x86_64.whl",
+        "aiohttp-3.14.1-cp314-cp314-android_24_arm64_v8a.whl",
+        "aiohttp-3.14.1-cp314-cp314-android_24_x86_64.whl",
+        "aiohttp-3.14.2-cp313-cp313-android_21_arm64_v8a.whl",
+        "aiohttp-3.14.2-cp313-cp313-android_21_x86_64.whl",
+        "aiohttp-3.14.2-cp314-cp314-android_24_arm64_v8a.whl",
+        "aiohttp-3.14.2-cp314-cp314-android_24_x86_64.whl",
+        "aiohttp-3.14.3-cp313-cp313-android_21_arm64_v8a.whl",
+        "aiohttp-3.14.3-cp313-cp313-android_21_x86_64.whl",
+        "aiohttp-3.14.3-cp314-cp314-android_24_arm64_v8a.whl",
+        "aiohttp-3.14.3-cp314-cp314-android_24_x86_64.whl",
+        "aiohttp-3.14.4-cp313-cp313-android_24_arm64_v8a.whl",
+        "aiohttp-3.14.4-cp313-cp313-android_24_x86_64.whl",
+        "aiohttp-3.14.4-cp314-cp314-android_24_arm64_v8a.whl",
+        "aiohttp-3.14.4-cp314-cp314-android_24_x86_64.whl",
+        "aiohttp-3.14.4-cp315-cp315-android_24_arm64_v8a.whl",
+        "aiohttp-3.14.4-cp315-cp315-android_24_x86_64.whl",
+        "aiohttp-3.14.5-cp313-cp313-android_24_arm64_v8a.whl",
+        "aiohttp-3.14.5-cp313-cp313-android_24_x86_64.whl",
+        "aiohttp-3.14.5-cp314-cp314-android_24_arm64_v8a.whl",
+        "aiohttp-3.14.5-cp314-cp314-android_24_x86_64.whl",
+        "aiohttp-3.14.5-cp315-cp315-android_24_arm64_v8a.whl",
+        "aiohttp-3.14.5-cp315-cp315-android_24_x86_64.whl"
+      ],
+      "decision": "official_android_available"
+    },
+    {
+      "native_rank": 14,
+      "pypi_rank": 55,
+      "package": "propcache",
+      "downloads": 442913585,
+      "pypi_version": "0.5.4",
+      "native_wheel_sample": "propcache-0.5.4-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "backend_not_enabled"
+    },
+    {
+      "native_rank": 15,
+      "pypi_rank": 59,
+      "package": "pillow",
+      "downloads": 425694980,
+      "pypi_version": "13.0.0",
+      "native_wheel_sample": "pillow-13.0.0-cp311-cp311-macosx_10_10_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 16,
+      "pypi_rank": 61,
+      "package": "frozenlist",
+      "downloads": 417051290,
+      "pypi_version": "1.8.0",
+      "native_wheel_sample": "frozenlist-1.8.0-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "backend_not_enabled"
+    },
+    {
+      "native_rank": 17,
+      "pypi_rank": 68,
+      "package": "websockets",
+      "downloads": 398431816,
+      "pypi_version": "17.3",
+      "native_wheel_sample": "websockets-17.3-cp311-cp311-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted"
+    },
+    {
+      "native_rank": 18,
+      "pypi_rank": 70,
+      "package": "wrapt",
+      "downloads": 392118252,
+      "pypi_version": "2.5.1",
+      "native_wheel_sample": "wrapt-2.5.1-cp310-cp310-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted"
+    },
+    {
+      "native_rank": 19,
+      "pypi_rank": 77,
+      "package": "greenlet",
+      "downloads": 369974693,
+      "pypi_version": "3.5.6",
+      "native_wheel_sample": "greenlet-3.5.6-cp310-cp310-macosx_11_0_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 20,
+      "pypi_rank": 86,
+      "package": "pyarrow",
+      "downloads": 333202119,
+      "pypi_version": "26.0.0",
+      "native_wheel_sample": "pyarrow-26.0.0-cp311-cp311-macosx_12_0_arm64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 21,
+      "pypi_rank": 87,
+      "package": "sqlalchemy",
+      "downloads": 331730354,
+      "pypi_version": "2.1.6",
+      "native_wheel_sample": "sqlalchemy-2.1.6-cp311-cp311-macosx_11_0_arm64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted"
+    },
+    {
+      "native_rank": 22,
+      "pypi_rank": 89,
+      "package": "grpcio",
+      "downloads": 319720146,
+      "pypi_version": "1.85.0",
+      "native_wheel_sample": "grpcio-1.85.0-cp310-cp310-linux_armv7l.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 23,
+      "pypi_rank": 91,
+      "package": "lxml",
+      "downloads": 313948323,
+      "pypi_version": "6.1.3",
+      "native_wheel_sample": "lxml-6.1.3-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 24,
+      "pypi_rank": 92,
+      "package": "jiter",
+      "downloads": 312958613,
+      "pypi_version": "0.18.0",
+      "native_wheel_sample": "jiter-0.18.0-cp310-cp310-macosx_10_12_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "already_in_repository"
+    },
+    {
+      "native_rank": 25,
+      "pypi_rank": 93,
+      "package": "regex",
+      "downloads": 309895354,
+      "pypi_version": "2026.9.29",
+      "native_wheel_sample": "regex-2026.9.29-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "already_in_repository"
+    },
+    {
+      "native_rank": 26,
+      "pypi_rank": 94,
+      "package": "watchfiles",
+      "downloads": 305158420,
+      "pypi_version": "1.3.0",
+      "native_wheel_sample": "watchfiles-1.3.0-cp310-abi3-macosx_10_12_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted"
+    },
+    {
+      "native_rank": 27,
+      "pypi_rank": 97,
+      "package": "scipy",
+      "downloads": 300069551,
+      "pypi_version": "1.18.1",
+      "native_wheel_sample": "scipy-1.18.1-cp312-cp312-macosx_10_15_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 28,
+      "pypi_rank": 103,
+      "package": "psutil",
+      "downloads": 288818629,
+      "pypi_version": "7.2.2",
+      "native_wheel_sample": "psutil-7.2.2-cp313-cp313t-macosx_10_13_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 29,
+      "pypi_rank": 104,
+      "package": "coverage",
+      "downloads": 287744815,
+      "pypi_version": "7.17.0",
+      "native_wheel_sample": "coverage-7.17.0-cp311-cp311-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [
+        "coverage-7.17.0-cp313-cp313-android_24_arm64_v8a.whl",
+        "coverage-7.17.0-cp313-cp313-android_24_x86_64.whl",
+        "coverage-7.17.0-cp314-cp314-android_24_arm64_v8a.whl",
+        "coverage-7.17.0-cp314-cp314-android_24_x86_64.whl",
+        "coverage-7.17.0-cp315-cp315-android_24_arm64_v8a.whl",
+        "coverage-7.17.0-cp315-cp315-android_24_x86_64.whl"
+      ],
+      "decision": "official_android_available"
+    },
+    {
+      "native_rank": 30,
+      "pypi_rank": 107,
+      "package": "tomli",
+      "downloads": 274144944,
+      "pypi_version": "2.5.0",
+      "native_wheel_sample": "tomli-2.5.0-cp311-cp311-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 31,
+      "pypi_rank": 118,
+      "package": "wcwidth",
+      "downloads": 240279397,
+      "pypi_version": "0.9.4",
+      "native_wheel_sample": "wcwidth-0.9.4-cp310-abi3-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 32,
+      "pypi_rank": 134,
+      "package": "httptools",
+      "downloads": 212349802,
+      "pypi_version": "0.9.0",
+      "native_wheel_sample": "httptools-0.9.0-cp310-cp310-macosx_11_0_arm64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted"
+    },
+    {
+      "native_rank": 33,
+      "pypi_rank": 136,
+      "package": "uvloop",
+      "downloads": 211131340,
+      "pypi_version": "0.23.0",
+      "native_wheel_sample": "uvloop-0.23.0-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 34,
+      "pypi_rank": 138,
+      "package": "psycopg2-binary",
+      "downloads": 208775354,
+      "pypi_version": "2.9.13",
+      "native_wheel_sample": "psycopg2_binary-2.9.13-cp310-cp310-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 35,
+      "pypi_rank": 145,
+      "package": "msgpack",
+      "downloads": 193313294,
+      "pypi_version": "1.2.4",
+      "native_wheel_sample": "msgpack-1.2.4-cp310-cp310-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "preflight_failed"
+    },
+    {
+      "native_rank": 36,
+      "pypi_rank": 146,
+      "package": "fonttools",
+      "downloads": 193015590,
+      "pypi_version": "4.68.0",
+      "native_wheel_sample": "fonttools-4.68.0-cp311-cp311-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 37,
+      "pypi_rank": 148,
+      "package": "hf-xet",
+      "downloads": 188604448,
+      "pypi_version": "1.7.0",
+      "native_wheel_sample": "hf_xet-1.7.0-cp314-cp314t-macosx_10_12_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 38,
+      "pypi_rank": 150,
+      "package": "scikit-learn",
+      "downloads": 188102242,
+      "pypi_version": "1.9.1",
+      "native_wheel_sample": "scikit_learn-1.9.1-cp311-cp311-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 39,
+      "pypi_rank": 153,
+      "package": "orjson",
+      "downloads": 180495295,
+      "pypi_version": "3.13.0",
+      "native_wheel_sample": "orjson-3.13.0-cp310-cp310-macosx_10_15_x86_64.macosx_11_0_arm64.macosx_10_15_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "already_in_repository"
+    },
+    {
+      "native_rank": 40,
+      "pypi_rank": 155,
+      "package": "tiktoken",
+      "downloads": 179033638,
+      "pypi_version": "0.14.0",
+      "native_wheel_sample": "tiktoken-0.14.0-cp310-cp310-macosx_10_12_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "already_in_repository"
+    },
+    {
+      "native_rank": 41,
+      "pypi_rank": 164,
+      "package": "tokenizers",
+      "downloads": 166389324,
+      "pypi_version": "0.23.3",
+      "native_wheel_sample": "tokenizers-0.23.3-cp310-abi3-macosx_10_12_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 42,
+      "pypi_rank": 165,
+      "package": "pynacl",
+      "downloads": 166088922,
+      "pypi_version": "1.6.2",
+      "native_wheel_sample": "pynacl-1.6.2-cp314-cp314t-macosx_10_10_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 43,
+      "pypi_rank": 166,
+      "package": "chardet",
+      "downloads": 165621246,
+      "pypi_version": "7.7.0",
+      "native_wheel_sample": "chardet-7.7.0-cp310-cp310-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 44,
+      "pypi_rank": 169,
+      "package": "matplotlib",
+      "downloads": 162125416,
+      "pypi_version": "3.11.2",
+      "native_wheel_sample": "matplotlib-3.11.2-cp311-cp311-macosx_10_12_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 45,
+      "pypi_rank": 174,
+      "package": "mypy",
+      "downloads": 159257721,
+      "pypi_version": "2.4.0",
+      "native_wheel_sample": "mypy-2.4.0-cp310-cp310-macosx_11_0_arm64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 46,
+      "pypi_rank": 177,
+      "package": "zstandard",
+      "downloads": 157498843,
+      "pypi_version": "0.25.0",
+      "native_wheel_sample": "zstandard-0.25.0-cp310-cp310-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "already_in_repository"
+    },
+    {
+      "native_rank": 47,
+      "pypi_rank": 179,
+      "package": "kiwisolver",
+      "downloads": 156347414,
+      "pypi_version": "1.5.1",
+      "native_wheel_sample": "kiwisolver-1.5.1-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "version_metadata_mismatch"
+    },
+    {
+      "native_rank": 48,
+      "pypi_rank": 182,
+      "package": "bcrypt",
+      "downloads": 154218667,
+      "pypi_version": "5.0.0",
+      "native_wheel_sample": "bcrypt-5.0.0-cp313-cp313t-macosx_10_12_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted"
+    },
+    {
+      "native_rank": 49,
+      "pypi_rank": 207,
+      "package": "google-crc32c",
+      "downloads": 140796400,
+      "pypi_version": "1.9.0",
+      "native_wheel_sample": "google_crc32c-1.9.0-cp310-cp310-macosx_12_0_arm64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    },
+    {
+      "native_rank": 50,
+      "pypi_rank": 208,
+      "package": "contourpy",
+      "downloads": 139594438,
+      "pypi_version": "1.4.0",
+      "native_wheel_sample": "contourpy-1.4.0-cp312-cp312-macosx_10_13_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "deferred"
+    }
+  ],
+  "admitted_sources": [
+    {
+      "name": "bcrypt",
+      "repository": "pyca/bcrypt",
+      "version": "5.0.0",
+      "ref": "5.0.0",
+      "sha": "5060bce7e6c27f55e89d5b0d22b7ae0437a362f7",
+      "backend": "setuptools.build_meta"
+    },
+    {
+      "name": "httptools",
+      "repository": "MagicStack/httptools",
+      "version": "0.9.0",
+      "ref": "v0.9.0",
+      "sha": "104198474662752f4f4845c79007100829aff442",
+      "backend": "setuptools.build_meta"
+    },
+    {
+      "name": "sqlalchemy",
+      "repository": "sqlalchemy/sqlalchemy",
+      "version": "2.1.6",
+      "ref": "rel_2_1_6",
+      "sha": "2f6968cc126d4da2d2eabc5a51285472bb9bfc9e",
+      "backend": "setuptools.build_meta"
+    },
+    {
+      "name": "watchfiles",
+      "repository": "samuelcolvin/watchfiles",
+      "version": "1.3.0",
+      "ref": "v1.3.0",
+      "sha": "e74b8fc7d8d9e35c3b6bb88af0aef5ea82ee815e",
+      "backend": "maturin"
+    },
+    {
+      "name": "websockets",
+      "repository": "python-websockets/websockets",
+      "version": "17.3",
+      "ref": "17.3",
+      "sha": "86a1ad5b0009e801e451f1be1da2a077e2dd2471",
+      "backend": "setuptools.build_meta"
+    },
+    {
+      "name": "wrapt",
+      "repository": "GrahamDumpleton/wrapt",
+      "version": "2.5.1",
+      "ref": "2.5.1",
+      "sha": "dbbb21fa76915541a850a2029e97c116f38a53b0",
+      "backend": "setuptools.build_meta"
+    }
+  ],
+  "preflight_wheels": [
+    {
+      "package": "bcrypt",
+      "version": "5.0.0",
+      "abi": "arm64-v8a",
+      "filename": "bcrypt-5.0.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "8a1a69af5433527d5e233d7c3cfcf94f8ba6c2cf41a8b1ad61d305c86a40e312",
+      "native_modules": [
+        "bcrypt/_bcrypt.cpython-313-aarch64-linux-android.so"
+      ],
+      "source_sha": "5060bce7e6c27f55e89d5b0d22b7ae0437a362f7",
+      "preflight_run": 40653014430
+    },
+    {
+      "package": "bcrypt",
+      "version": "5.0.0",
+      "abi": "x86_64",
+      "filename": "bcrypt-5.0.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "4604923c4cb067e73a561721d7791a938b7319eb18a945a80a5bad1297157f83",
+      "native_modules": [
+        "bcrypt/_bcrypt.cpython-313-x86_64-linux-android.so"
+      ],
+      "source_sha": "5060bce7e6c27f55e89d5b0d22b7ae0437a362f7",
+      "preflight_run": 40653014430
+    },
+    {
+      "package": "httptools",
+      "version": "0.9.0",
+      "abi": "arm64-v8a",
+      "filename": "httptools-0.9.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "1527495741148bdc4d10b451059b73ec979259ac9b9263086003f7f84308fc06",
+      "native_modules": [
+        "httptools/parser/parser.cpython-313-aarch64-linux-android.so",
+        "httptools/parser/url_parser.cpython-313-aarch64-linux-android.so"
+      ],
+      "source_sha": "104198474662752f4f4845c79007100829aff442",
+      "preflight_run": 40653012691
+    },
+    {
+      "package": "httptools",
+      "version": "0.9.0",
+      "abi": "x86_64",
+      "filename": "httptools-0.9.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "1e85801436a04059382e97803e7b37102ef8ca689baf89e8fcdf16d4af6a356b",
+      "native_modules": [
+        "httptools/parser/parser.cpython-313-x86_64-linux-android.so",
+        "httptools/parser/url_parser.cpython-313-x86_64-linux-android.so"
+      ],
+      "source_sha": "104198474662752f4f4845c79007100829aff442",
+      "preflight_run": 40653012691
+    },
+    {
+      "package": "sqlalchemy",
+      "version": "2.1.6",
+      "abi": "arm64-v8a",
+      "filename": "sqlalchemy-2.1.6-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "6ffdc1c5206cbe685a95f9147429115d65fe5041521ab02d12955f1652cf7911",
+      "native_modules": [
+        "sqlalchemy/engine/_processors_cy.cpython-313-aarch64-linux-android.so",
+        "sqlalchemy/engine/_result_cy.cpython-313-aarch64-linux-android.so",
+        "sqlalchemy/engine/_row_cy.cpython-313-aarch64-linux-android.so",
+        "sqlalchemy/engine/_util_cy.cpython-313-aarch64-linux-android.so",
+        "sqlalchemy/sql/_cache_key_cy.cpython-313-aarch64-linux-android.so",
+        "sqlalchemy/sql/_util_cy.cpython-313-aarch64-linux-android.so",
+        "sqlalchemy/util/_collections_cy.cpython-313-aarch64-linux-android.so",
+        "sqlalchemy/util/_immutabledict_cy.cpython-313-aarch64-linux-android.so"
+      ],
+      "source_sha": "2f6968cc126d4da2d2eabc5a51285472bb9bfc9e",
+      "preflight_run": 40653007969
+    },
+    {
+      "package": "sqlalchemy",
+      "version": "2.1.6",
+      "abi": "x86_64",
+      "filename": "sqlalchemy-2.1.6-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "423523e27e1faa215719fd0c8a45bc60fc15a42edc23eaf9d5c9721267b46b4f",
+      "native_modules": [
+        "sqlalchemy/engine/_processors_cy.cpython-313-x86_64-linux-android.so",
+        "sqlalchemy/engine/_result_cy.cpython-313-x86_64-linux-android.so",
+        "sqlalchemy/engine/_row_cy.cpython-313-x86_64-linux-android.so",
+        "sqlalchemy/engine/_util_cy.cpython-313-x86_64-linux-android.so",
+        "sqlalchemy/sql/_cache_key_cy.cpython-313-x86_64-linux-android.so",
+        "sqlalchemy/sql/_util_cy.cpython-313-x86_64-linux-android.so",
+        "sqlalchemy/util/_collections_cy.cpython-313-x86_64-linux-android.so",
+        "sqlalchemy/util/_immutabledict_cy.cpython-313-x86_64-linux-android.so"
+      ],
+      "source_sha": "2f6968cc126d4da2d2eabc5a51285472bb9bfc9e",
+      "preflight_run": 40653007969
+    },
+    {
+      "package": "watchfiles",
+      "version": "1.3.0",
+      "abi": "arm64-v8a",
+      "filename": "watchfiles-1.3.0-cp310-abi3-android_24_arm64_v8a.whl",
+      "sha256": "f6d2e07ae04b385e4284d40e0ba8e94f460082a6a493456171b83454a8d9b3d7",
+      "native_modules": [
+        "watchfiles/_rust_notify.abi3.so"
+      ],
+      "source_sha": "e74b8fc7d8d9e35c3b6bb88af0aef5ea82ee815e",
+      "preflight_run": 40653006143
+    },
+    {
+      "package": "watchfiles",
+      "version": "1.3.0",
+      "abi": "x86_64",
+      "filename": "watchfiles-1.3.0-cp310-abi3-android_24_x86_64.whl",
+      "sha256": "4522bba85c38e3d35719c3b7824444def917d585f005a88fa0b02721c253c5c5",
+      "native_modules": [
+        "watchfiles/_rust_notify.abi3.so"
+      ],
+      "source_sha": "e74b8fc7d8d9e35c3b6bb88af0aef5ea82ee815e",
+      "preflight_run": 40653006143
+    },
+    {
+      "package": "websockets",
+      "version": "17.3",
+      "abi": "arm64-v8a",
+      "filename": "websockets-17.3-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "98aeb9704e0600793492ea7f2685692c7e4f2019d4a3ba3c65cebcc97d5ad240",
+      "native_modules": [
+        "websockets/speedups.cpython-313-aarch64-linux-android.so"
+      ],
+      "source_sha": "86a1ad5b0009e801e451f1be1da2a077e2dd2471",
+      "preflight_run": 40653007438
+    },
+    {
+      "package": "websockets",
+      "version": "17.3",
+      "abi": "x86_64",
+      "filename": "websockets-17.3-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "96d00413cb1ce3feda3479a79b6fdef02add2d7e437c3893c2bd9181a91e3cc1",
+      "native_modules": [
+        "websockets/speedups.cpython-313-x86_64-linux-android.so"
+      ],
+      "source_sha": "86a1ad5b0009e801e451f1be1da2a077e2dd2471",
+      "preflight_run": 40653007438
+    },
+    {
+      "package": "wrapt",
+      "version": "2.5.1",
+      "abi": "arm64-v8a",
+      "filename": "wrapt-2.5.1-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "b4f01dad43bda45c4239781bf7764fe53293401f9538394e583956929e8b4656",
+      "native_modules": [
+        "wrapt/_wrappers.cpython-313-aarch64-linux-android.so"
+      ],
+      "source_sha": "dbbb21fa76915541a850a2029e97c116f38a53b0",
+      "preflight_run": 40653007909
+    },
+    {
+      "package": "wrapt",
+      "version": "2.5.1",
+      "abi": "x86_64",
+      "filename": "wrapt-2.5.1-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "5ef2c7f87d6db19eff6b2bfd45b10192dd660412742388ec1912474cd0a9746f",
+      "native_modules": [
+        "wrapt/_wrappers.cpython-313-x86_64-linux-android.so"
+      ],
+      "source_sha": "dbbb21fa76915541a850a2029e97c116f38a53b0",
+      "preflight_run": 40653007909
+    }
+  ],
+  "deferred_preflights": [
+    {
+      "package": "msgpack",
+      "version": "1.2.4",
+      "run_id": 40653013076,
+      "reason": "Git tag 缺少 msgpack/_cmsgpack.c，默认源码构建失败。"
+    },
+    {
+      "package": "kiwisolver",
+      "version": "1.5.1",
+      "run_id": 40653014288,
+      "reason": "浅克隆未保留版本标签，setuptools-scm 生成 0.1.dev1+g166899b65，拒绝按 1.5.1 发布。"
+    }
+  ]
+}

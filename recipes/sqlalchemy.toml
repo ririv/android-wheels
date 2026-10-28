@@ -1,0 +1,10 @@
+name = "sqlalchemy"
+repository = "sqlalchemy/sqlalchemy"
+ref = "rel_2_1_6"
+directory = "."
+backend = "setuptools.build_meta"
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24

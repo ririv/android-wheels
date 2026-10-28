@@ -1,0 +1,10 @@
+name = "httptools"
+repository = "MagicStack/httptools"
+ref = "v0.9.0"
+directory = "."
+backend = "setuptools.build_meta"
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24

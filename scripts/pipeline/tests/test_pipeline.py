@@ -61,8 +61,14 @@ class PipelineTests(unittest.TestCase):
             side_effect=lambda *key: by_source[key],
         ):
             plan = recipe_plan("push", {"before": "0" * 40}, ROOT)
-        self.assertEqual(len(plan.targets), 20)
-        self.assertEqual(len({t.artifact for t in plan.targets}), 20)
+        expected = {
+            (recipe.name, python, abi)
+            for recipe in recipes
+            for python in recipe.android.python.values
+            for abi in recipe.android.abis.values
+        }
+        self.assertEqual({(t.library, t.python, t.abi) for t in plan.targets}, expected)
+        self.assertEqual(len({t.artifact for t in plan.targets}), len(expected))
 
     def test_push_of_publication_code_does_not_resolve_or_compile_sources(self):
         with (
