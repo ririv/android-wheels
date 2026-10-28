@@ -212,6 +212,8 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
           CIBW_TEST_SKIP: "*"
+          # cibuildwheel's default Android repair (auditwheel), but wheels without native code pass through
+          CIBW_REPAIR_WHEEL_COMMAND_ANDROID: 'python "$GITHUB_WORKSPACE/scripts/build/repair_android_wheel.py" {wheel} {dest_dir} {ldpaths}'
           CIBW_BEFORE_BUILD: |
             set -e
             # This command runs inside the cibuildwheel container.
