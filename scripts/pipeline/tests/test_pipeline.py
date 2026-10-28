@@ -10,17 +10,24 @@ from unittest.mock import patch
 from scripts.build.android_python import AndroidABI, PythonVersion
 from scripts.pipeline.artifacts import collect, record, verify_wheel
 from scripts.pipeline.cargo_env import configure
-from scripts.pipeline.model import Builder, Plan, Source, Target, load_plan
+from scripts.pipeline.model import (
+    Builder,
+    GitSource,
+    Plan,
+    SdistSource,
+    Target,
+    load_plan,
+)
 from scripts.pipeline.planning import recipe_plan
 from scripts.pipeline.publish import Published, Unchanged, publish
 from scripts.pipeline.source import backend_at, verify_checkout
 from scripts.recipes.load import load_recipes
-from scripts.recipes.model import Backend, Publication
+from scripts.recipes.model import Backend, GitLocation, Publication
 from scripts.recipes.plan import affected_recipes
 from scripts.testing.wheels import write_wheel
 
 ROOT = Path(__file__).resolve().parents[3]
-SOURCE = Source("pydantic/pydantic-core", "v2.41.5", "a" * 40, ".", Backend.MATURIN)
+SOURCE = GitSource("pydantic/pydantic-core", "v2.41.5", "a" * 40, ".", Backend.MATURIN)
 TARGET = Target("pydantic-core", SOURCE, PythonVersion.PY313, AndroidABI.ARM64, 24)
 
 
@@ -50,12 +57,23 @@ def make_wheel(
 class PipelineTests(unittest.TestCase):
     def test_initial_push_uses_the_production_flat_plan(self):
         recipes = load_recipes(ROOT / "recipes")
-        by_source = {
-            (r.repository, r.ref, r.directory): Source(
-                r.repository, r.ref, "a" * 40, r.directory, r.backend
-            )
-            for r in recipes
-        }
+        by_source = {}
+        for r in recipes:
+            if isinstance(r.source, GitLocation):
+                source = GitSource(
+                    r.source.repository, r.source.ref, "a" * 40, r.directory, r.backend
+                )
+            else:
+                source = SdistSource(
+                    r.name,
+                    r.source.version,
+                    "https://example/source.tar.gz",
+                    "b" * 64,
+                    "source.tar.gz",
+                    r.directory,
+                    r.backend,
+                )
+            by_source[r.source, r.directory] = source
         with patch(
             "scripts.pipeline.planning.resolve_source",
             side_effect=lambda *key: by_source[key],

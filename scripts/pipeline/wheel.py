@@ -10,7 +10,7 @@ from email.parser import BytesParser
 from itertools import product
 from pathlib import Path
 
-from scripts.pipeline.model import Target
+from scripts.pipeline.model import SdistSource, Target
 
 
 def normalized(name: str) -> str:
@@ -66,6 +66,10 @@ def verify_wheel(path: Path, target: Target) -> None:
             raise ValueError(f"无效的 wheel 文件名：{path.name}")
     if normalized(name) != normalized(target.library):
         raise ValueError(f"wheel 包名不匹配：{path.name}")
+    if isinstance(
+        target.source, SdistSource
+    ) and version != target.source.version.replace("-", "_"):
+        raise ValueError("wheel 版本与固定的 PyPI 发行版本不一致")
     if platform == "any":
         if abi != "none" or "py3" not in python.split("."):
             raise ValueError(f"无效的纯 Python wheel：{path.name}")

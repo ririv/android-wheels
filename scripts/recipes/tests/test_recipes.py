@@ -35,9 +35,9 @@ class RecipeTests(unittest.TestCase):
     def test_migrated_recipes_keep_sources_and_special_directories(self):
         by_name = {recipe.name: recipe for recipe in self.recipes}
         self.assertEqual(by_name["jiter"].directory, "crates/jiter-python")
-        self.assertEqual(by_name["regex"].ref, "hg")
-        self.assertEqual(by_name["orjson"].repository, "ririv/orjson")
-        self.assertEqual(by_name["ormsgpack"].repository, "ormsgpack/ormsgpack")
+        self.assertEqual(by_name["regex"].source.ref, "hg")
+        self.assertEqual(by_name["orjson"].source.repository, "ririv/orjson")
+        self.assertEqual(by_name["ormsgpack"].source.repository, "ormsgpack/ormsgpack")
         self.assertEqual(by_name["pyyaml"].backend.value, "_pyyaml_pep517")
         self.assertTrue(
             all(
@@ -75,8 +75,8 @@ class RecipeTests(unittest.TestCase):
 
     def test_single_recipe_ref_override(self):
         jobs = build_jobs(RefBuild(self.core, "v2.41.5"))
-        self.assertEqual(jobs[0].ref, "v2.41.5")
-        self.assertEqual(self.core.ref, "main")
+        self.assertEqual(jobs[0].recipe.source.ref, "v2.41.5")
+        self.assertEqual(self.core.source.ref, "main")
 
     def test_single_recipe_change_selects_only_that_package(self):
         selected = affected_recipes(

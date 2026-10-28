@@ -2,9 +2,10 @@
 
 import json
 import re
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from enum import StrEnum
 from pathlib import Path
+from typing import Literal
 
 from scripts.build.android_python import AndroidABI, PythonVersion
 from scripts.recipes.model import Backend, Publication
@@ -18,12 +19,28 @@ class Builder(StrEnum):
 
 
 @dataclass(frozen=True)
-class Source:
+class GitSource:
     repository: str
     ref: str
     sha: str
     directory: str
     backend: Backend
+    kind: Literal["git"] = field(init=False, default="git")
+
+
+@dataclass(frozen=True)
+class SdistSource:
+    package: str
+    version: str
+    url: str
+    sha256: str
+    filename: str
+    directory: str
+    backend: Backend
+    kind: Literal["pypi-sdist"] = field(init=False, default="pypi-sdist")
+
+
+Source = GitSource | SdistSource
 
 
 @dataclass(frozen=True)
@@ -86,11 +103,20 @@ def load_plan(path: Path) -> Plan:
     data = json.loads(path.read_text(encoding="utf-8"))
     targets = []
     for row in data["targets"]:
-        source = Source(
-            **{**row["source"], "backend": Backend(row["source"]["backend"])}
-        )
-        if not re.fullmatch(r"[a-f0-9]{40}", source.sha):
-            raise ValueError("构建计划必须使用完整提交 SHA")
+        fields = dict(row["source"])
+        kind = fields.pop("kind")
+        fields["backend"] = Backend(fields["backend"])
+        match kind:
+            case "git":
+                source = GitSource(**fields)
+                if not re.fullmatch(r"[a-f0-9]{40}", source.sha):
+                    raise ValueError("构建计划必须使用完整提交 SHA")
+            case "pypi-sdist":
+                source = SdistSource(**fields)
+                if not re.fullmatch(r"[a-f0-9]{64}", source.sha256):
+                    raise ValueError("源码分发包必须使用完整 SHA-256")
+            case _:
+                raise ValueError(f"未知源码类型：{kind}")
         targets.append(
             Target(
                 row["library"],

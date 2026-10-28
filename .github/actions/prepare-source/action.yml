@@ -11,14 +11,15 @@ runs:
       with:
         name: build-plan
     - uses: actions/checkout@v4
+      if: fromJSON(inputs.target).source.kind == 'git'
       with:
         repository: ${{ fromJSON(inputs.target).source.repository }}
         ref: ${{ fromJSON(inputs.target).source.sha }}
         path: library-source
         submodules: recursive
         persist-credentials: false
-    - name: Verify source
+    - name: Prepare and verify declared source
       shell: bash
       env:
         ARTIFACT: ${{ fromJSON(inputs.target).artifact }}
-      run: python -B -m scripts.pipeline verify-source --artifact "$ARTIFACT" --directory library-source
+      run: python -B -m scripts.pipeline prepare-source --artifact "$ARTIFACT" --directory library-source

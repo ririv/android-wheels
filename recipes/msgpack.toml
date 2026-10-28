@@ -1,0 +1,9 @@
+name = "msgpack"
+pypi-version = "1.2.4"
+directory = "."
+backend = "setuptools.build_meta"
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24

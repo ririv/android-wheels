@@ -6,11 +6,11 @@ import os
 from pathlib import Path
 
 from scripts.pipeline.artifacts import collect, record
-from scripts.pipeline.model import load_plan
+from scripts.pipeline.model import GitSource, SdistSource, load_plan
 from scripts.pipeline.notifications import notify_index, notify_legacy
 from scripts.pipeline.planning import manual_plan, recipe_plan, write_actions_plan
 from scripts.pipeline.publish import publish
-from scripts.pipeline.source import verify_checkout
+from scripts.pipeline.source import prepare_sdist, verify_checkout
 from scripts.recipes.model import Publication
 
 
@@ -33,7 +33,7 @@ def main() -> None:
         command.add_argument("--event-name", required=True)
         command.add_argument("--github-output", type=Path, required=True)
         command.add_argument("--output", type=Path, default=Path("build-plan.json"))
-    for name in ("verify-source", "record", "publish"):
+    for name in ("prepare-source", "record", "publish"):
         command = commands.add_parser(name)
         command.add_argument("--plan", type=Path, default=Path("build-plan.json"))
         if name == "publish":
@@ -77,8 +77,13 @@ def main() -> None:
         print(args.output.read_text(encoding="utf-8"))
         return
     plan = load_plan(args.plan)
-    if args.command == "verify-source":
-        verify_checkout(plan.target(args.artifact).source, args.directory)
+    if args.command == "prepare-source":
+        source = plan.target(args.artifact).source
+        match source:
+            case GitSource():
+                verify_checkout(source, args.directory)
+            case SdistSource():
+                prepare_sdist(source, args.directory)
     elif args.command == "record":
         record(args.directory, plan.target(args.artifact))
     else:

@@ -7,7 +7,14 @@ from pathlib import Path, PurePosixPath
 from typing import TypeVar
 
 from scripts.build.android_python import AndroidABI, PythonVersion
-from scripts.recipes.model import Android, Backend, Choices, Recipe
+from scripts.recipes.model import (
+    Android,
+    Backend,
+    Choices,
+    GitLocation,
+    PyPILocation,
+    Recipe,
+)
 
 T = TypeVar("T")
 NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
@@ -40,20 +47,26 @@ def require_keys(data: dict, expected: set[str], label: str) -> None:
 
 def load_recipe(path: Path) -> Recipe:
     data = tomllib.loads(path.read_text(encoding="utf-8"))
-    require_keys(
-        data,
-        {"name", "repository", "ref", "directory", "backend", "android"},
-        str(path),
-    )
-    for key in ["name", "repository", "ref", "directory", "backend"]:
+    common = {"name", "directory", "backend", "android"}
+    if "pypi-version" in data:
+        require_keys(data, common | {"pypi-version"}, str(path))
+        if type(data["pypi-version"]) is not str or not data["pypi-version"]:
+            raise ValueError("pypi-version 必须显式指定发行版本")
+        source = PyPILocation(data["name"], data["pypi-version"])
+    else:
+        require_keys(data, common | {"repository", "ref"}, str(path))
+        if type(data["repository"]) is not str or not re.fullmatch(
+            r"[A-Za-z0-9][A-Za-z0-9-]*/[A-Za-z0-9_.-]+", data["repository"]
+        ):
+            raise ValueError(f"{path}: repository 必须是 GitHub owner/repo")
+        if type(data["ref"]) is not str:
+            raise ValueError("Git ref 必须是字符串")
+        source = GitLocation(data["repository"], validate_ref(data["ref"]))
+    for key in ["name", "directory", "backend"]:
         if type(data[key]) is not str or not data[key]:
             raise ValueError(f"{path}: {key} 必须是非空字符串")
     if not NAME.fullmatch(data["name"]) or path.stem != data["name"]:
         raise ValueError(f"{path}: 包名必须规范化且与文件名相同")
-    if not re.fullmatch(
-        r"[A-Za-z0-9][A-Za-z0-9-]*/[A-Za-z0-9_.-]+", data["repository"]
-    ):
-        raise ValueError(f"{path}: repository 必须是 GitHub owner/repo")
     directory = PurePosixPath(data["directory"])
     if directory.is_absolute() or ".." in directory.parts or "\\" in data["directory"]:
         raise ValueError(f"{path}: directory 必须在源码仓库内")
@@ -63,8 +76,7 @@ def load_recipe(path: Path) -> Recipe:
         raise ValueError(f"{path}: Android API 必须是至少为 24 的整数")
     return Recipe(
         name=data["name"],
-        repository=data["repository"],
-        ref=validate_ref(data["ref"]),
+        source=source,
         directory=directory.as_posix(),
         backend=Backend(data["backend"]),
         android=Android(

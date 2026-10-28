@@ -1,0 +1,9 @@
+name = "frozenlist"
+pypi-version = "1.8.0"
+directory = "."
+backend = "pep517_backend.hooks"
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24

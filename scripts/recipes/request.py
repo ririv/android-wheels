@@ -5,6 +5,7 @@ from scripts.recipes.load import choices, validate_ref
 from scripts.recipes.model import (
     AllRecipes,
     BuildSelection,
+    GitLocation,
     Recipe,
     RecipeBuilds,
     RecipePython,
@@ -32,5 +33,9 @@ def requested_builds(
     if ref:
         if len(selected) != 1:
             raise ValueError("覆盖 Git ref 时必须只选择一个 recipe")
+        if not isinstance(selected[0].source, GitLocation):
+            raise ValueError(
+                "Git ref 覆盖只适用于 Git 源；PyPI 源通过 pypi-version 固定版本"
+            )
         return RefBuild(selected[0], validate_ref(ref), python)
     return RecipeBuilds(selected, python)

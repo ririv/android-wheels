@@ -3,17 +3,18 @@
 import tempfile
 import unittest
 import zipfile
+from dataclasses import replace
 from pathlib import Path
 
 from scripts.build.android_python import AndroidABI, PythonVersion
-from scripts.pipeline.model import Source, Target
+from scripts.pipeline.model import GitSource, SdistSource, Target
 from scripts.pipeline.wheel import verify_wheel
 from scripts.recipes.model import Backend
 from scripts.testing.wheels import write_wheel
 
 TARGET = Target(
     "example",
-    Source("owner/repo", "main", "a" * 40, ".", Backend.MATURIN),
+    GitSource("owner/repo", "main", "a" * 40, ".", Backend.MATURIN),
     PythonVersion.PY313,
     AndroidABI.ARM64,
     24,
@@ -38,6 +39,20 @@ class WheelTests(unittest.TestCase):
     def test_valid_complete_wheel(self):
         write_wheel(self.path, self.files)
         verify_wheel(self.path, TARGET)
+
+    def test_sdist_wheel_must_match_the_pinned_release_version(self):
+        write_wheel(self.path, self.files)
+        source = SdistSource(
+            "example",
+            "2.0",
+            "https://example/source.tar.gz",
+            "a" * 64,
+            "source.tar.gz",
+            ".",
+            Backend.MATURIN,
+        )
+        with self.assertRaisesRegex(ValueError, "PyPI 发行版本"):
+            verify_wheel(self.path, replace(TARGET, source=source))
 
     def test_internal_platform_must_match_filename(self):
         self.files[PREFIX + "WHEEL"] = (

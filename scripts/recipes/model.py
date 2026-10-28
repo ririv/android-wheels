@@ -23,6 +23,8 @@ class Backend(StrEnum):
     MATURIN = "maturin"
     SETUPTOOLS = "setuptools.build_meta"
     PYYAML = "_pyyaml_pep517"
+    AIO_LIBS = "pep517_backend.hooks"
+    MESON = "mesonpy"
 
 
 class Publication(StrEnum):
@@ -38,10 +40,25 @@ class Android:
 
 
 @dataclass(frozen=True)
-class Recipe:
-    name: str
+class GitLocation:
     repository: str
     ref: str
+
+
+@dataclass(frozen=True)
+class PyPILocation:
+    package: str
+    version: str
+
+
+Location = GitLocation | PyPILocation
+L = TypeVar("L", GitLocation, PyPILocation)
+
+
+@dataclass(frozen=True)
+class Recipe(Generic[L]):
+    name: str
+    source: L
     directory: str
     backend: Backend
     android: Android
@@ -81,7 +98,7 @@ class RecipeBuilds:
 
 @dataclass(frozen=True)
 class RefBuild:
-    recipe: Recipe
+    recipe: Recipe[GitLocation]
     ref: str
     python: PythonSelection = RecipePython()
 
@@ -93,7 +110,3 @@ BuildSelection = RecipeBuilds | RefBuild
 class BuildJob:
     recipe: Recipe
     python: PythonVersion
-
-    @property
-    def ref(self) -> str:
-        return self.recipe.ref

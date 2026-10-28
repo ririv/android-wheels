@@ -9,6 +9,7 @@ from scripts.pipeline.model import Plan, Target
 from scripts.pipeline.source import resolve_source
 from scripts.recipes.load import load_recipes
 from scripts.recipes.model import (
+    GitLocation,
     Publication,
     RecipeBuilds,
 )
@@ -52,9 +53,9 @@ def recipe_plan(event_name: str, event: dict, root: Path) -> Plan:
     targets = []
     for job in build_jobs(request):
         recipe = job.recipe
-        key = (recipe.repository, job.ref, recipe.directory)
+        key = (recipe.source, recipe.directory)
         if key not in sources:
-            sources[key] = resolve_source(*key)
+            sources[key] = resolve_source(recipe.source, recipe.directory)
         source = sources[key]
         if source.backend != recipe.backend:
             raise ValueError(f"{recipe.name} 后端与 recipe 不一致：{source.backend}")
@@ -68,7 +69,8 @@ def recipe_plan(event_name: str, event: dict, root: Path) -> Plan:
 def manual_plan(event: dict) -> Plan:
     inputs = event["inputs"]
     source = resolve_source(
-        inputs["git_repository"], inputs.get("version_tag", ""), inputs["package_dir"]
+        GitLocation(inputs["git_repository"], inputs.get("version_tag", "")),
+        inputs["package_dir"],
     )
     api = int(inputs["android_api"])
     if api < 24:

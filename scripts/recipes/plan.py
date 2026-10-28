@@ -10,6 +10,7 @@ from scripts.recipes.model import (
     AllRecipes,
     BuildJob,
     BuildSelection,
+    GitLocation,
     Recipe,
     RecipeBuilds,
     RecipePython,
@@ -82,7 +83,9 @@ def build_jobs(selection: BuildSelection) -> tuple[BuildJob, ...]:
         case RecipeBuilds(recipes=recipes, python=python):
             selected = recipes
         case RefBuild(recipe=recipe, ref=ref, python=python):
-            selected = (replace(recipe, ref=ref),)
+            selected = (
+                replace(recipe, source=GitLocation(recipe.source.repository, ref)),
+            )
     jobs = []
     for recipe in selected:
         match python:
