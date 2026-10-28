@@ -8,7 +8,12 @@ from pathlib import Path
 from scripts.pipeline.artifacts import collect, record
 from scripts.pipeline.model import GitSource, SdistSource, load_plan
 from scripts.pipeline.notifications import notify_index, notify_legacy
-from scripts.pipeline.planning import manual_plan, recipe_plan, write_actions_plan
+from scripts.pipeline.planning import (
+    manual_plan,
+    recipe_plan,
+    write_actions_plan,
+    write_batch,
+)
 from scripts.pipeline.publish import publish
 from scripts.pipeline.source import prepare_sdist, verify_checkout
 from scripts.recipes.model import Publication
@@ -33,6 +38,10 @@ def main() -> None:
         command.add_argument("--event-name", required=True)
         command.add_argument("--github-output", type=Path, required=True)
         command.add_argument("--output", type=Path, default=Path("build-plan.json"))
+    batch = commands.add_parser("matrix-batch")
+    batch.add_argument("--plan", type=Path, default=Path("build-plan.json"))
+    batch.add_argument("--batch", type=int, required=True)
+    batch.add_argument("--github-output", type=Path, required=True)
     environment = commands.add_parser("build-environment")
     environment.add_argument("--plan", type=Path, default=Path("build-plan.json"))
     environment.add_argument("--artifact", required=True)
@@ -81,7 +90,9 @@ def main() -> None:
         print(args.output.read_text(encoding="utf-8"))
         return
     plan = load_plan(args.plan)
-    if args.command == "build-environment":
+    if args.command == "matrix-batch":
+        write_batch(plan, args.batch, args.github_output)
+    elif args.command == "build-environment":
         with args.output.open("a", encoding="utf-8") as stream:
             for variable in plan.target(args.artifact).environment:
                 stream.write(f"{variable.name}={variable.value}\n")

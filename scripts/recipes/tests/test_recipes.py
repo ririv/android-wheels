@@ -41,7 +41,7 @@ class RecipeTests(unittest.TestCase):
         self.assertEqual(by_name["pyyaml"].backend.value, "_pyyaml_pep517")
         self.assertTrue(
             all(
-                recipe.android.python.values == (PythonVersion.PY313,)
+                recipe.android.python.values == tuple(PythonVersion)
                 for recipe in self.recipes
             )
         )
@@ -51,11 +51,13 @@ class RecipeTests(unittest.TestCase):
             self.recipes, SelectedRecipes(Choices("pydantic-core", ("xxhash",)))
         )
         jobs = build_jobs(RecipeBuilds(selected))
-        self.assertEqual([job.recipe.name for job in jobs], ["pydantic-core", "xxhash"])
-        self.assertTrue(all(job.python == PythonVersion.PY313 for job in jobs))
+        self.assertEqual(
+            [job.recipe.name for job in jobs], ["pydantic-core"] * 6 + ["xxhash"] * 6
+        )
+        self.assertEqual({job.python for job in jobs}, set(PythonVersion))
         self.assertEqual(
             len(build_jobs(RecipeBuilds(select_recipes(self.recipes, AllRecipes())))),
-            len(self.recipes),
+            len(self.recipes) * len(PythonVersion),
         )
 
     def test_multiple_python_versions_expand_independent_jobs(self):
@@ -103,9 +105,18 @@ class RecipeTests(unittest.TestCase):
             original + "typo = 1\n",
             original.replace('ref = "main"\n', ""),
             original.replace('backend = "maturin"', 'backend = "unknown"'),
-            original.replace('python = ["3.13"]', "python = []"),
-            original.replace('python = ["3.13"]', 'python = ["3.13", "3.13"]'),
-            original.replace('python = ["3.13"]', 'python = ["3.9"]'),
+            original.replace(
+                'python = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]',
+                "python = []",
+            ),
+            original.replace(
+                'python = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]',
+                'python = ["3.13", "3.13"]',
+            ),
+            original.replace(
+                'python = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]',
+                'python = ["3.9"]',
+            ),
             original.replace('abis = ["arm64-v8a", "x86_64"]', 'abis = ["x86"]'),
             original.replace('directory = "."', 'directory = "../outside"'),
             original.replace("api = 24", "api = true"),

@@ -11,6 +11,8 @@ from email.parser import BytesParser
 from itertools import product
 from pathlib import Path
 
+from packaging.specifiers import SpecifierSet
+
 from scripts.build.native_libraries import library_specs
 from scripts.build.wheel_alignment import verify_alignment
 from scripts.pipeline.model import SdistSource, Target
@@ -101,6 +103,10 @@ def verify_wheel(path: Path, target: Target) -> None:
             or metadata["Version"].replace("-", "_") != version
         ):
             raise ValueError(f"wheel 元数据不匹配：{path}")
+        if not SpecifierSet(metadata.get("Requires-Python", "")).contains(
+            target.python.value
+        ):
+            raise ValueError("wheel Requires-Python 不支持构建目标")
         if target.native_dependencies:
             specs = library_specs(
                 Path(__file__).parents[1] / "build" / "native-libraries.toml"

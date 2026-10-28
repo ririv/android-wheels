@@ -32,6 +32,7 @@ class GitSource:
     sha: str
     directory: str
     backend: Backend
+    requires_python: str = ""
     kind: Literal["git"] = field(init=False, default="git")
 
 
@@ -44,6 +45,7 @@ class SdistSource:
     filename: str
     directory: str
     backend: Backend
+    requires_python: str = ""
     kind: Literal["pypi-sdist"] = field(init=False, default="pypi-sdist")
 
 
@@ -71,14 +73,8 @@ class Target:
 
     @property
     def builder(self) -> Builder:
-        if self.config_settings and (
-            self.source.backend == Backend.MATURIN
-            or self.python
-            in {PythonVersion.PY310, PythonVersion.PY311, PythonVersion.PY312}
-        ):
-            raise ValueError(
-                "config-settings 当前只接入现代 cibuildwheel，请选择 Python 3.13 或更新版本的 PEP 517 构建"
-            )
+        if self.config_settings and self.source.backend == Backend.MATURIN:
+            raise ValueError("maturin 构建参数尚未接入 config-settings")
         if self.source.backend == Backend.MATURIN:
             return Builder.MATURIN
         if self.python in {
@@ -86,10 +82,6 @@ class Target:
             PythonVersion.PY311,
             PythonVersion.PY312,
         }:
-            if self.native_dependencies:
-                raise ValueError(
-                    "Chaquopy 尚未接入 native-dependencies；请明确选择 Python 3.13 或更新版本"
-                )
             return Builder.CHAQUOPY
         return Builder.CIBUILDWHEEL
 
@@ -116,9 +108,18 @@ class Target:
 
 
 @dataclass(frozen=True)
+class UnsupportedPython:
+    library: str
+    python: PythonVersion
+    requires_python: str
+    reason: Literal["requires-python"] = field(init=False, default="requires-python")
+
+
+@dataclass(frozen=True)
 class Plan:
     publication: Publication
     targets: tuple[Target, ...]
+    skipped: tuple[UnsupportedPython, ...] = ()
 
     def write(self, path: Path) -> None:
         path.write_text(
@@ -126,6 +127,7 @@ class Plan:
                 {
                     "publication": self.publication,
                     "targets": [t.to_dict() for t in self.targets],
+                    "skipped": [asdict(s) for s in self.skipped],
                 },
                 indent=2,
             )
@@ -167,7 +169,16 @@ def load_plan(path: Path) -> Plan:
                 tuple(ConfigSetting(**v) for v in row["config_settings"]),
             )
         )
-    plan = Plan(Publication(data["publication"]), tuple(targets))
+    skipped = []
+    for row in data["skipped"]:
+        if row["reason"] != "requires-python":
+            raise ValueError(f"未知跳过原因：{row['reason']}")
+        skipped.append(
+            UnsupportedPython(
+                row["library"], PythonVersion(row["python"]), row["requires_python"]
+            )
+        )
+    plan = Plan(Publication(data["publication"]), tuple(targets), tuple(skipped))
     if len({t.artifact for t in plan.targets}) != len(plan.targets):
         raise ValueError("构建计划存在重复目标")
     return plan

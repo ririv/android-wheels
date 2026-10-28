@@ -227,7 +227,12 @@ def process_wheel(
 
     # 使用 wheel 工具同时更新文件名、WHEEL 与 RECORD。
     # 先保留上游 ABI，随后根据实际的版本专用动态库约束收窄标签。
-    _, wheel_python, wheel_abi, _ = wheel_path.stem.rsplit("-", 3)
+    _, wheel_python, wheel_abi, wheel_platform = wheel_path.stem.rsplit("-", 3)
+    if wheel_python == "py3" and wheel_abi == "none" and wheel_platform == "any":
+        output_dir.mkdir(parents=True, exist_ok=True)
+        destination = output_dir / wheel_path.name
+        shutil.move(str(wheel_path), destination)
+        return destination
     requested_tag = f"cp{python_version.replace('.', '')}"
     abi3_compatible = (
         wheel_abi == "abi3"

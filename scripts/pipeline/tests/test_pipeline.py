@@ -51,7 +51,7 @@ def make_wheel(
         },
     )
     record(directory, target)
-    return path
+    return next(directory.glob("*.whl"))
 
 
 class PipelineTests(unittest.TestCase):

@@ -19,6 +19,7 @@ on:
       - '!scripts/**/*.pyc'
       - '.github/workflows/build-wheels.yml'
       - '.github/workflows/build-android-wheel-dispatch.yml'
+      - '.github/workflows/build-wheel-batch.yml'
   workflow_dispatch:
     inputs:
       recipes:
@@ -67,15 +68,15 @@ jobs:
           if-no-files-found: error
 
   build:
-    name: ${{ matrix.library }} / Python ${{ matrix.python }} / ${{ matrix.abi }}
+    name: Batch ${{ matrix.batch }}
     needs: plan
     if: needs.plan.outputs.has_jobs == 'true'
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
-    uses: ./.github/workflows/build-android-wheel-dispatch.yml
+    uses: ./.github/workflows/build-wheel-batch.yml
     with:
-      target: ${{ toJSON(matrix) }}
+      batch: ${{ matrix.batch }}
 
   publish:
     needs: [plan, build]

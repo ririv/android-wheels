@@ -4,6 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from wheel.cli.tags import tags
+
 from scripts.pipeline.model import Plan, Target
 from scripts.pipeline.wheel import normalized, verify_wheel
 
@@ -20,6 +22,15 @@ def record(directory: Path, target: Target) -> None:
             f"每个目标必须生成一个 wheel，实际为 {len(wheels)}：{directory}"
         )
     wheel = wheels[0]
+    _, abi, platform = wheel.stem.rsplit("-", 2)
+    if abi == "abi3" or platform == "any":
+        # 稳定 ABI 与纯 Python 产物跨版本同名，用构建号区分实际构建来源。
+        wheel = wheel.parent / tags(
+            str(wheel),
+            build_tag=target.python.value.replace(".", "")
+            + (target.abi.value.replace("-", "_") if platform == "any" else ""),
+            remove=True,
+        )
     verify_wheel(wheel, target)
     (directory / "manifest.json").write_text(
         json.dumps(

@@ -1,0 +1,37 @@
+name: Reusable - Build a bounded batch
+
+on:
+  workflow_call:
+    inputs:
+      batch:
+        required: true
+        type: number
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-tools
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-plan
+      - name: Select independent targets in this batch
+        id: matrix
+        env:
+          BATCH: ${{ inputs.batch }}
+        run: python -B -m scripts.pipeline matrix-batch --batch "$BATCH" --github-output "$GITHUB_OUTPUT"
+  build:
+    needs: plan
+    name: ${{ matrix.library }} / Python ${{ matrix.python }} / ${{ matrix.abi }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    uses: ./.github/workflows/build-android-wheel-dispatch.yml
+    with:
+      target: ${{ toJSON(matrix) }}

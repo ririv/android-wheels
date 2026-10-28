@@ -108,6 +108,8 @@ jobs:
           python -m venv "$RUNNER_TEMP/chaquopy-build-env"
           source "$RUNNER_TEMP/chaquopy-build-env/bin/activate"
           python -m pip install -r chaquopy/server/pypi/requirements.txt
+          python -B -m scripts.tooling requirements build --output "$RUNNER_TEMP/build-requirements.txt"
+          python -m pip install -r "$RUNNER_TEMP/build-requirements.txt"
           python -B -m scripts.build.build_chaquopy_wheel
 
       - name: Validate wheel and record build provenance

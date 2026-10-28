@@ -26,6 +26,7 @@ SHARED_FILES = {
     "scripts/tooling.py",
     ".github/workflows/build-wheels.yml",
     ".github/workflows/build-android-wheel-dispatch.yml",
+    ".github/workflows/build-wheel-batch.yml",
 }
 SHARED_PREFIXES = (
     "scripts/build/",

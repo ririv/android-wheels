@@ -1,106 +1,106 @@
-"""Build pre-3.13 Android wheels with Chaquopy's PEP 517 build tool."""
+"""Build pre-3.13 Android wheels using Chaquopy's prepared PEP 517 environment."""
 
 import os
-import re
-import shutil
-import subprocess
 import sys
 import tempfile
+import tomllib
 from pathlib import Path
 
 import yaml
 from build.util import project_wheel_metadata
+from packaging.requirements import Requirement
 
 from scripts.build.android_python import (
     PYTHON_ARCHIVES,
-    AndroidABI,
     ChaquopyArchive,
-    PyO3ConfigRuntime,
-    PythonVersion,
     download_archive,
-    setup_python_cross_build,
 )
+from scripts.build.build_android_wheel import process_wheel
+from scripts.build.chaquopy_adapter import prepare_builder
+from scripts.build.repair_android_wheel import repair
+from scripts.pipeline.model import SdistSource, load_plan
 
 
 def main() -> None:
-    version = PythonVersion(os.environ["TARGET_PYTHON_VERSION"])
-    abi = AndroidABI(os.environ["TARGET_ABI"])
-    source = PYTHON_ARCHIVES[version]
-    if not isinstance(source, ChaquopyArchive):
-        raise TypeError(f"Python {version} 应使用现代 Android 构建流程")
-
     workspace = Path.cwd()
+    target = load_plan(workspace / "build-plan.json").target(os.environ["ARTIFACT"])
+    version, abi = target.python, target.abi
+    runtime = PYTHON_ARCHIVES[version]
+    if not isinstance(runtime, ChaquopyArchive):
+        raise TypeError(f"Python {version} 应使用现代 Android 构建流程")
     chaquopy = workspace / "chaquopy"
-    package_dir = os.environ["PROJECT_DIR"]
-    project = workspace / "library-source" / package_dir
-    pypi_dir = chaquopy / "server" / "pypi"
-    target_dir = (
-        chaquopy / "maven" / "com" / "chaquo" / "python" / "target" / source.release
-    )
-    download_archive(source.url(abi), target_dir)
-
-    # Chaquopy 的构建器按目标版本查找 pythonX.Y，驱动脚本使用自身虚拟环境。
+    project = workspace / "library-source" / target.source.directory
+    pypi_dir = chaquopy / "server/pypi"
+    target_dir = chaquopy / "maven/com/chaquo/python/target" / runtime.release
+    download_archive(runtime.url(abi), target_dir)
     host_python = Path(os.environ["HOST_PYTHON"])
-    env = os.environ.copy()
-    env["PATH"] = os.pathsep.join(
-        [str(Path(sys.executable).parent), str(host_python.parent), env["PATH"]]
+    os.environ["PATH"] = os.pathsep.join(
+        [str(Path(sys.executable).parent), str(host_python.parent), os.environ["PATH"]]
     )
 
-    # 元数据遵循项目本身的构建后端，不能从 Git 标签猜测包版本。
-    metadata = project_wheel_metadata(str(project), isolated=True)
+    if isinstance(target.source, SdistSource):
+        name, version_string = target.source.package, target.source.version
+    else:
+        metadata = project_wheel_metadata(str(project), isolated=True)
+        name, version_string = metadata["Name"], metadata["Version"]
+    metadata_path = project / "pyproject.toml"
+    requirements = (
+        tomllib.loads(metadata_path.read_text())
+        .get("build-system", {})
+        .get("requires", [])
+        if metadata_path.is_file()
+        else []
+    )
+    rust = any(Requirement(r).name == "setuptools-rust" for r in requirements)
     recipe = {
-        "package": {"name": metadata["Name"], "version": metadata["Version"]},
+        "package": {"name": name, "version": version_string},
         "source": {"path": str(project)},
-        "requirements": {"host": ["python"], "build": []},
+        "requirements": {"host": ["python"], "build": ["rust"] if rust else []},
         "build": {"script_env": []},
     }
-    if (project / "Cargo.toml").is_file():
-        runtime = setup_python_cross_build(
-            Path(os.environ["RUNNER_TEMP"]), version, abi.triplet
-        )
-        match runtime:
-            case PyO3ConfigRuntime(config_file=config_file):
-                recipe["requirements"]["build"].append("rust")
-                recipe["build"]["script_env"].append(f"PYO3_CONFIG_FILE={config_file}")
-            case _:
-                raise TypeError("旧版 Chaquopy 构建需要显式 PyO3 配置")
-
-    # compiler-wrapper 只允许 Chaquopy server 目录内的头文件及库路径。
+    # compiler-wrapper 只接受 Chaquopy server 目录内的依赖路径。
     with tempfile.TemporaryDirectory(
         prefix="android-wheel-recipe-", dir=pypi_dir
     ) as recipe_dir:
         (Path(recipe_dir) / "meta.yaml").write_text(
             yaml.safe_dump(recipe), encoding="utf-8"
         )
-        subprocess.run(
-            [
-                sys.executable,
-                str(pypi_dir / "build-wheel.py"),
-                "--python",
+        builder = prepare_builder(pypi_dir, target)
+        sys.argv = [
+            str(pypi_dir / "build-wheel.py"),
+            "--no-build",
+            "--python",
+            version.value,
+            "--abi",
+            abi.value,
+            "--api-level",
+            str(target.api),
+            recipe_dir,
+        ]
+        builder.main()
+        with builder.env_vars():
+            builder.create_dummy_libs()
+            wheel = Path(builder.build_wheel()).resolve()
+            wheel = process_wheel(
+                wheel.parent,
                 version.value,
-                "--abi",
+                str(target.api),
                 abi.value,
-                "--api-level",
-                os.environ["ANDROID_API"],
-                recipe_dir,
-            ],
-            env=env,
-            check=True,
-        )
-
-    distribution = re.sub(r"[-_.]+", "-", metadata["Name"]).lower()
-    python_tag = f"cp{version.value.replace('.', '')}"
-    platform_tag = f"android_{os.environ['ANDROID_API']}_{abi.value.replace('-', '_')}"
-    wheels = list(
-        (pypi_dir / "dist" / distribution).glob(
-            f"*-{python_tag}-{python_tag}-{platform_tag}.whl"
-        )
-    )
-    if len(wheels) != 1:
-        raise ValueError(f"预期只生成一个 wheel，实际找到：{wheels}")
-    output_dir = workspace / "output"
-    output_dir.mkdir(exist_ok=True)
-    shutil.copy2(wheels[0], output_dir / wheels[0].name)
+                wheel.parent / "tagged",
+            )
+            ndk = Path(os.environ["ANDROID_NDK"])
+            libraries = (
+                ndk
+                / "toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib"
+                / abi.triplet
+            )
+            repair(
+                str(wheel),
+                str(workspace / "output"),
+                os.pathsep.join(
+                    [str(Path(builder.host_env) / "chaquopy/lib"), str(libraries)]
+                ),
+            )
 
 
 if __name__ == "__main__":

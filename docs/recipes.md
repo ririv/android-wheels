@@ -20,6 +20,12 @@ recipes/*.toml
 内容变化时触发一次索引部署，再事件通知旧索引
 ```
 
+默认请求 Python 3.10–3.15，不切换旧包版本。规划器从固定 Git 提交的项目元数据或固定 sdist 的 `PKG-INFO` 读取 `Requires-Python`，不满足的版本记录在 `build-plan.json` 的 `skipped` 中。没有声明上限不代表已经验证 3.15：需要实际构建验证，编译失败仍然失败，不自动忽略或降级。
+
+统一计划按最多 96 个目标分批，每批再展开独立任务，避开单个 Actions 矩阵 256 个任务和输出大小限制。批次全部并行，发布在所有批次成功后进行。
+
+稳定 ABI（`abi3`）与纯 Python wheel 跨目标重建时，使用构建号区分文件名：例如 `310`、`315`；纯 Python 产物再包含目标架构。ABI 标签保持上游真实兼容范围，来源清单保留实际构建的 Python 版本。
+
 矩阵设置 `fail-fast: false`，一个目标失败不会取消其他编译。发布要求本次计划的全部目标成功、产物齐全且校验通过；不会把不完整构建当成成功发布。成功目标的 Actions 产物仍保留，可以重新运行失败任务。实际并发数受 GitHub runner 和账户配额限制。
 
 ## TOML 格式
@@ -32,7 +38,7 @@ directory = "."
 backend = "maturin"
 
 [android]
-python = ["3.13"]
+python = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
 abis = ["arm64-v8a", "x86_64"]
 api = 24
 ```
@@ -46,7 +52,7 @@ directory = "."
 backend = "setuptools.build_meta"
 
 [android]
-python = ["3.13"]
+python = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
 abis = ["arm64-v8a", "x86_64"]
 api = 24
 ```
@@ -101,10 +107,10 @@ zlib = "enable"
 
 ```toml
 [config-settings]
-"cmake.define.CMAKE_C_STANDARD_LIBRARIES" = "-lpython3.13"
+"cmake.define.CMAKE_C_STANDARD_LIBRARIES" = "-lpython{python}"
 ```
 
-这是后端参数名中的点号，不是 TOML 子表。参数按独立的 `-C key=value` 边界交给后端，不拼接 Shell 命令，空格和特殊字符保持字面含义；键和值写入构建计划与来源清单。当前只接入现代 cibuildwheel；为 maturin 或旧版 Chaquopy 声明这些参数会在规划阶段报错。
+这是后端参数名中的点号，不是 TOML 子表。参数按独立的 `-C key=value` 边界交给后端，不拼接 Shell 命令，空格和特殊字符保持字面含义；键和值写入构建计划与来源清单。cibuildwheel 和 Chaquopy 都把同一组参数传入依赖探测与构建钩子；maturin 尚不接受这项配置。值中的 `{python}` 显式替换成当前目标版本，构建计划记录替换后的字面值，例如 `-lpython3.15`。
 
 需要外部原生库时，在 TOML 顶层声明：
 
@@ -116,7 +122,7 @@ backend = "setuptools.build_meta"
 native-dependencies = ["libffi"]
 
 [android]
-python = ["3.13"]
+python = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
 abis = ["arm64-v8a", "x86_64"]
 api = 24
 ```
@@ -129,7 +135,7 @@ Android 交叉编译的宿主构建钩子使用显式 `/system/bin/sh` 到宿主
 
 所有新构建的 ELF 加载段都必须满足 16 KB 对齐。C/C++ 原生库和 Rust 链接显式设置页大小参数，auditwheel 使用任务临时的 patchelf CLI 适配器保留新增段的对齐；不修改第三方工具源码。发布校验逐个检查 wheel 内的 ELF 加载段，发现 4 KB 段或文件偏移与虚拟地址不匹配时直接失败。[Android 官方说明](https://developer.android.com/guide/practices/page-sizes) 同时要求检查代码中的页大小假设；本仓库目前只完成构建和静态检查，没有设备运行验证。
 
-最终 wheel 的 `.dist-info/native-libraries.json` 记录实际依赖来源，`.dist-info/licenses/native/` 保存许可证；发布阶段核验这些记录与固定配置一致，并照常验证 RECORD 哈希。当前依赖步骤接入 maturin 与现代 cibuildwheel；旧版 Chaquopy 不接受 `native-dependencies`，规划阶段直接报错。
+最终 wheel 的 `.dist-info/native-libraries.json` 记录实际依赖来源，`.dist-info/licenses/native/` 保存许可证；发布阶段核验这些记录与固定配置一致，并照常验证 RECORD 哈希。原生依赖接入三个构建器。旧版 Chaquopy 在建立目标 Python 开发前缀后编译依赖，再执行 PEP 517 依赖探测；最终 wheel 使用共用的 Android repair 与 16 KB 对齐校验。
 
 maturin 构建还会读取原始 `build-system.requires`，在匹配目标版本的宿主 Python 环境安装其构建依赖，继续使用统一固定的 maturin 构建器。驱动 Python 与宿主、目标 Python 分离，保留已有 Python 3.10 构建路径。
 

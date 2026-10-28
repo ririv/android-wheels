@@ -49,8 +49,10 @@ def resolve_source(location: Location, directory: str) -> Source:
     sha = github(f"repos/{repository}/commits/{quote(ref, safe='')}")["sha"]
     path = (project / "pyproject.toml").as_posix()
     contents = github(f"repos/{repository}/contents/{quote(path)}?ref={sha}")
-    backend = backend_from_text(base64.b64decode(contents["content"]).decode("utf-8"))
-    return GitSource(repository, ref, sha, project.as_posix(), backend)
+    text = base64.b64decode(contents["content"]).decode("utf-8")
+    backend = backend_from_text(text)
+    requires_python = tomllib.loads(text).get("project", {}).get("requires-python", "")
+    return GitSource(repository, ref, sha, project.as_posix(), backend, requires_python)
 
 
 def verify_checkout(source: GitSource, checkout: Path) -> None:
@@ -94,6 +96,8 @@ def verify_sdist_project(source: SdistSource, root: Path) -> None:
         or metadata["Version"] != source.version
     ):
         raise ValueError("sdist PKG-INFO 与所选包或版本不一致")
+    if metadata.get("Requires-Python", "") != source.requires_python:
+        raise ValueError("sdist Requires-Python 与构建计划不一致")
 
 
 def resolve_sdist(
@@ -129,6 +133,9 @@ def resolve_sdist(
             filename,
             path.as_posix(),
             reader(root / path),
+            BytesParser()
+            .parsebytes((root / "PKG-INFO").read_bytes())
+            .get("Requires-Python", ""),
         )
         verify_sdist_project(source, root)
     return source
