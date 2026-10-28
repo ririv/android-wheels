@@ -29,6 +29,7 @@ class Backend(StrEnum):
     HATCHLING = "hatchling.build"
     SETUPTOOLS_LEGACY = "setuptools.build_meta:__legacy__"
     PILLOW = "backend"
+    SCIKIT_BUILD = "scikit_build_core.build"
 
 
 class Publication(StrEnum):

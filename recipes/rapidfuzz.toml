@@ -1,0 +1,12 @@
+name = "rapidfuzz"
+pypi-version = "3.14.6"
+directory = "."
+backend = "scikit_build_core.build"
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24
+
+[environment]
+RAPIDFUZZ_BUILD_EXTENSION = "1"

@@ -1,0 +1,12 @@
+name = "lz4"
+pypi-version = "4.4.5"
+directory = "."
+backend = "setuptools.build_meta"
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24
+
+[environment]
+PYLZ4_USE_SYSTEM_LZ4 = "False"
