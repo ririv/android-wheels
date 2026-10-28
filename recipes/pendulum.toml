@@ -1,0 +1,9 @@
+name = "pendulum"
+pypi-version = "3.3.0"
+directory = "."
+backend = "maturin"
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24
