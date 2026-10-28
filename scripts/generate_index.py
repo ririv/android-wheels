@@ -48,6 +48,7 @@ def generate_root_html_lines(packages):
     """Generator for the root index.html content."""
     yield "<!DOCTYPE html>\n"
     yield "<html>\n"
+    yield "<head><meta charset=\"utf-8\"><title>Py Extra Wheels</title></head>\n"
     yield "<body>\n"
     yield "  <table>\n"
     for name in sorted(packages.keys()):
