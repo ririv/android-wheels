@@ -1,19 +1,15 @@
 """Verify recipe boundaries and parallel build planning."""
 
-import json
 import subprocess
-import sys
 import tempfile
 import unittest
-from dataclasses import replace
 from pathlib import Path
 
-from scripts.build.android_python import AndroidABI, PythonVersion
+from scripts.build.android_python import PythonVersion
 from scripts.recipes.load import load_recipe, load_recipes
 from scripts.recipes.model import (
     AllRecipes,
     Choices,
-    Publication,
     RecipeBuilds,
     RefBuild,
     SelectedPython,
@@ -21,12 +17,9 @@ from scripts.recipes.model import (
 )
 from scripts.recipes.plan import (
     affected_recipes,
-    android_matrix,
     build_jobs,
     changed_paths,
-    matrix,
     select_recipes,
-    write_outputs,
 )
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -59,10 +52,8 @@ class RecipeTests(unittest.TestCase):
             self.recipes, SelectedRecipes(Choices("pydantic-core", ("xxhash",)))
         )
         jobs = build_jobs(RecipeBuilds(selected))
-        rows = matrix(jobs, Publication.PUBLISH)["include"]
-        self.assertEqual([row["name"] for row in rows], ["pydantic-core", "xxhash"])
-        self.assertTrue(all(row["python"] == "3.13" for row in rows))
-        self.assertTrue(all(row["publication"] == "publish" for row in rows))
+        self.assertEqual([job.recipe.name for job in jobs], ["pydantic-core", "xxhash"])
+        self.assertTrue(all(job.python == PythonVersion.PY313 for job in jobs))
         self.assertEqual(
             len(build_jobs(RecipeBuilds(select_recipes(self.recipes, AllRecipes())))),
             10,
@@ -78,108 +69,15 @@ class RecipeTests(unittest.TestCase):
                 SelectedPython(Choices(PythonVersion.PY310, (PythonVersion.PY313,))),
             )
         )
-        rows = matrix(jobs, Publication.BUILD)["include"]
-        artifact_names = [
-            target["artifact_name"]
-            for job in jobs
-            for target in android_matrix(
-                job.recipe.android.abis, job.recipe.name, job.python
-            )["include"]
-        ]
-        self.assertEqual(len(rows), 4)
-        self.assertEqual(len(artifact_names), 8)
-        self.assertEqual(len(set(artifact_names)), 8)
-        self.assertTrue(all(row["publication"] == "build" for row in rows))
+        self.assertEqual(len(jobs), 4)
+        self.assertEqual(
+            {job.python for job in jobs}, {PythonVersion.PY310, PythonVersion.PY313}
+        )
 
     def test_single_recipe_ref_override(self):
         jobs = build_jobs(RefBuild(self.core, "v2.41.5"))
         self.assertEqual(jobs[0].ref, "v2.41.5")
         self.assertEqual(self.core.ref, "main")
-
-    def test_cli_writes_multi_version_plan_and_rejects_ambiguous_ref_override(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            output = Path(tmp) / "output"
-            base = [
-                sys.executable,
-                "-B",
-                "-m",
-                "scripts.recipes",
-                "plan",
-                "--github-output",
-                str(output),
-            ]
-            subprocess.run(
-                [
-                    *base,
-                    "--recipes",
-                    "pydantic-core",
-                    "--python-versions",
-                    "3.10,3.13",
-                    "--version-tag",
-                    "v2.41.5",
-                    "--publication",
-                    "build",
-                ],
-                cwd=ROOT,
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            values = dict(
-                line.split("=", 1) for line in output.read_text().splitlines()
-            )
-            rows = json.loads(values["matrix"])["include"]
-            self.assertEqual(values["has_jobs"], "true")
-            self.assertEqual([row["python"] for row in rows], ["3.10", "3.13"])
-            self.assertTrue(
-                all(
-                    row["ref"] == "v2.41.5" and row["publication"] == "build"
-                    for row in rows
-                )
-            )
-            output.unlink()
-            result = subprocess.run(
-                [
-                    *base,
-                    "--recipes",
-                    "pydantic-core,xxhash",
-                    "--version-tag",
-                    "v2.41.5",
-                ],
-                cwd=ROOT,
-                capture_output=True,
-                text=True,
-            )
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn("只选择一个", result.stderr)
-            self.assertFalse(output.exists())
-
-    def test_initial_push_plans_all_existing_recipes(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            output = Path(tmp) / "output"
-            subprocess.run(
-                [
-                    sys.executable,
-                    "-B",
-                    "-m",
-                    "scripts.recipes",
-                    "plan-changes",
-                    "--before",
-                    "0" * 40,
-                    "--after",
-                    "a" * 40,
-                    "--github-output",
-                    str(output),
-                ],
-                cwd=ROOT,
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            values = dict(
-                line.split("=", 1) for line in output.read_text().splitlines()
-            )
-            self.assertEqual(len(json.loads(values["matrix"])["include"]), 10)
 
     def test_single_recipe_change_selects_only_that_package(self):
         selected = affected_recipes(
@@ -199,51 +97,6 @@ class RecipeTests(unittest.TestCase):
         ]:
             with self.subTest(path=path):
                 self.assertEqual(affected_recipes(self.recipes, (path,)), self.recipes)
-
-    def test_targets_derive_cibuildwheel_names_and_rust_triplets(self):
-        target = android_matrix(
-            Choices(AndroidABI.X86_64), "pydantic-core", PythonVersion.PY310
-        )["include"]
-        self.assertEqual(
-            target,
-            [
-                {
-                    "abi": "x86_64",
-                    "cibw_arch": "x86_64",
-                    "target": "x86_64-linux-android",
-                    "artifact_name": "pydantic-core-android-3.10-wheel-x86_64",
-                }
-            ],
-        )
-        target = android_matrix(
-            Choices(AndroidABI.ARM64), "pydantic-core", PythonVersion.PY310
-        )["include"][0]
-        self.assertEqual(target["abi"], "arm64-v8a")
-        self.assertEqual(target["cibw_arch"], "arm64_v8a")
-        self.assertEqual(target["target"], "aarch64-linux-android")
-
-    def test_output_empty_plan_skips_matrix_job(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            output = Path(tmp) / "output"
-            write_outputs(output, matrix((), Publication.PUBLISH))
-            values = dict(
-                line.split("=", 1) for line in output.read_text().splitlines()
-            )
-            self.assertEqual(values["has_jobs"], "false")
-            self.assertEqual(json.loads(values["matrix"]), {"include": []})
-
-    def test_configured_python_and_abi_subsets_are_preserved(self):
-        target = replace(
-            self.core.android,
-            python=Choices(PythonVersion.PY310),
-            abis=Choices(AndroidABI.ARM64),
-        )
-        recipe = replace(self.core, android=target)
-        row = matrix(build_jobs(RecipeBuilds((recipe,))), Publication.PUBLISH)[
-            "include"
-        ][0]
-        self.assertEqual(row["python"], "3.10")
-        self.assertEqual(json.loads(row["abis"]), ["arm64-v8a"])
 
     def test_toml_boundary_rejects_unknown_missing_and_invalid_fields(self):
         original = (ROOT / "recipes/pydantic-core.toml").read_text()

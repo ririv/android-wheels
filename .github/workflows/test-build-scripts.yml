@@ -9,7 +9,6 @@ on:
       - '.github/**'
       - 'pyproject.toml'
       - 'uv.lock'
-      - 'requirements/**'
   pull_request:
     paths:
       - 'scripts/**'
@@ -17,7 +16,6 @@ on:
       - '.github/**'
       - 'pyproject.toml'
       - 'uv.lock'
-      - 'requirements/**'
 
 permissions:
   contents: read
@@ -31,18 +29,21 @@ jobs:
         python: ['3.11', '3.15']
     steps:
       - uses: actions/checkout@v4
+      - name: Read central tool settings
+        id: tools
+        run: python3 -B -m scripts.tooling outputs --github-output "$GITHUB_OUTPUT"
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
       - uses: astral-sh/setup-uv@v6
         with:
-          version: '0.8.4'
+          version: ${{ steps.tools.outputs.uv_version }}
       - name: Install locked development tools
         run: uv sync --locked --no-install-project --python "$(command -v python)"
       - name: Check Python and TOML
         run: |
-          uv run --no-sync ruff check scripts/pipeline scripts/recipes scripts/index scripts/generate_index.py
-          uv run --no-sync ruff format --check scripts/pipeline scripts/recipes scripts/index scripts/generate_index.py
+          uv run --no-sync ruff check scripts
+          uv run --no-sync ruff format --check scripts
           uv run --no-sync python -B -m scripts.recipes validate
       - name: Test pipeline components
         run: |
@@ -53,8 +54,8 @@ jobs:
       - name: Checkout pinned Chaquopy build tools
         uses: actions/checkout@v4
         with:
-          repository: chaquo/chaquopy
-          ref: 6e365e30f7199468d9fffe628fe9f0a7658fdbb3
+          repository: ${{ steps.tools.outputs.chaquopy_repository }}
+          ref: ${{ steps.tools.outputs.chaquopy_revision }}
           path: chaquopy
           persist-credentials: false
       - name: Check build-tool patch
@@ -63,5 +64,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Read central tool settings
+        id: tools
+        run: python3 -B -m scripts.tooling outputs --github-output "$GITHUB_OUTPUT"
       - name: Check Actions workflows
-        run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
+        env:
+          ACTIONLINT_VERSION: ${{ steps.tools.outputs.actionlint_version }}
+        run: go run "github.com/rhysd/actionlint/cmd/actionlint@$ACTIONLINT_VERSION"

@@ -2,7 +2,6 @@
 
 import io
 import os
-import sys
 import tarfile
 import tempfile
 import tomllib
@@ -12,9 +11,7 @@ import zipfile
 from pathlib import Path
 from unittest.mock import patch
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from android_python import (
+from scripts.build.android_python import (
     PYTHON_ARCHIVES,
     AndroidABI,
     ChaquopyArchive,
@@ -25,7 +22,7 @@ from android_python import (
     download_archive,
     setup_python_cross_build,
 )
-from build_android_wheel import (
+from scripts.build.build_android_wheel import (
     create_cargo_config,
     prepare_build_environment,
     process_wheel,
@@ -60,7 +57,7 @@ class AndroidPythonTests(unittest.TestCase):
 
             locations = set()
             with patch(
-                "android_python.download_archive",
+                "scripts.build.android_python.download_archive",
                 side_effect=lambda url, _: archives[url],
             ):
                 for version in PythonVersion:
@@ -112,7 +109,8 @@ class AndroidPythonTests(unittest.TestCase):
             url = PYTHON_ARCHIVES[PythonVersion.PY311].url(AndroidABI.ARM64)
             error = urllib.error.HTTPError(url, 404, "not found", {}, None)
             with patch(
-                "android_python.urllib.request.urlretrieve", side_effect=error
+                "scripts.build.android_python.urllib.request.urlretrieve",
+                side_effect=error,
             ) as download:
                 with self.assertRaises(urllib.error.HTTPError):
                     setup_python_cross_build(root, "3.11", AndroidABI.ARM64.triplet)
@@ -129,7 +127,7 @@ class AndroidPythonTests(unittest.TestCase):
                 raise OSError("下载中断")
 
             with patch(
-                "android_python.urllib.request.urlretrieve",
+                "scripts.build.android_python.urllib.request.urlretrieve",
                 side_effect=partial_download,
             ):
                 with self.assertRaises(OSError):
@@ -146,7 +144,9 @@ class AndroidPythonTests(unittest.TestCase):
             (runtime_dir / "incomplete").touch()
             with zipfile.ZipFile(archive, "w") as zf:
                 zf.writestr("jniLibs/arm64-v8a/libpython3.11.so", b"\x7fELF")
-            with patch("android_python.download_archive", return_value=archive):
+            with patch(
+                "scripts.build.android_python.download_archive", return_value=archive
+            ):
                 setup_python_cross_build(root, "3.11", AndroidABI.ARM64.triplet)
             self.assertFalse((runtime_dir / "incomplete").exists())
             self.assertTrue((runtime_dir / ".complete").is_file())

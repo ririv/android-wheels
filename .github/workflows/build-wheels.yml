@@ -10,7 +10,11 @@ on:
       - 'scripts/build/**'
       - 'scripts/pipeline/**'
       - '.github/actions/**'
-      - 'requirements/build.txt'
+      - 'scripts/tooling.py'
+      - 'pyproject.toml'
+      - '!scripts/pipeline/publish.py'
+      - '!scripts/pipeline/notifications.py'
+      - '!.github/actions/publish-wheels/**'
       - '!scripts/**/tests/**'
       - '!scripts/**/*.pyc'
       - '.github/workflows/build-wheels.yml'
@@ -50,9 +54,7 @@ jobs:
       publication: ${{ steps.plan.outputs.publication }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
+      - uses: ./.github/actions/setup-tools
       - name: Plan pinned independent targets
         id: plan
         env:
@@ -84,7 +86,5 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
+      - uses: ./.github/actions/setup-tools
       - uses: ./.github/actions/publish-wheels

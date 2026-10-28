@@ -4,7 +4,20 @@ version = "0.1.0"
 requires-python = ">=3.11"
 
 [dependency-groups]
-dev = ["tomli-w==1.2.0", "wheel==0.45.1", "ruff==0.14.0"]
+toml = ["tomli-w==1.2.0"]
+shared = [{include-group = "toml"}, "wheel==0.45.1"]
+build = [{include-group = "shared"}, "maturin==1.15.0"]
+dev = [{include-group = "shared"}, "ruff==0.14.0"]
+
+[tool.py-extra-wheels]
+driver-python = "3.12"
+chaquopy-repository = "chaquo/chaquopy"
+chaquopy-revision = "6e365e30f7199468d9fffe628fe9f0a7658fdbb3"
+uv-version = "0.8.4"
+actionlint-version = "1.7.7"
+index-url = "https://ririv.github.io/py-extra-wheels"
+legacy-index-url = "https://ririv.github.io/android-wheels"
+legacy-repository = "ririv/ririv.github.io"
 
 [tool.ruff]
 target-version = "py311"

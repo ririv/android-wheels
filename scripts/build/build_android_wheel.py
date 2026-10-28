@@ -10,14 +10,15 @@ from pathlib import Path
 from shutil import which
 
 import tomli_w
-from android_python import (
+from wheel.cli.tags import tags
+
+from scripts.build.android_python import (
     AndroidABI,
     PyO3ConfigRuntime,
     PythonRuntime,
     SysconfigRuntime,
     setup_python_cross_build,
 )
-from wheel.cli.tags import tags
 
 
 def create_cargo_config(
@@ -233,7 +234,7 @@ def process_wheel(
 def main():
     # 读取环境变量（与现有 CI 对齐）
     library_name = os.environ["LIBRARY_NAME"]
-    source_dir = os.environ.get("SOURCE_DIR", ".")
+    source_dir = os.environ["PROJECT_DIR"]
     target_python_version = os.environ["TARGET_PYTHON_VERSION"]  # e.g. "3.13"
     android_api = os.environ["ANDROID_API"]  # e.g. "24"
     abi = AndroidABI(os.environ["TARGET_ABI"])

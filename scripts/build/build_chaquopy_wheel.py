@@ -9,7 +9,9 @@ import tempfile
 from pathlib import Path
 
 import yaml
-from android_python import (
+from build.util import project_wheel_metadata
+
+from scripts.build.android_python import (
     PYTHON_ARCHIVES,
     AndroidABI,
     ChaquopyArchive,
@@ -18,7 +20,6 @@ from android_python import (
     download_archive,
     setup_python_cross_build,
 )
-from build.util import project_wheel_metadata
 
 
 def main() -> None:
@@ -30,7 +31,7 @@ def main() -> None:
 
     workspace = Path.cwd()
     chaquopy = workspace / "chaquopy"
-    package_dir = os.environ.get("PACKAGE_DIR") or "."
+    package_dir = os.environ["PROJECT_DIR"]
     project = workspace / "library-source" / package_dir
     pypi_dir = chaquopy / "server" / "pypi"
     target_dir = (

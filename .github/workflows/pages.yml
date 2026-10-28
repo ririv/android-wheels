@@ -9,6 +9,7 @@ on:
       # Trigger when the index script on main changes, or when any wheel on wheels changes.
       - 'scripts/generate_index.py'
       - 'scripts/index/**'
+      - 'scripts/pipeline/notifications.py'
       - '!scripts/index/tests/**'
       - '.github/workflows/pages.yml'
       - '**/*.whl'
@@ -39,9 +40,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
+      - uses: ./.github/actions/setup-tools
       - name: Checkout wheel metadata without wheel binaries
         uses: actions/checkout@v4
         with:
@@ -56,14 +55,6 @@ jobs:
           WHEEL_REPOSITORY: ${{ github.repository }}
         run: python -B -m scripts.generate_index --checkout wheel-store --repository "$WHEEL_REPOSITORY" --output public
 
-      - name: Record published index tree
-        id: previous_index
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          INDEX_TREE=$(gh api "repos/$GITHUB_REPOSITORY/commits/gh-pages" --jq '.commit.tree.sha')
-          echo "tree=$INDEX_TREE" >> "$GITHUB_OUTPUT"
-
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -71,17 +62,8 @@ jobs:
           publish_dir: public
           force_orphan: true
 
-      - name: Read published index tree
-        id: published_index
+      - name: Ensure compatibility index is synchronized
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          INDEX_TREE=$(gh api "repos/$GITHUB_REPOSITORY/commits/gh-pages" --jq '.commit.tree.sha')
-          echo "tree=$INDEX_TREE" >> "$GITHUB_OUTPUT"
-
-      - name: Notify compatibility index of changed content
-        if: steps.previous_index.outputs.tree != steps.published_index.outputs.tree
-        env:
-          GH_TOKEN: ${{ secrets.LEGACY_INDEX_DISPATCH_TOKEN }}
-        run: |
-          gh workflow run sync-wheel-index.yml --repo ririv/ririv.github.io --ref main
+          LEGACY_INDEX_DISPATCH_TOKEN: ${{ secrets.LEGACY_INDEX_DISPATCH_TOKEN }}
+        run: python -B -m scripts.pipeline notify-legacy --repository "$GITHUB_REPOSITORY"

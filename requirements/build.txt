@@ -1,3 +1,0 @@
-maturin==1.15.0
-tomli-w==1.2.0
-wheel==0.45.1

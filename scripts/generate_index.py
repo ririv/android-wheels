@@ -1,6 +1,8 @@
 """Generate the wheel index from an explicit repository checkout."""
 
 import argparse
+import json
+import subprocess
 from pathlib import Path
 
 from scripts.build.normalize_repo_input import normalize_repo_input
@@ -15,6 +17,12 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     render(read_wheels(args.checkout), args.repository, args.output)
+    tree = subprocess.check_output(
+        ["git", "rev-parse", "HEAD^{tree}"], cwd=args.checkout, text=True
+    ).strip()
+    (args.output / "index-state.json").write_text(
+        json.dumps({"tree": tree}) + "\n", encoding="utf-8"
+    )
 
 
 if __name__ == "__main__":

@@ -17,10 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       LIBRARY_NAME: ${{ fromJSON(inputs.target).library }}
-      GIT_REPOSITORY: ${{ fromJSON(inputs.target).source.repository }}
-      VERSION_TAG: ${{ fromJSON(inputs.target).source.sha }}
-      SOURCE_DIR: ${{ fromJSON(inputs.target).source.directory }}
-      PACKAGE_DIR: ${{ fromJSON(inputs.target).source.directory }}
+      PROJECT_DIR: ${{ fromJSON(inputs.target).source.directory }}
       TARGET_PYTHON_VERSION: ${{ fromJSON(inputs.target).python }}
       ANDROID_API: ${{ fromJSON(inputs.target).api }}
       TARGET_ABI: ${{ fromJSON(inputs.target).abi }}
@@ -28,9 +25,8 @@ jobs:
       WHEEL_DIRECTORY: ${{ fromJSON(inputs.target).builder == 'cibuildwheel' && 'wheelhouse' || 'output' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
+      - uses: ./.github/actions/setup-tools
+        id: tools
       - uses: ./.github/actions/prepare-source
         with:
           target: ${{ inputs.target }}
@@ -49,8 +45,9 @@ jobs:
         run: |
           python -m venv "$RUNNER_TEMP/android-wheel-build-env"
           source "$RUNNER_TEMP/android-wheel-build-env/bin/activate"
-          python -m pip install -r requirements/build.txt
-          python scripts/build/build_android_wheel.py
+          python -B -m scripts.tooling requirements build --output "$RUNNER_TEMP/build-requirements.txt"
+          python -m pip install -r "$RUNNER_TEMP/build-requirements.txt"
+          python -B -m scripts.build.build_android_wheel
 
       - name: Install Rust target for cibuildwheel
         if: fromJSON(inputs.target).builder == 'cibuildwheel'
@@ -74,15 +71,16 @@ jobs:
           CIBW_TEST_SKIP: '*'
           CIBW_REPAIR_WHEEL_COMMAND_ANDROID: 'python "$GITHUB_WORKSPACE/scripts/build/repair_android_wheel.py" {wheel} {dest_dir} {ldpaths}'
           CIBW_BEFORE_BUILD: |
-            python -m pip install 'tomli-w==1.2.0'
+            python "$GITHUB_WORKSPACE/scripts/tooling.py" requirements toml --output "$RUNNER_TEMP/cibw-requirements.txt"
+            python -m pip install -r "$RUNNER_TEMP/cibw-requirements.txt"
             python "$GITHUB_WORKSPACE/scripts/pipeline/cargo_env.py" "{package}" "$VIRTUAL_ENV"
 
       - name: Checkout Chaquopy build tools
         if: fromJSON(inputs.target).builder == 'chaquopy'
         uses: actions/checkout@v4
         with:
-          repository: chaquo/chaquopy
-          ref: 6e365e30f7199468d9fffe628fe9f0a7658fdbb3
+          repository: ${{ steps.tools.outputs.chaquopy_repository }}
+          ref: ${{ steps.tools.outputs.chaquopy_revision }}
           path: chaquopy
           persist-credentials: false
       - name: Build with Chaquopy
@@ -96,7 +94,7 @@ jobs:
           python -m venv "$RUNNER_TEMP/chaquopy-build-env"
           source "$RUNNER_TEMP/chaquopy-build-env/bin/activate"
           python -m pip install -r chaquopy/server/pypi/requirements.txt
-          python scripts/build/build_chaquopy_wheel.py
+          python -B -m scripts.build.build_chaquopy_wheel
 
       - name: Validate wheel and record build provenance
         run: python -B -m scripts.pipeline record --artifact "$ARTIFACT" --directory "$WHEEL_DIRECTORY"

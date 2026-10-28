@@ -3,7 +3,6 @@
 import subprocess
 import tempfile
 import unittest
-import zipfile
 from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
@@ -18,6 +17,7 @@ from scripts.pipeline.source import backend_at, verify_checkout
 from scripts.recipes.load import load_recipes
 from scripts.recipes.model import Backend, Publication
 from scripts.recipes.plan import affected_recipes
+from scripts.testing.wheels import write_wheel
 
 ROOT = Path(__file__).resolve().parents[3]
 SOURCE = Source("pydantic/pydantic-core", "v2.41.5", "a" * 40, ".", Backend.MATURIN)
@@ -33,17 +33,67 @@ def make_wheel(
 ):
     directory.mkdir(parents=True, exist_ok=True)
     path = directory / f"pydantic_core-2.41.5-{python}-{abi}-{platform}.whl"
-    with zipfile.ZipFile(path, "w") as archive:
-        archive.writestr(
-            "pydantic_core-2.41.5.dist-info/METADATA",
-            "Name: pydantic-core\nVersion: 2.41.5\n",
-        )
-        archive.writestr("pydantic_core/__init__.py", "")
+    prefix = "pydantic_core-2.41.5.dist-info/"
+    write_wheel(
+        path,
+        {
+            prefix + "METADATA": b"Name: pydantic-core\nVersion: 2.41.5\n",
+            prefix
+            + "WHEEL": f"Wheel-Version: 1.0\nTag: {python}-{abi}-{platform}\n".encode(),
+            "pydantic_core/__init__.py": b"",
+        },
+    )
     record(directory, target)
     return path
 
 
 class PipelineTests(unittest.TestCase):
+    def test_initial_push_uses_the_production_flat_plan(self):
+        recipes = load_recipes(ROOT / "recipes")
+        by_source = {
+            (r.repository, r.ref, r.directory): Source(
+                r.repository, r.ref, "a" * 40, r.directory, r.backend
+            )
+            for r in recipes
+        }
+        with patch(
+            "scripts.pipeline.planning.resolve_source",
+            side_effect=lambda *key: by_source[key],
+        ):
+            plan = recipe_plan("push", {"before": "0" * 40}, ROOT)
+        self.assertEqual(len(plan.targets), 20)
+        self.assertEqual(len({t.artifact for t in plan.targets}), 20)
+
+    def test_push_of_publication_code_does_not_resolve_or_compile_sources(self):
+        with (
+            patch("scripts.pipeline.planning.subprocess.run"),
+            patch(
+                "scripts.pipeline.planning.changed_paths",
+                return_value=(
+                    "scripts/pipeline/publish.py",
+                    ".github/actions/publish-wheels/action.yml",
+                ),
+            ),
+            patch("scripts.pipeline.planning.resolve_source") as resolve,
+        ):
+            plan = recipe_plan("push", {"before": "a" * 40, "after": "b" * 40}, ROOT)
+        self.assertEqual(plan.targets, ())
+        resolve.assert_not_called()
+
+    def test_ambiguous_ref_override_fails_before_source_resolution(self):
+        event = {
+            "inputs": {
+                "recipes": "pydantic-core,xxhash",
+                "python_versions": "recipe",
+                "version_tag": "v1",
+                "publication": "build",
+            }
+        }
+        with patch("scripts.pipeline.planning.resolve_source") as resolve:
+            with self.assertRaisesRegex(ValueError, "只选择一个"):
+                recipe_plan("workflow_dispatch", event, ROOT)
+        resolve.assert_not_called()
+
     def test_multi_python_plan_resolves_each_source_once_and_keeps_flat_parallel_targets(
         self,
     ):
@@ -89,6 +139,9 @@ class PipelineTests(unittest.TestCase):
                     "scripts/build/tests/test_android_python.py",
                     "scripts/pipeline/tests/test_pipeline.py",
                     "scripts/build/__pycache__/x.pyc",
+                    "scripts/pipeline/publish.py",
+                    "scripts/pipeline/notifications.py",
+                    ".github/actions/publish-wheels/action.yml",
                 ),
             ),
             (),

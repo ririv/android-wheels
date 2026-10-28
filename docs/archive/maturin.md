@@ -1,3 +1,5 @@
+> 历史排障资料，仅供背景参考。当前构建方式以 [构建流水线](../pipeline.md) 为准。
+
 https://github.com/PyO3/maturin/blob/d51f86d90946e5b28fe84a9495e5b20a7588a1ae/src/compile.rs
 https://github.com/PyO3/maturin/blob/d51f86d90946e5b28fe84a9495e5b20a7588a1ae/src/cross_compile.rs
 https://github.com/PyO3/maturin/blob/d51f86d90946e5b28fe84a9495e5b20a7588a1ae/src/build_options.rs

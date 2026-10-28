@@ -50,9 +50,7 @@ jobs:
       publication: ${{ steps.plan.outputs.publication }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
+      - uses: ./.github/actions/setup-tools
       - name: Resolve source and plan targets
         id: plan
         env:
@@ -81,7 +79,5 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
+      - uses: ./.github/actions/setup-tools
       - uses: ./.github/actions/publish-wheels

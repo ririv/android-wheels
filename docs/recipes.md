@@ -61,11 +61,11 @@ api = 24
 只有相关文件推送到 `main` 才启动统一构建入口，没有定时扫描。
 
 - 修改某个 TOML，只构建对应的包及其默认目标。
-- 修改共享构建代码、规划代码或统一构建工作流，构建所有现存 recipe，延续原来共享代码变化时全量构建的行为。
+- 修改共享编译代码、源码准备、目标规划或构建工作流，构建所有现存 recipe，延续原来共享代码变化时全量构建的行为。
 - 删除 recipe 不会重新构建已删除的包；仅删除文件时，空矩阵直接跳过构建。
 - 文档变化不会触发 native wheel 构建。
 
-仅修改 `scripts/**/tests/` 不触发 native 构建；修改公共构建依赖清单也会重建全部 recipe。
+仅修改测试、发布模块或通知动作不触发 native 构建；这些变化仍运行 CI。修改公共工具或构建配置会重建全部 recipe。
 
 规划会先校验全部 recipe，再根据 Git diff 选择目标。新增或重命名的 TOML 可以被识别，不依赖 GitHub push 事件里可能被截断的文件列表。
 
@@ -108,9 +108,9 @@ pydantic-core-android-3.13-wheel-arm64-v8a
 pydantic-core-android-3.13-wheel-x86_64
 ```
 
-每个 artifact 包含一个 wheel 和 `manifest.json`，记录固定源码 SHA、目标信息与 wheel SHA-256。统一发布任务按 `build-plan.json` 核验完整产物集合、来源、哈希、文件名、平台、Python/ABI 标签和 METADATA，再用一个提交更新 `wheels` 分支。缺失、多余、错配或冲突的产物会使发布失败；多个目标生成同名且内容不同的 wheel 时也直接失败。
+每个 artifact 包含一个 wheel 和 `manifest.json`，记录固定源码 SHA、目标信息与 wheel SHA-256。统一发布任务按 `build-plan.json` 核验完整产物集合、来源、哈希、文件名、平台、Python/ABI 标签、METADATA、WHEEL 内部标签和每个 RECORD 文件的哈希及大小，再用一个提交更新 `wheels` 分支。缺失、多余、错配或冲突的产物会使发布失败；多个目标生成同名且内容不同的 wheel 时也直接失败。
 
-编译任务只有读权限，写入仓库和触发索引的权限仅授予汇总发布任务。只有 wheel 内容变化才触发索引，`publication=build` 始终跳过发布。
+编译任务只有读权限，写入仓库和触发索引的权限仅授予汇总发布任务。发布后核对下游已发布的 wheels 树，仅在尚未同步时通知；`publication=build` 始终跳过发布。
 
 ## 本地校验
 
@@ -118,13 +118,13 @@ pydantic-core-android-3.13-wheel-x86_64
 uv sync --locked --no-install-project
 uv run python -B -m scripts.recipes validate
 python -B -m unittest discover -s scripts/recipes/tests -v
-python -B -m scripts.recipes plan \
+uv run python -B -m scripts.pipeline plan-local \
   --recipes pydantic-core,xxhash \
   --python-versions 3.10,3.13 \
   --publication build \
   --github-output /tmp/wheel-matrix-output
 ```
 
-规划输出独立任务的 JSON，不在本地编译。运行这些命令的 Python 至少为 3.11，且不需要安装 TOML 第三方库。
+本地规划使用与 Actions 相同的规划器，输出固定源码的独立任务 JSON，不在本地编译。需要已登录的 `gh` 读取上游公开源码信息。`scripts.recipes` 仅保留配置校验入口。运行这些命令的 Python 至少为 3.11，且不需要安装 TOML 第三方库。
 
 整体模块边界、工作流职责与测试方式见 [构建流水线](pipeline.md)。

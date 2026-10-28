@@ -1,0 +1,18 @@
+name: Set up configured build tools
+description: Read central tool settings and select the driver Python
+outputs:
+  chaquopy_repository:
+    description: Configured Chaquopy repository
+    value: ${{ steps.settings.outputs.chaquopy_repository }}
+  chaquopy_revision:
+    description: Pinned Chaquopy revision
+    value: ${{ steps.settings.outputs.chaquopy_revision }}
+runs:
+  using: composite
+  steps:
+    - id: settings
+      shell: bash
+      run: python3 -B -m scripts.tooling outputs --github-output "$GITHUB_OUTPUT"
+    - uses: actions/setup-python@v6
+      with:
+        python-version: ${{ steps.settings.outputs.driver_python }}
