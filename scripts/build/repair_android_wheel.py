@@ -10,12 +10,15 @@ Usage: repair_android_wheel.py <wheel> <dest_dir> <ldpaths>
 """
 
 import os
+import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 import zipfile
 from pathlib import Path
 
+from scripts.build.link_flags import PAGE_SIZE
 from scripts.build.wheel_abi import constrain_abi
 from scripts.build.wheel_native import attach_native_metadata
 
@@ -46,7 +49,24 @@ def repair(wheel: str, dest_dir: str, ldpaths: str) -> None:
             dest_dir,
             wheel,
         ]
-        subprocess.run(cmd, check=True)
+        # auditwheel 的 patchelf 接口未提供页大小参数；固定 CLI 适配器保留新加载段对齐。
+        real_patchelf = shutil.which("patchelf")
+        if real_patchelf is None:
+            raise FileNotFoundError("找不到 patchelf")
+        with tempfile.TemporaryDirectory(prefix="android-patchelf-") as temporary:
+            adapter = Path(temporary) / "patchelf"
+            adapter.write_text(
+                "#!/bin/sh\nexec "
+                + shlex.quote(real_patchelf)
+                + f' --page-size {PAGE_SIZE} "$@"\n',
+                encoding="utf-8",
+            )
+            adapter.chmod(0o755)
+            subprocess.run(
+                cmd,
+                env={**os.environ, "PATH": temporary + os.pathsep + os.environ["PATH"]},
+                check=True,
+            )
         repaired = list(Path(dest_dir).glob("*.whl"))
         if len(repaired) != 1:
             raise ValueError("Android repair 必须生成恰好一个 wheel")

@@ -612,5 +612,12 @@
       "result": "failure",
       "reason": "Pillow 双 ABI 成功并已独立核验；lxml 的 libxslt 共享库缺少导出表声明的调试器符号，后续开启上游选项解决。该次未发布。"
     }
-  ]
+  ],
+  "alignment_correction": {
+    "cancelled_run_id": 40682586892,
+    "result": "cancelled_before_publication",
+    "reason": "最终复核发现外部共享库、部分现有 Rust 扩展及 patchelf 新增段存在 4 KB 对齐；在发布前取消本次运行，补齐 C/C++、Rust 和 patchelf 参数，并增加 ELF 加载段发布校验。",
+    "reference": "https://developer.android.com/guide/practices/page-sizes",
+    "runtime_validation": "静态对齐检查不代替设备或模拟器功能测试。"
+  }
 }

@@ -12,6 +12,7 @@ from itertools import product
 from pathlib import Path
 
 from scripts.build.native_libraries import library_specs
+from scripts.build.wheel_alignment import verify_alignment
 from scripts.pipeline.model import SdistSource, Target
 
 
@@ -125,3 +126,9 @@ def verify_wheel(path: Path, target: Target) -> None:
         if wheel["Wheel-Version"] != "1.0":
             raise ValueError("不支持的 Wheel-Version")
         verify_record(archive, record_name)
+        for entry in archive.infolist():
+            if entry.is_dir():
+                continue
+            with archive.open(entry) as stream:
+                if stream.read(4) == b"\x7fELF":
+                    verify_alignment(io.BytesIO(archive.read(entry)), entry.filename)

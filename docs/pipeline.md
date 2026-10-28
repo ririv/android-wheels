@@ -15,6 +15,8 @@
 | `scripts/build/cibuildwheel_prepare.py` | 核对并安装已编译依赖，组合宿主工具与 Cargo 环境 |
 | `scripts/build/native_model.py` | 原生依赖名、互斥构建系统和固定来源数据 |
 | `scripts/build/native_libraries.py` | 验证并直接编译固定原生依赖，不改源码 |
+| `scripts/build/link_flags.py` | 组合固定页大小链接参数，保留项目 Rust 设置 |
+| `scripts/build/wheel_alignment.py` | 核验 ELF 加载段的 16 KB 对齐和地址关系 |
 | `scripts/build/wheel_native.py` | 将依赖来源和许可证写入 wheel 并更新 RECORD |
 | `scripts/build/requirements.py` | 读取选定项目的宿主构建依赖声明 |
 | `scripts/build/wheel_abi.py` | 根据实际 ELF 的版本专用 libpython 依赖约束 wheel 兼容标签 |

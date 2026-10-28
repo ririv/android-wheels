@@ -10,6 +10,7 @@ import tomllib
 from pathlib import Path
 
 from scripts.build.android_python import AndroidABI
+from scripts.build.link_flags import PAGE_LINK_FLAGS
 from scripts.build.native_model import BuildSystem, Library, NativeLibrary
 from scripts.pipeline.sdists import download, extract
 
@@ -60,7 +61,7 @@ def compiler_environment(
         "CFLAGS": "-O2 -fPIC",
         "CXXFLAGS": "-O2 -fPIC",
         "CPPFLAGS": "",
-        "LDFLAGS": "",
+        "LDFLAGS": " ".join(PAGE_LINK_FLAGS),
         "PKG_CONFIG_LIBDIR": str(prefix / "lib" / "pkgconfig"),
         "PKG_CONFIG_PATH": "",
         "PKG_CONFIG_ALLOW_CROSS": "1",
@@ -123,6 +124,7 @@ def commands(
                     f"-DCMAKE_INSTALL_PREFIX={prefix}",
                     "-DCMAKE_INSTALL_LIBDIR=lib",
                     "-DCMAKE_POSITION_INDEPENDENT_CODE=ON",
+                    "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
                     "-DCMAKE_BUILD_TYPE=Release",
                     *args,
                 ],

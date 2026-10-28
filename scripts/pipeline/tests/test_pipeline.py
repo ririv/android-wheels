@@ -242,7 +242,7 @@ class PipelineTests(unittest.TestCase):
             (root / ".cargo").mkdir()
             path = root / ".cargo/config.toml"
             path.write_text('[build]\njobs=2\n[env]\nKEEP="yes"\n')
-            configure(root, Path("/runtime/env"))
+            configure(root, Path("/runtime/env"), "aarch64-linux-android")
             import tomllib
 
             data = tomllib.loads(path.read_text())

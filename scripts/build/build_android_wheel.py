@@ -19,6 +19,7 @@ from scripts.build.android_python import (
     SysconfigRuntime,
     setup_python_cross_build,
 )
+from scripts.build.link_flags import PAGE_LINK_FLAGS, rust_link_flags
 from scripts.build.native_libraries import build_libraries
 from scripts.build.native_model import NativeLibrary
 from scripts.build.repair_android_wheel import repair
@@ -50,15 +51,15 @@ def create_cargo_config(
     if not any(rustflags[i : i + 2] == library_flag for i in range(len(rustflags))):
         rustflags.extend(library_flag)
     # extension-module/abi3 会禁用 PyO3 的自动链接；Android 必须显式保留该依赖。
-    for flag in (
-        "-Wl,--no-as-needed",
-        f"-lpython{python_version}",
-        "-Wl,--as-needed",
-    ):
-        pair = ["-C", f"link-arg={flag}"]
-        if not any(rustflags[i : i + 2] == pair for i in range(len(rustflags))):
-            rustflags.extend(pair)
-    target_config["rustflags"] = rustflags
+    target_config["rustflags"] = rust_link_flags(
+        rustflags,
+        (
+            "-Wl,--no-as-needed",
+            f"-lpython{python_version}",
+            "-Wl,--as-needed",
+            *PAGE_LINK_FLAGS,
+        ),
+    )
     with open(config_path, "wb") as f:
         tomli_w.dump(existing, f)
 

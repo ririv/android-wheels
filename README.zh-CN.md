@@ -72,7 +72,7 @@ wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#
 
 ## 如何添加新的包
 
-在 `recipes/` 新增 `<包名>.toml`，显式填写源码仓库、Git ref、Python 项目目录、构建后端及 Android 默认目标。不要为每个包新增工作流。
+在 `recipes/` 新增 `<包名>.toml`，显式填写 Git 仓库与 ref，或固定版本的 PyPI 官方 sdist，并声明项目目录、构建后端及 Android 默认目标。外部环境、PEP 517 参数和原生依赖也由 TOML 声明。不要为每个包新增工作流。
 
 配置合并到 `main` 后，只构建变更对应的包。手动构建、多 Python 版本、仅生成 Actions 产物和配置校验见 [Recipe 与并行构建](docs/recipes.md)。
 
@@ -82,4 +82,4 @@ gh workflow run build-wheels.yml -f recipes=pydantic-core -f python_versions=3.1
 
 模块划分与开发检查见 [构建流水线](docs/pipeline.md)。
 
-新增包的筛选口径、热门原生扩展前 50 审计及首批构建验证见 [包收录记录](docs/package-selection.md)。
+新增包的筛选口径、热门原生扩展前 50 审计及各批构建验证见 [包收录记录](docs/package-selection.md)。

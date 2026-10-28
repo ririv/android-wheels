@@ -45,7 +45,7 @@ def main() -> None:
     # tomli-w 由上面的固定 shared 依赖组安装，之后再加载 Cargo 配置模块。
     from scripts.pipeline.cargo_env import configure
 
-    configure(args.project, args.venv)
+    configure(args.project, args.venv, os.environ["CARGO_BUILD_TARGET"])
 
 
 if __name__ == "__main__":

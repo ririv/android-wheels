@@ -219,6 +219,10 @@ class AndroidPythonTests(unittest.TestCase):
                         "link-arg=-lpython3.13",
                         "-C",
                         "link-arg=-Wl,--as-needed",
+                        "-C",
+                        "link-arg=-Wl,-z,max-page-size=16384",
+                        "-C",
+                        "link-arg=-Wl,-z,common-page-size=16384",
                     ],
                 },
             )
