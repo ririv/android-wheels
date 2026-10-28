@@ -118,3 +118,11 @@ sdist 的地址、SHA-256、排名及全部预验证 wheel 记录见 [第二批�
 - [google-crc32c 双 ABI](https://github.com/ririv/py-extra-wheels/actions/runs/40672514748)：全部成功，包含共享 CRC32C 和 C++ 运行库。
 - [Python 3.10 pydantic-core 回归](https://github.com/ririv/py-extra-wheels/actions/runs/40666954200)：两种 ABI 均成功，保留原有构建能力。
 - [gRPC 最后一次配置验证](https://github.com/ririv/py-extra-wheels/actions/runs/40673736717)：未通过，不收录失败 recipe。
+
+## 第三批回归与发布
+
+本轮新增 **6 个包**，仓库共 **30 个 recipe**；三批累计新增 20 个 Python 包。原生依赖库不计入此数量。
+
+[全量构建与发布](https://github.com/ririv/py-extra-wheels/actions/runs/40675141301) 的 60 个目标全部成功，[CI](https://github.com/ririv/py-extra-wheels/actions/runs/40675141332) 也已通过。下载全部最终产物后复核：58 个含 ELF，两个已有 PyYAML 产物沿用纯 Python 构建；本轮新增的十二个 wheel 全部含原生扩展。来源、版本、SHA-256、WHEEL/RECORD、架构、Python 动态库与标签、依赖闭合和相对加载路径均通过检查。新增文件的已发布 Git blob 与 Actions 核验产物逐字节一致。
+
+[主索引](https://ririv.github.io/py-extra-wheels/) 和 [旧索引](https://ririv.github.io/android-wheels/) 已由事件链路自动更新。两处根页和六个新增包页均返回 HTTP 200，版本及双 ABI 链接齐全；公开状态标记与对应源码树一致。发布文件、哈希和状态树详见本批审计记录的 `published_wheels` 与 `regression`。
