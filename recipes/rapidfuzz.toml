@@ -10,3 +10,8 @@ api = 24
 
 [environment]
 RAPIDFUZZ_BUILD_EXTENSION = "1"
+
+[config-settings]
+"cmake.define.CMAKE_LINKER_TYPE" = "LLD"
+"cmake.define.CMAKE_C_STANDARD_LIBRARIES" = "-lpython3.13"
+"cmake.define.CMAKE_CXX_STANDARD_LIBRARIES" = "-lpython3.13"
