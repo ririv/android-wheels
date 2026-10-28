@@ -7,3 +7,6 @@ backend = "scikit_build_core.build"
 python = ["3.13"]
 abis = ["arm64-v8a", "x86_64"]
 api = 24
+
+[config-settings]
+"cmake.define.CMAKE_C_STANDARD_LIBRARIES" = "-lpython3.13"
