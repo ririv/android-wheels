@@ -67,4 +67,4 @@ Package index names follow Python's [PEP 503](https://peps.python.org/pep-0503/)
 
 新增包请添加 `recipes/<包名>.toml`；统一入口为 `build-wheels.yml`。配置格式、手动构建及多 Python 版本并行见 [Recipe 与并行构建](docs/recipes.md)。
 
-新增包的筛选口径、热门原生扩展前 50 审计及各批构建验证见 [包收录记录](docs/package-selection.md)。
+新增包的筛选口径、热门原生扩展前 100 审计及各批构建验证见 [包收录记录](docs/package-selection.md)。

@@ -2,13 +2,15 @@
 
 ## 筛选口径
 
-以 [Top PyPI Packages](https://hugovk.dev/top-pypi-packages/) 2026-10-01 月度快照的包下载量排序，先核对总榜前 300 个项目，识别出 66 个当前发行版提供 CPython 原生 wheel 的项目，再取其中前 50。这里的名次是原生扩展候选子榜，不是 PyPI 总榜前 50。
+前四批以 [Top PyPI Packages](https://hugovk.dev/top-pypi-packages/) 2026-10-01 月度快照的包下载量排序，先核对总榜前 300 个项目，识别出 66 个当前发行版提供 CPython 原生 wheel 的项目，再取其中前 50。这里的名次是原生扩展候选子榜，不是 PyPI 总榜前 50。
 
 候选识别条件为 wheel ABI 不等于 `none`、平台不等于 `any`；真正收录还须核对上游源码和实际 ELF 扩展，排除仅包含 CLI 二进制的情况。下载量按包计算，不等于独立用户数。
 
 2026-10-28 通过 [PyPI JSON API](https://docs.pypi.org/api/json/) 核对所有历史发行文件：各批新增项目均没有官方 `android_*` wheel。已存在官方 Android wheel 的包不纳入新增范围。
 
 排名、下载量、官方文件列表、源码提交和预验证产物哈希保存在 [机器可读审计记录](data/native-top50-2026-10.json)。这是一份本次快照，不设置定时扫描。
+
+第五批经用户确认扩展到原生候选前 100：继续使用相同月度快照，核对总榜前 500 个项目，发现 103 个候选，取其中前 100，边界为总榜第 469。新增包仍须无官方 Android wheel、保持源码不变并含实际原生库；排名和决策见 [前 100 审计记录](data/native-top100-2026-10.json)。
 
 ## 首批收录
 
@@ -100,7 +102,7 @@ lxml 需要在后端查询构建依赖之前找到目标原生库。流水线先
 | --- | --- |
 | charset-normalizer、MarkupSafe、multidict、aiohttp、coverage | 当前 PyPI 已有官方 Android wheel，排除新增 |
 | grpcio 1.85.0 | 外部 OpenSSL 和 c-ares 均已编译，但上游硬编码宿主 `/usr/include`；调整搜索顺序后仍未通过，暂缓 |
-| mypy 2.4.0 | 运行依赖 librt 与 ast-serialize 尚无官方 Android wheel，本轮不单独发布主包 |
+| mypy 2.4.0 | librt、ast-serialize 已在第五批收录；Android 下的 mypyc 自举类型检查仍失败，暂缓主包 |
 | NumPy | 已尝试 Meson 构建，但缺少 Android BLAS；不发布关闭 BLAS 的构建 |
 | contourpy | 双 ABI 编译通过，因依赖 NumPy 暂缓发布 |
 | psutil | 上游明确拒绝 Android 平台，不修改源码中的平台判断 |
@@ -160,3 +162,40 @@ lxml 需要在后端查询构建依赖之前找到目标原生库。流水线先
 [Python 3.10 pydantic-core 2.41.5 双 ABI 回归](https://github.com/ririv/py-extra-wheels/actions/runs/40684018312) 同样通过来源、哈希、标签、ELF、16 KB 对齐和依赖闭合检查，仅保留验证产物。
 
 [主索引](https://ririv.github.io/py-extra-wheels/) 和 [旧索引](https://ririv.github.io/android-wheels/) 已由事件链路自动更新。两处根页及四个新增包页均返回 HTTP 200，版本与双 ABI 链接齐全；两个公开状态标记分别匹配 wheels 和 gh-pages 源码树。八个新增 wheel 的已发布 Git blob 与 Actions 核验产物逐字节一致。最终文件、哈希、加载段对齐和状态树见第四批审计记录的 `published_wheels`、`python310_regression` 与 `regression`。
+
+## 第五批收录
+
+本轮按扩展后的原生候选前 100 筛选，预验证通过 **20 个新包**。全部固定到官方 PyPI sdist，默认 Python 3.13 / Android API 24 / `arm64-v8a` 与 `x86_64`；不修改上游源码。
+
+| 原生候选名次 | 包 | 版本 | 快照下载量 |
+| --- | --- | --- | --- |
+| 54 | [librt](https://pypi.org/project/librt/) | 0.16.0 | 124,732,283 |
+| 56 | [rapidfuzz](https://pypi.org/project/rapidfuzz/) | 3.14.6 | 119,792,814 |
+| 58 | [asyncpg](https://pypi.org/project/asyncpg/) | 0.32.0 | 106,776,505 |
+| 60 | [tornado](https://pypi.org/project/tornado/) | 6.6 | 100,712,647 |
+| 66 | [brotli](https://pypi.org/project/brotli/) | 1.2.1 | 84,886,808 |
+| 69 | [ast-serialize](https://pypi.org/project/ast-serialize/) | 0.13.1 | 78,021,669 |
+| 70 | [lz4](https://pypi.org/project/lz4/) | 4.4.5 | 75,441,790 |
+| 72 | [safetensors](https://pypi.org/project/safetensors/) | 0.8.0 | 72,673,120 |
+| 73 | [cbor2](https://pypi.org/project/cbor2/) | 6.1.5 | 71,697,985 |
+| 74 | [uuid-utils](https://pypi.org/project/uuid-utils/) | 1.2.0 | 71,576,401 |
+| 76 | [pycryptodome](https://pypi.org/project/pycryptodome/) | 4.2.0 | 69,586,596 |
+| 77 | [fastuuid](https://pypi.org/project/fastuuid/) | 0.14.0 | 67,032,433 |
+| 78 | [pymongo](https://pypi.org/project/pymongo/) | 4.19.0 | 66,109,460 |
+| 79 | [ruamel-yaml-clib](https://pypi.org/project/ruamel-yaml-clib/) | 0.2.15 | 64,868,988 |
+| 81 | [argon2-cffi-bindings](https://pypi.org/project/argon2-cffi-bindings/) | 26.1.0 | 61,897,186 |
+| 87 | [pendulum](https://pypi.org/project/pendulum/) | 3.3.0 | 53,541,176 |
+| 92 | [zope-interface](https://pypi.org/project/zope-interface/) | 8.7 | 50,024,324 |
+| 94 | [tree-sitter](https://pypi.org/project/tree-sitter/) | 0.26.0 | 48,510,727 |
+| 95 | [pycryptodomex](https://pypi.org/project/pycryptodomex/) | 3.24.1 | 47,477,810 |
+| 99 | [simplejson](https://pypi.org/project/simplejson/) | 4.2.0 | 42,202,185 |
+
+Tornado、SimpleJSON、PyMongo 分别用上游参数明确要求扩展成功；LZ4 明确选择官方 sdist 自带的源码。Argon2 绑定使用原有 scikit-build-core 后端，通过 CMake 参数补齐目标 Python 动态库，运行时使用仓库已有 CFFI。其他新包沿用原始 setuptools、Hatchling 或 maturin 声明。只扩展后端枚举，没有增加包专用工作流。
+
+PyCryptodome 与 PyCryptodomex 是分别排名的两个发行包，分别提供 `Crypto`、`Cryptodome` 命名空间；其 C 库经 ctypes/CFFI 加载，不直接依赖版本专用 libpython，因此保留上游 `cp39-abi3`、`cp37-abi3` 标签。此次只验证 Python 3.13 的构建和静态产物，不表示其他 Python 版本已做运行测试。
+
+mypy 的运行依赖已由本批 librt、ast-serialize 提供，但其终端颜色代码在 Android 下自举检查失败，本轮删除失败 recipe 并保留日志。Tomli 的官方 sdist 声明为纯 Python Flit 构建，本轮不改写其元数据以生成原生扩展。MMH3 已有官方 Android wheel；ujson 不在本次前 100 范围，均不计入新增。
+
+全部 40 个预验证 wheel 均含 ELF，来源、版本、哈希、WHEEL/RECORD、架构、16 KB 加载段对齐、依赖闭合和相对加载路径通过核验。普通纯 Python 依赖仍由 PyPI 提供；PyMongo 的加密等可选扩展、Tree-sitter 的语言语法库不在本批收录范围。尚未进行设备或模拟器功能测试。完整来源、配置、成功产物和失败候选见 [第五批审计记录](data/native-fifth-batch-2026-10.json)。
+
+RapidFuzz 使用 scikit-build-core；cibuildwheel 的 Android CMake 工具链未完整提供 NDK 版本信息，使 CMake IPO 添加宿主 gold 参数。recipe 显式在最终 C++ 链接参数中选择 `-fuse-ld=lld`，并链接目标 Python；保持 LTO 与 C++ 扩展启用，不修改 CMake 源码。

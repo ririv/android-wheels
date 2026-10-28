@@ -1,0 +1,3021 @@
+{
+  "checked_on": "2026-10-28",
+  "ranking_snapshot": "native-top100-2026-10.json",
+  "criteria": "原生扩展候选下载量前 100；官方所有历史发行文件无 Android wheel；不改上游源码，只声明环境和命令参数。",
+  "selection": [
+    {
+      "native_rank": 54,
+      "pypi_rank": 235,
+      "package": "librt",
+      "downloads": 124732283,
+      "pypi_version": "0.16.0",
+      "native_wheel_sample": "librt-0.16.0-cp310-cp310-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 56,
+      "pypi_rank": 242,
+      "package": "rapidfuzz",
+      "downloads": 119792814,
+      "pypi_version": "3.14.6",
+      "native_wheel_sample": "rapidfuzz-3.14.6-cp311-cp311-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 58,
+      "pypi_rank": 257,
+      "package": "asyncpg",
+      "downloads": 106776505,
+      "pypi_version": "0.32.0",
+      "native_wheel_sample": "asyncpg-0.32.0-cp310-cp310-macosx_11_0_arm64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 60,
+      "pypi_rank": 262,
+      "package": "tornado",
+      "downloads": 100712647,
+      "pypi_version": "6.6",
+      "native_wheel_sample": "tornado-6.6-cp311-abi3-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 66,
+      "pypi_rank": 298,
+      "package": "brotli",
+      "downloads": 84886808,
+      "pypi_version": "1.2.1",
+      "native_wheel_sample": "brotli-1.2.1-cp27-cp27m-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 69,
+      "pypi_rank": 310,
+      "package": "ast-serialize",
+      "downloads": 78021669,
+      "pypi_version": "0.13.1",
+      "native_wheel_sample": "ast_serialize-0.13.1-cp314-cp314-pyemscripten_2026_0_wasm32.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 70,
+      "pypi_rank": 318,
+      "package": "lz4",
+      "downloads": 75441790,
+      "pypi_version": "4.4.5",
+      "native_wheel_sample": "lz4-4.4.5-cp310-cp310-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 72,
+      "pypi_rank": 325,
+      "package": "safetensors",
+      "downloads": 72673120,
+      "pypi_version": "0.8.0",
+      "native_wheel_sample": "safetensors-0.8.0-cp310-abi3-macosx_10_12_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 73,
+      "pypi_rank": 328,
+      "package": "cbor2",
+      "downloads": 71697985,
+      "pypi_version": "6.1.5",
+      "native_wheel_sample": "cbor2-6.1.5-cp310-cp310-macosx_11_0_arm64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 74,
+      "pypi_rank": 329,
+      "package": "uuid-utils",
+      "downloads": 71576401,
+      "pypi_version": "1.2.0",
+      "native_wheel_sample": "uuid_utils-1.2.0-cp310-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 76,
+      "pypi_rank": 336,
+      "package": "pycryptodome",
+      "downloads": 69586596,
+      "pypi_version": "4.2.0",
+      "native_wheel_sample": "pycryptodome-4.2.0-cp315-cp315t-macosx_10_15_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 77,
+      "pypi_rank": 344,
+      "package": "fastuuid",
+      "downloads": 67032433,
+      "pypi_version": "0.14.0",
+      "native_wheel_sample": "fastuuid-0.14.0-cp310-cp310-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 78,
+      "pypi_rank": 352,
+      "package": "pymongo",
+      "downloads": 66109460,
+      "pypi_version": "4.19.0",
+      "native_wheel_sample": "pymongo-4.19.0-cp311-cp311-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 79,
+      "pypi_rank": 358,
+      "package": "ruamel-yaml-clib",
+      "downloads": 64868988,
+      "pypi_version": "0.2.15",
+      "native_wheel_sample": "ruamel_yaml_clib-0.2.15-cp310-cp310-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 81,
+      "pypi_rank": 364,
+      "package": "argon2-cffi-bindings",
+      "downloads": 61897186,
+      "pypi_version": "26.1.0",
+      "native_wheel_sample": "argon2_cffi_bindings-26.1.0-cp310-abi3-macosx_11_0_arm64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 87,
+      "pypi_rank": 403,
+      "package": "pendulum",
+      "downloads": 53541176,
+      "pypi_version": "3.3.0",
+      "native_wheel_sample": "pendulum-3.3.0-cp310-cp310-macosx_10_12_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 92,
+      "pypi_rank": 420,
+      "package": "zope-interface",
+      "downloads": 50024324,
+      "pypi_version": "8.7",
+      "native_wheel_sample": "zope_interface-8.7-cp311-cp311-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 94,
+      "pypi_rank": 427,
+      "package": "tree-sitter",
+      "downloads": 48510727,
+      "pypi_version": "0.26.0",
+      "native_wheel_sample": "tree_sitter-0.26.0-cp310-cp310-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 95,
+      "pypi_rank": 436,
+      "package": "pycryptodomex",
+      "downloads": 47477810,
+      "pypi_version": "3.24.1",
+      "native_wheel_sample": "pycryptodomex-3.24.1-cp27-cp27m-manylinux2010_i686.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 99,
+      "pypi_rank": 466,
+      "package": "simplejson",
+      "downloads": 42202185,
+      "pypi_version": "4.2.0",
+      "native_wheel_sample": "simplejson-4.2.0-cp27-cp27m-manylinux1_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    }
+  ],
+  "sources": [
+    {
+      "package": "argon2-cffi-bindings",
+      "version": "26.1.0",
+      "url": "https://files.pythonhosted.org/packages/0b/43/bb8b6e8708d49a5ab36781333af092d9f483b198a2710d01281204640055/argon2_cffi_bindings-26.1.0.tar.gz",
+      "sha256": "63505c71542a44b68b1e38060450fb006404170da375feb31af153e7f9c6205d",
+      "filename": "argon2_cffi_bindings-26.1.0.tar.gz",
+      "directory": ".",
+      "backend": "scikit_build_core.build",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "ast-serialize",
+      "version": "0.13.1",
+      "url": "https://files.pythonhosted.org/packages/21/d5/5dc1ee8a80c3b20a0b63c61b43ba6bc53517faecd1def47bcd752d22268e/ast_serialize-0.13.1.tar.gz",
+      "sha256": "401cc84e8888d4d76f2c8d296fa006ed1a5ff993b6aff90dd777c03973efd025",
+      "filename": "ast_serialize-0.13.1.tar.gz",
+      "directory": ".",
+      "backend": "maturin",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "asyncpg",
+      "version": "0.32.0",
+      "url": "https://files.pythonhosted.org/packages/80/4e/59dc964f962f09e3ed472e5d2d3ba670a41a2be25080dc62ab3db507ff5e/asyncpg-0.32.0.tar.gz",
+      "sha256": "45e64e56714d888330b884aad1dfb363d0bf43fb343e3d1a8968525f3bade478",
+      "filename": "asyncpg-0.32.0.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "brotli",
+      "version": "1.2.1",
+      "url": "https://files.pythonhosted.org/packages/cf/81/1546c983678a9b4e77cb4718eaedd1b2caf24a6cdbf1eb8775938d22aff7/brotli-1.2.1.tar.gz",
+      "sha256": "02b2f7b5a83485efe448a44ddf7983def05c3bb1dcf917d4f7154070260e13de",
+      "filename": "brotli-1.2.1.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "cbor2",
+      "version": "6.1.5",
+      "url": "https://files.pythonhosted.org/packages/39/34/d443914ea562a985ccb357682e17b7190d5d58eff797c741379be47a8f31/cbor2-6.1.5.tar.gz",
+      "sha256": "6eb06160c42315ac0c4ded461c7d84d92fa18c69d13d17fc1dfc1fae96580c95",
+      "filename": "cbor2-6.1.5.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "fastuuid",
+      "version": "0.14.0",
+      "url": "https://files.pythonhosted.org/packages/c3/7d/d9daedf0f2ebcacd20d599928f8913e9d2aea1d56d2d355a93bfa2b611d7/fastuuid-0.14.0.tar.gz",
+      "sha256": "178947fc2f995b38497a74172adee64fdeb8b7ec18f2a5934d037641ba265d26",
+      "filename": "fastuuid-0.14.0.tar.gz",
+      "directory": ".",
+      "backend": "maturin",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "librt",
+      "version": "0.16.0",
+      "url": "https://files.pythonhosted.org/packages/04/f5/9dc696772d241814bacac7880bac32f2930b5a6ebc1f85317b83161a011c/librt-0.16.0.tar.gz",
+      "sha256": "ac38d6d8d66bf3d744148dbbc0b8e193e195a51e364ed55e224631f5721891fc",
+      "filename": "librt-0.16.0.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "lz4",
+      "version": "4.4.5",
+      "url": "https://files.pythonhosted.org/packages/57/51/f1b86d93029f418033dddf9b9f79c8d2641e7454080478ee2aab5123173e/lz4-4.4.5.tar.gz",
+      "sha256": "5f0b9e53c1e82e88c10d7c180069363980136b9d7a8306c4dca4f760d60c39f0",
+      "filename": "lz4-4.4.5.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "pendulum",
+      "version": "3.3.0",
+      "url": "https://files.pythonhosted.org/packages/d8/3f/345b5bc712ce806f3b5fbce6eea141f46713b2c1a7654eaead1b2593d5a1/pendulum-3.3.0.tar.gz",
+      "sha256": "9aceb5b24e9f55381df08187397e88546b5ba82f698b741cbf1a05c5e2369116",
+      "filename": "pendulum-3.3.0.tar.gz",
+      "directory": ".",
+      "backend": "maturin",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "pycryptodome",
+      "version": "4.2.0",
+      "url": "https://files.pythonhosted.org/packages/33/c7/f9374c8939560ab22db1dd9dbe215b62d20f32634aeb7f259dc03c807b44/pycryptodome-4.2.0.tar.gz",
+      "sha256": "21d7fdba239d6ef863d3d08388801c683453a3bb4897c2b27f27847aad89bdf7",
+      "filename": "pycryptodome-4.2.0.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "pycryptodomex",
+      "version": "3.24.1",
+      "url": "https://files.pythonhosted.org/packages/f4/e7/50e72301e32acb73a314e663c2014e1ddefc019d5f434ff14ec89861d664/pycryptodomex-3.24.1.tar.gz",
+      "sha256": "09081666ffc599976c0b8b29caf2cf82212c0f05bed233c8f8ed53e4f6e1d356",
+      "filename": "pycryptodomex-3.24.1.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "pymongo",
+      "version": "4.19.0",
+      "url": "https://files.pythonhosted.org/packages/42/8b/a9d214044153cb7d9141229d3e1b171cdf4f460fa07cade9354c4ce2f84d/pymongo-4.19.0.tar.gz",
+      "sha256": "3c510dd3c5d9b392d3b33bb5d2a594758acfe8f026fca654253f947ce0af9d40",
+      "filename": "pymongo-4.19.0.tar.gz",
+      "directory": ".",
+      "backend": "hatchling.build",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "rapidfuzz",
+      "version": "3.14.6",
+      "url": "https://files.pythonhosted.org/packages/18/97/226c43b7b5d957bc3840ed52ea99eed261f99834c4619be7a4742cbaeafa/rapidfuzz-3.14.6.tar.gz",
+      "sha256": "e13a8160d017b499ec7a2fa9d0ce1ae2e7377080815785819f966fb235d4eb60",
+      "filename": "rapidfuzz-3.14.6.tar.gz",
+      "directory": ".",
+      "backend": "scikit_build_core.build",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "ruamel-yaml-clib",
+      "version": "0.2.15",
+      "url": "https://files.pythonhosted.org/packages/ea/97/60fda20e2fb54b83a61ae14648b0817c8f5d84a3821e40bfbdae1437026a/ruamel_yaml_clib-0.2.15.tar.gz",
+      "sha256": "46e4cc8c43ef6a94885f72512094e482114a8a706d3c555a34ed4b0d20200600",
+      "filename": "ruamel_yaml_clib-0.2.15.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "safetensors",
+      "version": "0.8.0",
+      "url": "https://files.pythonhosted.org/packages/45/06/f955dbbb1859e3bd23c8ac6141af5106e7ad5fedec4a3a6e3d60f94b7001/safetensors-0.8.0.tar.gz",
+      "sha256": "fabaf3e0f18a6618d9b36560682562157f77c2b71fcffc7b432be2baed9d753d",
+      "filename": "safetensors-0.8.0.tar.gz",
+      "directory": ".",
+      "backend": "maturin",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "simplejson",
+      "version": "4.2.0",
+      "url": "https://files.pythonhosted.org/packages/2f/f0/ea064bba6c9afda0168ddb834f1c75a93351031e25aee35c046108e7f292/simplejson-4.2.0.tar.gz",
+      "sha256": "55b121b70a560f4610bd3a355ab2015aca4f39978f6a82353f24d2013fe85861",
+      "filename": "simplejson-4.2.0.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "tornado",
+      "version": "6.6",
+      "url": "https://files.pythonhosted.org/packages/d0/02/5f549b1ad5da6267ed1e1fac2eef69257b1979cc812497002499b7895ff9/tornado-6.6.tar.gz",
+      "sha256": "34c4aa916d7f2b2d5cadee2c6850f5a4a7f3d688cbf58399ea9bd3057af4abd5",
+      "filename": "tornado-6.6.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "tree-sitter",
+      "version": "0.26.0",
+      "url": "https://files.pythonhosted.org/packages/f7/03/5600b84aff2e6c4fe80cfebb4063fe2f50299521befe5f6092ab8c082f4a/tree_sitter-0.26.0.tar.gz",
+      "sha256": "b40c219edccc4564530c96f8f1556f6202b37cda964d1cbd7bd2b7e68b40a245",
+      "filename": "tree_sitter-0.26.0.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "uuid-utils",
+      "version": "1.2.0",
+      "url": "https://files.pythonhosted.org/packages/fd/01/baff7ef80f30885cca5ecfc0d9ea660b3d20c34dfaf0d17a79a95ec342d7/uuid_utils-1.2.0.tar.gz",
+      "sha256": "8a8bd1120a8bc5a6656a1c580d66a050af430b05d017da526ec0b0a06715bf70",
+      "filename": "uuid_utils-1.2.0.tar.gz",
+      "directory": ".",
+      "backend": "maturin",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "zope-interface",
+      "version": "8.7",
+      "url": "https://files.pythonhosted.org/packages/de/ff/a1f0021a26033da0df223fd05a7455d6d2881b67daf2c6dc897b4fe0a427/zope_interface-8.7.tar.gz",
+      "sha256": "0b47b62e8d0d99b24bcdd32f4f2120425e5019c3bee2ad69a0e1d75737487a96",
+      "filename": "zope_interface-8.7.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    }
+  ],
+  "verified_preflight_wheels": [
+    {
+      "package": "asyncpg",
+      "target": {
+        "library": "asyncpg",
+        "source": {
+          "package": "asyncpg",
+          "version": "0.32.0",
+          "url": "https://files.pythonhosted.org/packages/80/4e/59dc964f962f09e3ed472e5d2d3ba670a41a2be25080dc62ab3db507ff5e/asyncpg-0.32.0.tar.gz",
+          "sha256": "45e64e56714d888330b884aad1dfb363d0bf43fb343e3d1a8968525f3bade478",
+          "filename": "asyncpg-0.32.0.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "asyncpg-0.32.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "0f1d52d4cac640e8332c02ec357b59f284b649aad082126e30f51507dd9fe2ab",
+      "binary_kind": "elf",
+      "native_modules": [
+        "asyncpg/pgproto/pgproto.cpython-313-aarch64-linux-android.so",
+        "asyncpg/protocol/protocol.cpython-313-aarch64-linux-android.so",
+        "asyncpg/protocol/record.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "asyncpg/pgproto/pgproto.cpython-313-aarch64-linux-android.so": [
+          16384
+        ],
+        "asyncpg/protocol/protocol.cpython-313-aarch64-linux-android.so": [
+          16384
+        ],
+        "asyncpg/protocol/record.cpython-313-aarch64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "asyncpg",
+      "target": {
+        "library": "asyncpg",
+        "source": {
+          "package": "asyncpg",
+          "version": "0.32.0",
+          "url": "https://files.pythonhosted.org/packages/80/4e/59dc964f962f09e3ed472e5d2d3ba670a41a2be25080dc62ab3db507ff5e/asyncpg-0.32.0.tar.gz",
+          "sha256": "45e64e56714d888330b884aad1dfb363d0bf43fb343e3d1a8968525f3bade478",
+          "filename": "asyncpg-0.32.0.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "asyncpg-0.32.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "95b62c7350276762fb4933c6a4d94ea9a2047ac4e05aec2c4a19fa28e62dd21a",
+      "binary_kind": "elf",
+      "native_modules": [
+        "asyncpg/pgproto/pgproto.cpython-313-x86_64-linux-android.so",
+        "asyncpg/protocol/protocol.cpython-313-x86_64-linux-android.so",
+        "asyncpg/protocol/record.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "asyncpg/pgproto/pgproto.cpython-313-x86_64-linux-android.so": [
+          16384
+        ],
+        "asyncpg/protocol/protocol.cpython-313-x86_64-linux-android.so": [
+          16384
+        ],
+        "asyncpg/protocol/record.cpython-313-x86_64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "tornado",
+      "target": {
+        "library": "tornado",
+        "source": {
+          "package": "tornado",
+          "version": "6.6",
+          "url": "https://files.pythonhosted.org/packages/d0/02/5f549b1ad5da6267ed1e1fac2eef69257b1979cc812497002499b7895ff9/tornado-6.6.tar.gz",
+          "sha256": "34c4aa916d7f2b2d5cadee2c6850f5a4a7f3d688cbf58399ea9bd3057af4abd5",
+          "filename": "tornado-6.6.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [
+          {
+            "name": "TORNADO_EXTENSION",
+            "value": "1"
+          }
+        ],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "tornado-6.6-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "1cb7d7d48a7ad79c81495e12c63d912b022e2d9713120143186583b9a6abbae5",
+      "binary_kind": "elf",
+      "native_modules": [
+        "tornado/speedups.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "tornado/speedups.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "tornado",
+      "target": {
+        "library": "tornado",
+        "source": {
+          "package": "tornado",
+          "version": "6.6",
+          "url": "https://files.pythonhosted.org/packages/d0/02/5f549b1ad5da6267ed1e1fac2eef69257b1979cc812497002499b7895ff9/tornado-6.6.tar.gz",
+          "sha256": "34c4aa916d7f2b2d5cadee2c6850f5a4a7f3d688cbf58399ea9bd3057af4abd5",
+          "filename": "tornado-6.6.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [
+          {
+            "name": "TORNADO_EXTENSION",
+            "value": "1"
+          }
+        ],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "tornado-6.6-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "f3b15ae396108295c3047b8671b8b6b8187776ba65afb27e12103d7a94f9e13e",
+      "binary_kind": "elf",
+      "native_modules": [
+        "tornado/speedups.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "tornado/speedups.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "brotli",
+      "target": {
+        "library": "brotli",
+        "source": {
+          "package": "brotli",
+          "version": "1.2.1",
+          "url": "https://files.pythonhosted.org/packages/cf/81/1546c983678a9b4e77cb4718eaedd1b2caf24a6cdbf1eb8775938d22aff7/brotli-1.2.1.tar.gz",
+          "sha256": "02b2f7b5a83485efe448a44ddf7983def05c3bb1dcf917d4f7154070260e13de",
+          "filename": "brotli-1.2.1.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "brotli-1.2.1-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "ec89eb6c488c8567b8c966661d7ddee3e9c6439c1c031a19e6741756763413a1",
+      "binary_kind": "elf",
+      "native_modules": [
+        "_brotli.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "_brotli.cpython-313-aarch64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "brotli",
+      "target": {
+        "library": "brotli",
+        "source": {
+          "package": "brotli",
+          "version": "1.2.1",
+          "url": "https://files.pythonhosted.org/packages/cf/81/1546c983678a9b4e77cb4718eaedd1b2caf24a6cdbf1eb8775938d22aff7/brotli-1.2.1.tar.gz",
+          "sha256": "02b2f7b5a83485efe448a44ddf7983def05c3bb1dcf917d4f7154070260e13de",
+          "filename": "brotli-1.2.1.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "brotli-1.2.1-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "f4dcbb7c5e66d56042cf7e149f9feec180fe5af003fbf0d71c2b488607d72b60",
+      "binary_kind": "elf",
+      "native_modules": [
+        "_brotli.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "_brotli.cpython-313-x86_64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "lz4",
+      "target": {
+        "library": "lz4",
+        "source": {
+          "package": "lz4",
+          "version": "4.4.5",
+          "url": "https://files.pythonhosted.org/packages/57/51/f1b86d93029f418033dddf9b9f79c8d2641e7454080478ee2aab5123173e/lz4-4.4.5.tar.gz",
+          "sha256": "5f0b9e53c1e82e88c10d7c180069363980136b9d7a8306c4dca4f760d60c39f0",
+          "filename": "lz4-4.4.5.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [
+          {
+            "name": "PYLZ4_USE_SYSTEM_LZ4",
+            "value": "False"
+          }
+        ],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "lz4-4.4.5-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "140e0c268823a1314f8da5825ac9a52e18bc5bf37c932f57f5f2f21966fa9bfa",
+      "binary_kind": "elf",
+      "native_modules": [
+        "lz4/_version.cpython-313-aarch64-linux-android.so",
+        "lz4/block/_block.cpython-313-aarch64-linux-android.so",
+        "lz4/frame/_frame.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "lz4/_version.cpython-313-aarch64-linux-android.so": [
+          16384
+        ],
+        "lz4/block/_block.cpython-313-aarch64-linux-android.so": [
+          16384
+        ],
+        "lz4/frame/_frame.cpython-313-aarch64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "lz4",
+      "target": {
+        "library": "lz4",
+        "source": {
+          "package": "lz4",
+          "version": "4.4.5",
+          "url": "https://files.pythonhosted.org/packages/57/51/f1b86d93029f418033dddf9b9f79c8d2641e7454080478ee2aab5123173e/lz4-4.4.5.tar.gz",
+          "sha256": "5f0b9e53c1e82e88c10d7c180069363980136b9d7a8306c4dca4f760d60c39f0",
+          "filename": "lz4-4.4.5.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [
+          {
+            "name": "PYLZ4_USE_SYSTEM_LZ4",
+            "value": "False"
+          }
+        ],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "lz4-4.4.5-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "740a710896cea446ef30988d7513462b3b76931890b03865c269c456f6f918e0",
+      "binary_kind": "elf",
+      "native_modules": [
+        "lz4/_version.cpython-313-x86_64-linux-android.so",
+        "lz4/block/_block.cpython-313-x86_64-linux-android.so",
+        "lz4/frame/_frame.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "lz4/_version.cpython-313-x86_64-linux-android.so": [
+          16384
+        ],
+        "lz4/block/_block.cpython-313-x86_64-linux-android.so": [
+          16384
+        ],
+        "lz4/frame/_frame.cpython-313-x86_64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "safetensors",
+      "target": {
+        "library": "safetensors",
+        "source": {
+          "package": "safetensors",
+          "version": "0.8.0",
+          "url": "https://files.pythonhosted.org/packages/45/06/f955dbbb1859e3bd23c8ac6141af5106e7ad5fedec4a3a6e3d60f94b7001/safetensors-0.8.0.tar.gz",
+          "sha256": "fabaf3e0f18a6618d9b36560682562157f77c2b71fcffc7b432be2baed9d753d",
+          "filename": "safetensors-0.8.0.tar.gz",
+          "directory": ".",
+          "backend": "maturin",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "safetensors-0.8.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "74d51cbc363030813e19f1c171892226545c9dd22fc9bf504455f664e06a8f9b",
+      "binary_kind": "elf",
+      "native_modules": [
+        "safetensors/_safetensors_rust.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "safetensors/_safetensors_rust.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "safetensors",
+      "target": {
+        "library": "safetensors",
+        "source": {
+          "package": "safetensors",
+          "version": "0.8.0",
+          "url": "https://files.pythonhosted.org/packages/45/06/f955dbbb1859e3bd23c8ac6141af5106e7ad5fedec4a3a6e3d60f94b7001/safetensors-0.8.0.tar.gz",
+          "sha256": "fabaf3e0f18a6618d9b36560682562157f77c2b71fcffc7b432be2baed9d753d",
+          "filename": "safetensors-0.8.0.tar.gz",
+          "directory": ".",
+          "backend": "maturin",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "safetensors-0.8.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "09091c9252967436a1a4f0a964fd42a1159d660c4dbad8d47ad6110b7ef7e20b",
+      "binary_kind": "elf",
+      "native_modules": [
+        "safetensors/_safetensors_rust.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "safetensors/_safetensors_rust.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "cbor2",
+      "target": {
+        "library": "cbor2",
+        "source": {
+          "package": "cbor2",
+          "version": "6.1.5",
+          "url": "https://files.pythonhosted.org/packages/39/34/d443914ea562a985ccb357682e17b7190d5d58eff797c741379be47a8f31/cbor2-6.1.5.tar.gz",
+          "sha256": "6eb06160c42315ac0c4ded461c7d84d92fa18c69d13d17fc1dfc1fae96580c95",
+          "filename": "cbor2-6.1.5.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "cbor2-6.1.5-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "8629e4a1d3795aeb7a3d849a1015e17b1d09fde26a9b3a662c2b5dfd6b480ff8",
+      "binary_kind": "elf",
+      "native_modules": [
+        "cbor2/_cbor2.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "cbor2/_cbor2.cpython-313-aarch64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "cbor2",
+      "target": {
+        "library": "cbor2",
+        "source": {
+          "package": "cbor2",
+          "version": "6.1.5",
+          "url": "https://files.pythonhosted.org/packages/39/34/d443914ea562a985ccb357682e17b7190d5d58eff797c741379be47a8f31/cbor2-6.1.5.tar.gz",
+          "sha256": "6eb06160c42315ac0c4ded461c7d84d92fa18c69d13d17fc1dfc1fae96580c95",
+          "filename": "cbor2-6.1.5.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "cbor2-6.1.5-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "105878e63ff90e95255906778605fc2199cf709be173c6de9c465b57a5259024",
+      "binary_kind": "elf",
+      "native_modules": [
+        "cbor2/_cbor2.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "cbor2/_cbor2.cpython-313-x86_64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "uuid-utils",
+      "target": {
+        "library": "uuid-utils",
+        "source": {
+          "package": "uuid-utils",
+          "version": "1.2.0",
+          "url": "https://files.pythonhosted.org/packages/fd/01/baff7ef80f30885cca5ecfc0d9ea660b3d20c34dfaf0d17a79a95ec342d7/uuid_utils-1.2.0.tar.gz",
+          "sha256": "8a8bd1120a8bc5a6656a1c580d66a050af430b05d017da526ec0b0a06715bf70",
+          "filename": "uuid_utils-1.2.0.tar.gz",
+          "directory": ".",
+          "backend": "maturin",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "uuid_utils-1.2.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "bf5f3981548a2c83dbf041d10754b36d4da3c9ca7434751837830b658402df2b",
+      "binary_kind": "elf",
+      "native_modules": [
+        "uuid_utils/_uuid_utils.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "uuid_utils/_uuid_utils.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "uuid-utils",
+      "target": {
+        "library": "uuid-utils",
+        "source": {
+          "package": "uuid-utils",
+          "version": "1.2.0",
+          "url": "https://files.pythonhosted.org/packages/fd/01/baff7ef80f30885cca5ecfc0d9ea660b3d20c34dfaf0d17a79a95ec342d7/uuid_utils-1.2.0.tar.gz",
+          "sha256": "8a8bd1120a8bc5a6656a1c580d66a050af430b05d017da526ec0b0a06715bf70",
+          "filename": "uuid_utils-1.2.0.tar.gz",
+          "directory": ".",
+          "backend": "maturin",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "uuid_utils-1.2.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "1dd1d2da46d011c3d87075e338c41e1ef43f90d2f42a92248325f6a6dc030f99",
+      "binary_kind": "elf",
+      "native_modules": [
+        "uuid_utils/_uuid_utils.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "uuid_utils/_uuid_utils.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "simplejson",
+      "target": {
+        "library": "simplejson",
+        "source": {
+          "package": "simplejson",
+          "version": "4.2.0",
+          "url": "https://files.pythonhosted.org/packages/2f/f0/ea064bba6c9afda0168ddb834f1c75a93351031e25aee35c046108e7f292/simplejson-4.2.0.tar.gz",
+          "sha256": "55b121b70a560f4610bd3a355ab2015aca4f39978f6a82353f24d2013fe85861",
+          "filename": "simplejson-4.2.0.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [
+          {
+            "name": "REQUIRE_SPEEDUPS",
+            "value": "1"
+          }
+        ],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "simplejson-4.2.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "580773499f1ff9ec2201925766bcd7cc61ec0cd15e0bd51468e64589915212fa",
+      "binary_kind": "elf",
+      "native_modules": [
+        "simplejson/_speedups.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "simplejson/_speedups.cpython-313-aarch64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "simplejson",
+      "target": {
+        "library": "simplejson",
+        "source": {
+          "package": "simplejson",
+          "version": "4.2.0",
+          "url": "https://files.pythonhosted.org/packages/2f/f0/ea064bba6c9afda0168ddb834f1c75a93351031e25aee35c046108e7f292/simplejson-4.2.0.tar.gz",
+          "sha256": "55b121b70a560f4610bd3a355ab2015aca4f39978f6a82353f24d2013fe85861",
+          "filename": "simplejson-4.2.0.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [
+          {
+            "name": "REQUIRE_SPEEDUPS",
+            "value": "1"
+          }
+        ],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "simplejson-4.2.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "ca72bc5fd75f981a1f7b2596171e07e0d8e354c66bb3cb505a4dde830dc2feee",
+      "binary_kind": "elf",
+      "native_modules": [
+        "simplejson/_speedups.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "simplejson/_speedups.cpython-313-x86_64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "ruamel-yaml-clib",
+      "target": {
+        "library": "ruamel-yaml-clib",
+        "source": {
+          "package": "ruamel-yaml-clib",
+          "version": "0.2.15",
+          "url": "https://files.pythonhosted.org/packages/ea/97/60fda20e2fb54b83a61ae14648b0817c8f5d84a3821e40bfbdae1437026a/ruamel_yaml_clib-0.2.15.tar.gz",
+          "sha256": "46e4cc8c43ef6a94885f72512094e482114a8a706d3c555a34ed4b0d20200600",
+          "filename": "ruamel_yaml_clib-0.2.15.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "ruamel_yaml_clib-0.2.15-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "f1553dfeec3ac7ff66d5e0d96e1b927dad906db5d4de386686cdced804e27349",
+      "binary_kind": "elf",
+      "native_modules": [
+        "_ruamel_yaml.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "_ruamel_yaml.cpython-313-aarch64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "ruamel-yaml-clib",
+      "target": {
+        "library": "ruamel-yaml-clib",
+        "source": {
+          "package": "ruamel-yaml-clib",
+          "version": "0.2.15",
+          "url": "https://files.pythonhosted.org/packages/ea/97/60fda20e2fb54b83a61ae14648b0817c8f5d84a3821e40bfbdae1437026a/ruamel_yaml_clib-0.2.15.tar.gz",
+          "sha256": "46e4cc8c43ef6a94885f72512094e482114a8a706d3c555a34ed4b0d20200600",
+          "filename": "ruamel_yaml_clib-0.2.15.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "ruamel_yaml_clib-0.2.15-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "39f595fa3aca0a87dac1b13e69e9069388b46b8814c236db154f9909572d4fad",
+      "binary_kind": "elf",
+      "native_modules": [
+        "_ruamel_yaml.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "_ruamel_yaml.cpython-313-x86_64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "librt",
+      "target": {
+        "library": "librt",
+        "source": {
+          "package": "librt",
+          "version": "0.16.0",
+          "url": "https://files.pythonhosted.org/packages/04/f5/9dc696772d241814bacac7880bac32f2930b5a6ebc1f85317b83161a011c/librt-0.16.0.tar.gz",
+          "sha256": "ac38d6d8d66bf3d744148dbbc0b8e193e195a51e364ed55e224631f5721891fc",
+          "filename": "librt-0.16.0.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "librt-0.16.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "70b26c71cf69aaee1163085be3226b8dfa596f2869ae997cf949aaea13ca960d",
+      "binary_kind": "elf",
+      "native_modules": [
+        "librt/base64.cpython-313-aarch64-linux-android.so",
+        "librt/internal.cpython-313-aarch64-linux-android.so",
+        "librt/random.cpython-313-aarch64-linux-android.so",
+        "librt/strings.cpython-313-aarch64-linux-android.so",
+        "librt/threading.cpython-313-aarch64-linux-android.so",
+        "librt/time.cpython-313-aarch64-linux-android.so",
+        "librt/vecs.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "librt/base64.cpython-313-aarch64-linux-android.so": [
+          16384
+        ],
+        "librt/internal.cpython-313-aarch64-linux-android.so": [
+          16384
+        ],
+        "librt/random.cpython-313-aarch64-linux-android.so": [
+          16384
+        ],
+        "librt/strings.cpython-313-aarch64-linux-android.so": [
+          16384
+        ],
+        "librt/threading.cpython-313-aarch64-linux-android.so": [
+          16384
+        ],
+        "librt/time.cpython-313-aarch64-linux-android.so": [
+          16384
+        ],
+        "librt/vecs.cpython-313-aarch64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "librt",
+      "target": {
+        "library": "librt",
+        "source": {
+          "package": "librt",
+          "version": "0.16.0",
+          "url": "https://files.pythonhosted.org/packages/04/f5/9dc696772d241814bacac7880bac32f2930b5a6ebc1f85317b83161a011c/librt-0.16.0.tar.gz",
+          "sha256": "ac38d6d8d66bf3d744148dbbc0b8e193e195a51e364ed55e224631f5721891fc",
+          "filename": "librt-0.16.0.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "librt-0.16.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "ed7705fc224d85f96f659dc6475096f44e911e56fd54ba469f2a12ffd6783e00",
+      "binary_kind": "elf",
+      "native_modules": [
+        "librt/base64.cpython-313-x86_64-linux-android.so",
+        "librt/internal.cpython-313-x86_64-linux-android.so",
+        "librt/random.cpython-313-x86_64-linux-android.so",
+        "librt/strings.cpython-313-x86_64-linux-android.so",
+        "librt/threading.cpython-313-x86_64-linux-android.so",
+        "librt/time.cpython-313-x86_64-linux-android.so",
+        "librt/vecs.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "librt/base64.cpython-313-x86_64-linux-android.so": [
+          16384
+        ],
+        "librt/internal.cpython-313-x86_64-linux-android.so": [
+          16384
+        ],
+        "librt/random.cpython-313-x86_64-linux-android.so": [
+          16384
+        ],
+        "librt/strings.cpython-313-x86_64-linux-android.so": [
+          16384
+        ],
+        "librt/threading.cpython-313-x86_64-linux-android.so": [
+          16384
+        ],
+        "librt/time.cpython-313-x86_64-linux-android.so": [
+          16384
+        ],
+        "librt/vecs.cpython-313-x86_64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "ast-serialize",
+      "target": {
+        "library": "ast-serialize",
+        "source": {
+          "package": "ast-serialize",
+          "version": "0.13.1",
+          "url": "https://files.pythonhosted.org/packages/21/d5/5dc1ee8a80c3b20a0b63c61b43ba6bc53517faecd1def47bcd752d22268e/ast_serialize-0.13.1.tar.gz",
+          "sha256": "401cc84e8888d4d76f2c8d296fa006ed1a5ff993b6aff90dd777c03973efd025",
+          "filename": "ast_serialize-0.13.1.tar.gz",
+          "directory": ".",
+          "backend": "maturin",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "ast_serialize-0.13.1-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "902da19355813cdb83be6863fffbd23af8ebbf05a0f2cb2b2dcd9b312c4ac9e0",
+      "binary_kind": "elf",
+      "native_modules": [
+        "ast_serialize/ast_serialize.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "ast_serialize/ast_serialize.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "ast-serialize",
+      "target": {
+        "library": "ast-serialize",
+        "source": {
+          "package": "ast-serialize",
+          "version": "0.13.1",
+          "url": "https://files.pythonhosted.org/packages/21/d5/5dc1ee8a80c3b20a0b63c61b43ba6bc53517faecd1def47bcd752d22268e/ast_serialize-0.13.1.tar.gz",
+          "sha256": "401cc84e8888d4d76f2c8d296fa006ed1a5ff993b6aff90dd777c03973efd025",
+          "filename": "ast_serialize-0.13.1.tar.gz",
+          "directory": ".",
+          "backend": "maturin",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "ast_serialize-0.13.1-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "423332188be2d038c5367cd08f14e11830d639f909be7b049e4079fabf450367",
+      "binary_kind": "elf",
+      "native_modules": [
+        "ast_serialize/ast_serialize.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "ast_serialize/ast_serialize.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40690215130
+    },
+    {
+      "package": "fastuuid",
+      "target": {
+        "library": "fastuuid",
+        "source": {
+          "package": "fastuuid",
+          "version": "0.14.0",
+          "url": "https://files.pythonhosted.org/packages/c3/7d/d9daedf0f2ebcacd20d599928f8913e9d2aea1d56d2d355a93bfa2b611d7/fastuuid-0.14.0.tar.gz",
+          "sha256": "178947fc2f995b38497a74172adee64fdeb8b7ec18f2a5934d037641ba265d26",
+          "filename": "fastuuid-0.14.0.tar.gz",
+          "directory": ".",
+          "backend": "maturin",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "fastuuid-0.14.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "d2641499749556ab2a475591ee5ee208b5628626f9ec94f825b4494a85be83d7",
+      "binary_kind": "elf",
+      "native_modules": [
+        "fastuuid/fastuuid.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "fastuuid/fastuuid.cpython-313-aarch64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690628276
+    },
+    {
+      "package": "fastuuid",
+      "target": {
+        "library": "fastuuid",
+        "source": {
+          "package": "fastuuid",
+          "version": "0.14.0",
+          "url": "https://files.pythonhosted.org/packages/c3/7d/d9daedf0f2ebcacd20d599928f8913e9d2aea1d56d2d355a93bfa2b611d7/fastuuid-0.14.0.tar.gz",
+          "sha256": "178947fc2f995b38497a74172adee64fdeb8b7ec18f2a5934d037641ba265d26",
+          "filename": "fastuuid-0.14.0.tar.gz",
+          "directory": ".",
+          "backend": "maturin",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "fastuuid-0.14.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "9102a3232a452777aba9ec94a001d8fbddae53040a15e65a133770ffee5d3722",
+      "binary_kind": "elf",
+      "native_modules": [
+        "fastuuid/fastuuid.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "fastuuid/fastuuid.cpython-313-x86_64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690628276
+    },
+    {
+      "package": "pymongo",
+      "target": {
+        "library": "pymongo",
+        "source": {
+          "package": "pymongo",
+          "version": "4.19.0",
+          "url": "https://files.pythonhosted.org/packages/42/8b/a9d214044153cb7d9141229d3e1b171cdf4f460fa07cade9354c4ce2f84d/pymongo-4.19.0.tar.gz",
+          "sha256": "3c510dd3c5d9b392d3b33bb5d2a594758acfe8f026fca654253f947ce0af9d40",
+          "filename": "pymongo-4.19.0.tar.gz",
+          "directory": ".",
+          "backend": "hatchling.build",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [
+          {
+            "name": "PYMONGO_C_EXT_MUST_BUILD",
+            "value": "1"
+          }
+        ],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "pymongo-4.19.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "b0b151f34c7e9bef845837da6ae35c4f4c7a5a071f542f15f59236ab64f23a16",
+      "binary_kind": "elf",
+      "native_modules": [
+        "bson/_cbson.cpython-313-aarch64-linux-android.so",
+        "pymongo/_cmessage.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "bson/_cbson.cpython-313-aarch64-linux-android.so": [
+          16384
+        ],
+        "pymongo/_cmessage.cpython-313-aarch64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690628276
+    },
+    {
+      "package": "pymongo",
+      "target": {
+        "library": "pymongo",
+        "source": {
+          "package": "pymongo",
+          "version": "4.19.0",
+          "url": "https://files.pythonhosted.org/packages/42/8b/a9d214044153cb7d9141229d3e1b171cdf4f460fa07cade9354c4ce2f84d/pymongo-4.19.0.tar.gz",
+          "sha256": "3c510dd3c5d9b392d3b33bb5d2a594758acfe8f026fca654253f947ce0af9d40",
+          "filename": "pymongo-4.19.0.tar.gz",
+          "directory": ".",
+          "backend": "hatchling.build",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [
+          {
+            "name": "PYMONGO_C_EXT_MUST_BUILD",
+            "value": "1"
+          }
+        ],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "pymongo-4.19.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "34ce10ba3bf4dcf1c9da65063b9d6684430587e4ab793d7a957fd4b61066f6de",
+      "binary_kind": "elf",
+      "native_modules": [
+        "bson/_cbson.cpython-313-x86_64-linux-android.so",
+        "pymongo/_cmessage.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "bson/_cbson.cpython-313-x86_64-linux-android.so": [
+          16384
+        ],
+        "pymongo/_cmessage.cpython-313-x86_64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690628276
+    },
+    {
+      "package": "zope-interface",
+      "target": {
+        "library": "zope-interface",
+        "source": {
+          "package": "zope-interface",
+          "version": "8.7",
+          "url": "https://files.pythonhosted.org/packages/de/ff/a1f0021a26033da0df223fd05a7455d6d2881b67daf2c6dc897b4fe0a427/zope_interface-8.7.tar.gz",
+          "sha256": "0b47b62e8d0d99b24bcdd32f4f2120425e5019c3bee2ad69a0e1d75737487a96",
+          "filename": "zope_interface-8.7.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "zope_interface-8.7-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "ba70715cebca1288d0e3d3954ed2f2ac97ad01e7469b86991640c97fb603168e",
+      "binary_kind": "elf",
+      "native_modules": [
+        "zope/interface/_zope_interface_coptimizations.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "zope/interface/_zope_interface_coptimizations.cpython-313-aarch64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690628276
+    },
+    {
+      "package": "zope-interface",
+      "target": {
+        "library": "zope-interface",
+        "source": {
+          "package": "zope-interface",
+          "version": "8.7",
+          "url": "https://files.pythonhosted.org/packages/de/ff/a1f0021a26033da0df223fd05a7455d6d2881b67daf2c6dc897b4fe0a427/zope_interface-8.7.tar.gz",
+          "sha256": "0b47b62e8d0d99b24bcdd32f4f2120425e5019c3bee2ad69a0e1d75737487a96",
+          "filename": "zope_interface-8.7.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "zope_interface-8.7-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "560ddb82db864213b42b307f4dd8f42013945298ca4810a20996290711cad4ba",
+      "binary_kind": "elf",
+      "native_modules": [
+        "zope/interface/_zope_interface_coptimizations.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "zope/interface/_zope_interface_coptimizations.cpython-313-x86_64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690628276
+    },
+    {
+      "package": "tree-sitter",
+      "target": {
+        "library": "tree-sitter",
+        "source": {
+          "package": "tree-sitter",
+          "version": "0.26.0",
+          "url": "https://files.pythonhosted.org/packages/f7/03/5600b84aff2e6c4fe80cfebb4063fe2f50299521befe5f6092ab8c082f4a/tree_sitter-0.26.0.tar.gz",
+          "sha256": "b40c219edccc4564530c96f8f1556f6202b37cda964d1cbd7bd2b7e68b40a245",
+          "filename": "tree_sitter-0.26.0.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "tree_sitter-0.26.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "a23390d8ee21461e824dfac779182a869c1f31fcf917233f1770e05f632f5947",
+      "binary_kind": "elf",
+      "native_modules": [
+        "tree_sitter/_binding.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "tree_sitter/_binding.cpython-313-aarch64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690628276
+    },
+    {
+      "package": "tree-sitter",
+      "target": {
+        "library": "tree-sitter",
+        "source": {
+          "package": "tree-sitter",
+          "version": "0.26.0",
+          "url": "https://files.pythonhosted.org/packages/f7/03/5600b84aff2e6c4fe80cfebb4063fe2f50299521befe5f6092ab8c082f4a/tree_sitter-0.26.0.tar.gz",
+          "sha256": "b40c219edccc4564530c96f8f1556f6202b37cda964d1cbd7bd2b7e68b40a245",
+          "filename": "tree_sitter-0.26.0.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "tree_sitter-0.26.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "2028cc83cf4aa28b6852b74a9b4e8ced91de28cd44ef448c453087b1b523f88c",
+      "binary_kind": "elf",
+      "native_modules": [
+        "tree_sitter/_binding.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "tree_sitter/_binding.cpython-313-x86_64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40690628276
+    },
+    {
+      "package": "pycryptodome",
+      "target": {
+        "library": "pycryptodome",
+        "source": {
+          "package": "pycryptodome",
+          "version": "4.2.0",
+          "url": "https://files.pythonhosted.org/packages/33/c7/f9374c8939560ab22db1dd9dbe215b62d20f32634aeb7f259dc03c807b44/pycryptodome-4.2.0.tar.gz",
+          "sha256": "21d7fdba239d6ef863d3d08388801c683453a3bb4897c2b27f27847aad89bdf7",
+          "filename": "pycryptodome-4.2.0.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "pycryptodome-4.2.0-cp39-abi3-android_24_arm64_v8a.whl",
+      "sha256": "d003f5545c000388771772da1b839f9b10fb240f54d6f44d82b4c37298c807dd",
+      "binary_kind": "elf",
+      "native_modules": [
+        "Crypto/Cipher/_ARC4.abi3.so",
+        "Crypto/Cipher/_Salsa20.abi3.so",
+        "Crypto/Cipher/_chacha20.abi3.so",
+        "Crypto/Cipher/_pkcs1_decode.abi3.so",
+        "Crypto/Cipher/_raw_aes.abi3.so",
+        "Crypto/Cipher/_raw_arc2.abi3.so",
+        "Crypto/Cipher/_raw_blowfish.abi3.so",
+        "Crypto/Cipher/_raw_cast.abi3.so",
+        "Crypto/Cipher/_raw_cbc.abi3.so",
+        "Crypto/Cipher/_raw_cfb.abi3.so",
+        "Crypto/Cipher/_raw_ctr.abi3.so",
+        "Crypto/Cipher/_raw_des.abi3.so",
+        "Crypto/Cipher/_raw_des3.abi3.so",
+        "Crypto/Cipher/_raw_ecb.abi3.so",
+        "Crypto/Cipher/_raw_eksblowfish.abi3.so",
+        "Crypto/Cipher/_raw_ocb.abi3.so",
+        "Crypto/Cipher/_raw_ofb.abi3.so",
+        "Crypto/Hash/_BLAKE2b.abi3.so",
+        "Crypto/Hash/_BLAKE2s.abi3.so",
+        "Crypto/Hash/_MD2.abi3.so",
+        "Crypto/Hash/_MD4.abi3.so",
+        "Crypto/Hash/_MD5.abi3.so",
+        "Crypto/Hash/_RIPEMD160.abi3.so",
+        "Crypto/Hash/_SHA1.abi3.so",
+        "Crypto/Hash/_SHA224.abi3.so",
+        "Crypto/Hash/_SHA256.abi3.so",
+        "Crypto/Hash/_SHA384.abi3.so",
+        "Crypto/Hash/_SHA512.abi3.so",
+        "Crypto/Hash/_ghash_portable.abi3.so",
+        "Crypto/Hash/_k12.abi3.so",
+        "Crypto/Hash/_keccak.abi3.so",
+        "Crypto/Hash/_poly1305.abi3.so",
+        "Crypto/Math/_nat.abi3.so",
+        "Crypto/Protocol/_scrypt.abi3.so",
+        "Crypto/PublicKey/_curve25519.abi3.so",
+        "Crypto/PublicKey/_ec_nat.abi3.so",
+        "Crypto/PublicKey/_ed25519.abi3.so",
+        "Crypto/PublicKey/_mldsa.abi3.so",
+        "Crypto/PublicKey/_mlkem.abi3.so",
+        "Crypto/Util/_cpuid_c.abi3.so",
+        "Crypto/Util/_strxor.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "Crypto/Cipher/_ARC4.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_Salsa20.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_chacha20.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_pkcs1_decode.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_aes.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_arc2.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_blowfish.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_cast.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_cbc.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_cfb.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_ctr.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_des.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_des3.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_ecb.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_eksblowfish.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_ocb.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_ofb.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_BLAKE2b.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_BLAKE2s.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_MD2.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_MD4.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_MD5.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_RIPEMD160.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_SHA1.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_SHA224.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_SHA256.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_SHA384.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_SHA512.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_ghash_portable.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_k12.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_keccak.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_poly1305.abi3.so": [
+          16384
+        ],
+        "Crypto/Math/_nat.abi3.so": [
+          16384
+        ],
+        "Crypto/Protocol/_scrypt.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_curve25519.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_ec_nat.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_ed25519.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_mldsa.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_mlkem.abi3.so": [
+          16384
+        ],
+        "Crypto/Util/_cpuid_c.abi3.so": [
+          16384
+        ],
+        "Crypto/Util/_strxor.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40690628276
+    },
+    {
+      "package": "pycryptodome",
+      "target": {
+        "library": "pycryptodome",
+        "source": {
+          "package": "pycryptodome",
+          "version": "4.2.0",
+          "url": "https://files.pythonhosted.org/packages/33/c7/f9374c8939560ab22db1dd9dbe215b62d20f32634aeb7f259dc03c807b44/pycryptodome-4.2.0.tar.gz",
+          "sha256": "21d7fdba239d6ef863d3d08388801c683453a3bb4897c2b27f27847aad89bdf7",
+          "filename": "pycryptodome-4.2.0.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "pycryptodome-4.2.0-cp39-abi3-android_24_x86_64.whl",
+      "sha256": "32374d2480e1bfa5a44caef2ed08e79f143cbb8fe0fb8ce62d2e86f1121176b9",
+      "binary_kind": "elf",
+      "native_modules": [
+        "Crypto/Cipher/_ARC4.abi3.so",
+        "Crypto/Cipher/_Salsa20.abi3.so",
+        "Crypto/Cipher/_Salsa20_avx2_bmi2.abi3.so",
+        "Crypto/Cipher/_chacha20.abi3.so",
+        "Crypto/Cipher/_chacha20_avx2_bmi2.abi3.so",
+        "Crypto/Cipher/_pkcs1_decode.abi3.so",
+        "Crypto/Cipher/_raw_aes.abi3.so",
+        "Crypto/Cipher/_raw_aesni.abi3.so",
+        "Crypto/Cipher/_raw_arc2.abi3.so",
+        "Crypto/Cipher/_raw_blowfish.abi3.so",
+        "Crypto/Cipher/_raw_cast.abi3.so",
+        "Crypto/Cipher/_raw_cbc.abi3.so",
+        "Crypto/Cipher/_raw_cfb.abi3.so",
+        "Crypto/Cipher/_raw_ctr.abi3.so",
+        "Crypto/Cipher/_raw_des.abi3.so",
+        "Crypto/Cipher/_raw_des3.abi3.so",
+        "Crypto/Cipher/_raw_ecb.abi3.so",
+        "Crypto/Cipher/_raw_eksblowfish.abi3.so",
+        "Crypto/Cipher/_raw_ocb.abi3.so",
+        "Crypto/Cipher/_raw_ofb.abi3.so",
+        "Crypto/Hash/_BLAKE2b.abi3.so",
+        "Crypto/Hash/_BLAKE2s.abi3.so",
+        "Crypto/Hash/_MD2.abi3.so",
+        "Crypto/Hash/_MD4.abi3.so",
+        "Crypto/Hash/_MD5.abi3.so",
+        "Crypto/Hash/_RIPEMD160.abi3.so",
+        "Crypto/Hash/_SHA1.abi3.so",
+        "Crypto/Hash/_SHA224.abi3.so",
+        "Crypto/Hash/_SHA224_shani.abi3.so",
+        "Crypto/Hash/_SHA256.abi3.so",
+        "Crypto/Hash/_SHA256_shani.abi3.so",
+        "Crypto/Hash/_SHA384.abi3.so",
+        "Crypto/Hash/_SHA512.abi3.so",
+        "Crypto/Hash/_ghash_clmul.abi3.so",
+        "Crypto/Hash/_ghash_portable.abi3.so",
+        "Crypto/Hash/_k12.abi3.so",
+        "Crypto/Hash/_k12_avx2_bmi2.abi3.so",
+        "Crypto/Hash/_keccak.abi3.so",
+        "Crypto/Hash/_keccak_avx2_bmi2.abi3.so",
+        "Crypto/Hash/_poly1305.abi3.so",
+        "Crypto/Math/_nat.abi3.so",
+        "Crypto/Math/_nat_bmi2_adx.abi3.so",
+        "Crypto/Protocol/_scrypt.abi3.so",
+        "Crypto/PublicKey/_curve25519.abi3.so",
+        "Crypto/PublicKey/_ec_nat.abi3.so",
+        "Crypto/PublicKey/_ec_nat_bmi2_adx.abi3.so",
+        "Crypto/PublicKey/_ed25519.abi3.so",
+        "Crypto/PublicKey/_mldsa.abi3.so",
+        "Crypto/PublicKey/_mldsa_avx2_bmi2.abi3.so",
+        "Crypto/PublicKey/_mlkem.abi3.so",
+        "Crypto/PublicKey/_mlkem_avx2_bmi2.abi3.so",
+        "Crypto/Util/_cpuid_c.abi3.so",
+        "Crypto/Util/_strxor.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "Crypto/Cipher/_ARC4.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_Salsa20.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_Salsa20_avx2_bmi2.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_chacha20.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_chacha20_avx2_bmi2.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_pkcs1_decode.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_aes.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_aesni.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_arc2.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_blowfish.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_cast.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_cbc.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_cfb.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_ctr.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_des.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_des3.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_ecb.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_eksblowfish.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_ocb.abi3.so": [
+          16384
+        ],
+        "Crypto/Cipher/_raw_ofb.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_BLAKE2b.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_BLAKE2s.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_MD2.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_MD4.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_MD5.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_RIPEMD160.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_SHA1.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_SHA224.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_SHA224_shani.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_SHA256.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_SHA256_shani.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_SHA384.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_SHA512.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_ghash_clmul.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_ghash_portable.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_k12.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_k12_avx2_bmi2.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_keccak.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_keccak_avx2_bmi2.abi3.so": [
+          16384
+        ],
+        "Crypto/Hash/_poly1305.abi3.so": [
+          16384
+        ],
+        "Crypto/Math/_nat.abi3.so": [
+          16384
+        ],
+        "Crypto/Math/_nat_bmi2_adx.abi3.so": [
+          16384
+        ],
+        "Crypto/Protocol/_scrypt.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_curve25519.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_ec_nat.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_ec_nat_bmi2_adx.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_ed25519.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_mldsa.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_mldsa_avx2_bmi2.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_mlkem.abi3.so": [
+          16384
+        ],
+        "Crypto/PublicKey/_mlkem_avx2_bmi2.abi3.so": [
+          16384
+        ],
+        "Crypto/Util/_cpuid_c.abi3.so": [
+          16384
+        ],
+        "Crypto/Util/_strxor.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40690628276
+    },
+    {
+      "package": "pycryptodomex",
+      "target": {
+        "library": "pycryptodomex",
+        "source": {
+          "package": "pycryptodomex",
+          "version": "3.24.1",
+          "url": "https://files.pythonhosted.org/packages/f4/e7/50e72301e32acb73a314e663c2014e1ddefc019d5f434ff14ec89861d664/pycryptodomex-3.24.1.tar.gz",
+          "sha256": "09081666ffc599976c0b8b29caf2cf82212c0f05bed233c8f8ed53e4f6e1d356",
+          "filename": "pycryptodomex-3.24.1.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "pycryptodomex-3.24.1-cp37-abi3-android_24_arm64_v8a.whl",
+      "sha256": "0daaaf006d642f930062a63383ce43fa686735054afcecdffa632ef8f9cd69c8",
+      "binary_kind": "elf",
+      "native_modules": [
+        "Cryptodome/Cipher/_ARC4.abi3.so",
+        "Cryptodome/Cipher/_Salsa20.abi3.so",
+        "Cryptodome/Cipher/_chacha20.abi3.so",
+        "Cryptodome/Cipher/_pkcs1_decode.abi3.so",
+        "Cryptodome/Cipher/_raw_aes.abi3.so",
+        "Cryptodome/Cipher/_raw_arc2.abi3.so",
+        "Cryptodome/Cipher/_raw_blowfish.abi3.so",
+        "Cryptodome/Cipher/_raw_cast.abi3.so",
+        "Cryptodome/Cipher/_raw_cbc.abi3.so",
+        "Cryptodome/Cipher/_raw_cfb.abi3.so",
+        "Cryptodome/Cipher/_raw_ctr.abi3.so",
+        "Cryptodome/Cipher/_raw_des.abi3.so",
+        "Cryptodome/Cipher/_raw_des3.abi3.so",
+        "Cryptodome/Cipher/_raw_ecb.abi3.so",
+        "Cryptodome/Cipher/_raw_eksblowfish.abi3.so",
+        "Cryptodome/Cipher/_raw_ocb.abi3.so",
+        "Cryptodome/Cipher/_raw_ofb.abi3.so",
+        "Cryptodome/Hash/_BLAKE2b.abi3.so",
+        "Cryptodome/Hash/_BLAKE2s.abi3.so",
+        "Cryptodome/Hash/_MD2.abi3.so",
+        "Cryptodome/Hash/_MD4.abi3.so",
+        "Cryptodome/Hash/_MD5.abi3.so",
+        "Cryptodome/Hash/_RIPEMD160.abi3.so",
+        "Cryptodome/Hash/_SHA1.abi3.so",
+        "Cryptodome/Hash/_SHA224.abi3.so",
+        "Cryptodome/Hash/_SHA256.abi3.so",
+        "Cryptodome/Hash/_SHA384.abi3.so",
+        "Cryptodome/Hash/_SHA512.abi3.so",
+        "Cryptodome/Hash/_ghash_portable.abi3.so",
+        "Cryptodome/Hash/_keccak.abi3.so",
+        "Cryptodome/Hash/_poly1305.abi3.so",
+        "Cryptodome/Math/_modexp.abi3.so",
+        "Cryptodome/Protocol/_scrypt.abi3.so",
+        "Cryptodome/PublicKey/_curve25519.abi3.so",
+        "Cryptodome/PublicKey/_curve448.abi3.so",
+        "Cryptodome/PublicKey/_ec_ws.abi3.so",
+        "Cryptodome/PublicKey/_ed25519.abi3.so",
+        "Cryptodome/PublicKey/_ed448.abi3.so",
+        "Cryptodome/Util/_cpuid_c.abi3.so",
+        "Cryptodome/Util/_strxor.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "Cryptodome/Cipher/_ARC4.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_Salsa20.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_chacha20.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_pkcs1_decode.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_aes.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_arc2.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_blowfish.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_cast.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_cbc.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_cfb.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_ctr.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_des.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_des3.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_ecb.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_eksblowfish.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_ocb.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_ofb.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_BLAKE2b.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_BLAKE2s.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_MD2.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_MD4.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_MD5.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_RIPEMD160.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_SHA1.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_SHA224.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_SHA256.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_SHA384.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_SHA512.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_ghash_portable.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_keccak.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_poly1305.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Math/_modexp.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Protocol/_scrypt.abi3.so": [
+          16384
+        ],
+        "Cryptodome/PublicKey/_curve25519.abi3.so": [
+          16384
+        ],
+        "Cryptodome/PublicKey/_curve448.abi3.so": [
+          16384
+        ],
+        "Cryptodome/PublicKey/_ec_ws.abi3.so": [
+          16384
+        ],
+        "Cryptodome/PublicKey/_ed25519.abi3.so": [
+          16384
+        ],
+        "Cryptodome/PublicKey/_ed448.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Util/_cpuid_c.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Util/_strxor.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40690628276
+    },
+    {
+      "package": "pycryptodomex",
+      "target": {
+        "library": "pycryptodomex",
+        "source": {
+          "package": "pycryptodomex",
+          "version": "3.24.1",
+          "url": "https://files.pythonhosted.org/packages/f4/e7/50e72301e32acb73a314e663c2014e1ddefc019d5f434ff14ec89861d664/pycryptodomex-3.24.1.tar.gz",
+          "sha256": "09081666ffc599976c0b8b29caf2cf82212c0f05bed233c8f8ed53e4f6e1d356",
+          "filename": "pycryptodomex-3.24.1.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "pycryptodomex-3.24.1-cp37-abi3-android_24_x86_64.whl",
+      "sha256": "79d40a13a8db8e7d7dac72949d6c792d7eb8426f20233fe8ca5bdf3acd8021b3",
+      "binary_kind": "elf",
+      "native_modules": [
+        "Cryptodome/Cipher/_ARC4.abi3.so",
+        "Cryptodome/Cipher/_Salsa20.abi3.so",
+        "Cryptodome/Cipher/_chacha20.abi3.so",
+        "Cryptodome/Cipher/_pkcs1_decode.abi3.so",
+        "Cryptodome/Cipher/_raw_aes.abi3.so",
+        "Cryptodome/Cipher/_raw_aesni.abi3.so",
+        "Cryptodome/Cipher/_raw_arc2.abi3.so",
+        "Cryptodome/Cipher/_raw_blowfish.abi3.so",
+        "Cryptodome/Cipher/_raw_cast.abi3.so",
+        "Cryptodome/Cipher/_raw_cbc.abi3.so",
+        "Cryptodome/Cipher/_raw_cfb.abi3.so",
+        "Cryptodome/Cipher/_raw_ctr.abi3.so",
+        "Cryptodome/Cipher/_raw_des.abi3.so",
+        "Cryptodome/Cipher/_raw_des3.abi3.so",
+        "Cryptodome/Cipher/_raw_ecb.abi3.so",
+        "Cryptodome/Cipher/_raw_eksblowfish.abi3.so",
+        "Cryptodome/Cipher/_raw_ocb.abi3.so",
+        "Cryptodome/Cipher/_raw_ofb.abi3.so",
+        "Cryptodome/Hash/_BLAKE2b.abi3.so",
+        "Cryptodome/Hash/_BLAKE2s.abi3.so",
+        "Cryptodome/Hash/_MD2.abi3.so",
+        "Cryptodome/Hash/_MD4.abi3.so",
+        "Cryptodome/Hash/_MD5.abi3.so",
+        "Cryptodome/Hash/_RIPEMD160.abi3.so",
+        "Cryptodome/Hash/_SHA1.abi3.so",
+        "Cryptodome/Hash/_SHA224.abi3.so",
+        "Cryptodome/Hash/_SHA256.abi3.so",
+        "Cryptodome/Hash/_SHA384.abi3.so",
+        "Cryptodome/Hash/_SHA512.abi3.so",
+        "Cryptodome/Hash/_ghash_clmul.abi3.so",
+        "Cryptodome/Hash/_ghash_portable.abi3.so",
+        "Cryptodome/Hash/_keccak.abi3.so",
+        "Cryptodome/Hash/_poly1305.abi3.so",
+        "Cryptodome/Math/_modexp.abi3.so",
+        "Cryptodome/Protocol/_scrypt.abi3.so",
+        "Cryptodome/PublicKey/_curve25519.abi3.so",
+        "Cryptodome/PublicKey/_curve448.abi3.so",
+        "Cryptodome/PublicKey/_ec_ws.abi3.so",
+        "Cryptodome/PublicKey/_ed25519.abi3.so",
+        "Cryptodome/PublicKey/_ed448.abi3.so",
+        "Cryptodome/Util/_cpuid_c.abi3.so",
+        "Cryptodome/Util/_strxor.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "Cryptodome/Cipher/_ARC4.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_Salsa20.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_chacha20.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_pkcs1_decode.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_aes.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_aesni.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_arc2.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_blowfish.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_cast.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_cbc.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_cfb.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_ctr.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_des.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_des3.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_ecb.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_eksblowfish.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_ocb.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Cipher/_raw_ofb.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_BLAKE2b.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_BLAKE2s.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_MD2.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_MD4.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_MD5.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_RIPEMD160.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_SHA1.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_SHA224.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_SHA256.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_SHA384.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_SHA512.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_ghash_clmul.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_ghash_portable.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_keccak.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Hash/_poly1305.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Math/_modexp.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Protocol/_scrypt.abi3.so": [
+          16384
+        ],
+        "Cryptodome/PublicKey/_curve25519.abi3.so": [
+          16384
+        ],
+        "Cryptodome/PublicKey/_curve448.abi3.so": [
+          16384
+        ],
+        "Cryptodome/PublicKey/_ec_ws.abi3.so": [
+          16384
+        ],
+        "Cryptodome/PublicKey/_ed25519.abi3.so": [
+          16384
+        ],
+        "Cryptodome/PublicKey/_ed448.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Util/_cpuid_c.abi3.so": [
+          16384
+        ],
+        "Cryptodome/Util/_strxor.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40690628276
+    },
+    {
+      "package": "argon2-cffi-bindings",
+      "target": {
+        "library": "argon2-cffi-bindings",
+        "source": {
+          "package": "argon2-cffi-bindings",
+          "version": "26.1.0",
+          "url": "https://files.pythonhosted.org/packages/0b/43/bb8b6e8708d49a5ab36781333af092d9f483b198a2710d01281204640055/argon2_cffi_bindings-26.1.0.tar.gz",
+          "sha256": "63505c71542a44b68b1e38060450fb006404170da375feb31af153e7f9c6205d",
+          "filename": "argon2_cffi_bindings-26.1.0.tar.gz",
+          "directory": ".",
+          "backend": "scikit_build_core.build",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": [
+          {
+            "name": "cmake.define.CMAKE_C_STANDARD_LIBRARIES",
+            "value": "-lpython3.13"
+          }
+        ]
+      },
+      "filename": "argon2_cffi_bindings-26.1.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "6a0eece61f7b8f3fcf6a262fb6867435bba4245172528b8c81d0e010a951ee0e",
+      "binary_kind": "elf",
+      "native_modules": [
+        "_argon2_cffi_bindings/_ffi.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "_argon2_cffi_bindings/_ffi.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40691292166
+    },
+    {
+      "package": "argon2-cffi-bindings",
+      "target": {
+        "library": "argon2-cffi-bindings",
+        "source": {
+          "package": "argon2-cffi-bindings",
+          "version": "26.1.0",
+          "url": "https://files.pythonhosted.org/packages/0b/43/bb8b6e8708d49a5ab36781333af092d9f483b198a2710d01281204640055/argon2_cffi_bindings-26.1.0.tar.gz",
+          "sha256": "63505c71542a44b68b1e38060450fb006404170da375feb31af153e7f9c6205d",
+          "filename": "argon2_cffi_bindings-26.1.0.tar.gz",
+          "directory": ".",
+          "backend": "scikit_build_core.build",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": [
+          {
+            "name": "cmake.define.CMAKE_C_STANDARD_LIBRARIES",
+            "value": "-lpython3.13"
+          }
+        ]
+      },
+      "filename": "argon2_cffi_bindings-26.1.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "28037262fbb169da11d4cdd94022d3a1e472e529352da635b3538c2e68459a44",
+      "binary_kind": "elf",
+      "native_modules": [
+        "_argon2_cffi_bindings/_ffi.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "_argon2_cffi_bindings/_ffi.abi3.so": [
+          16384
+        ]
+      },
+      "run_id": 40691292166
+    },
+    {
+      "package": "pendulum",
+      "target": {
+        "library": "pendulum",
+        "source": {
+          "package": "pendulum",
+          "version": "3.3.0",
+          "url": "https://files.pythonhosted.org/packages/d8/3f/345b5bc712ce806f3b5fbce6eea141f46713b2c1a7654eaead1b2593d5a1/pendulum-3.3.0.tar.gz",
+          "sha256": "9aceb5b24e9f55381df08187397e88546b5ba82f698b741cbf1a05c5e2369116",
+          "filename": "pendulum-3.3.0.tar.gz",
+          "directory": ".",
+          "backend": "maturin",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "pendulum-3.3.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "21dd52e60e9d5b44bd93f9243c2808227e182dfeb7e92b22556c4f59b965b076",
+      "binary_kind": "elf",
+      "native_modules": [
+        "pendulum/_pendulum.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "pendulum/_pendulum.cpython-313-aarch64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40691431216
+    },
+    {
+      "package": "pendulum",
+      "target": {
+        "library": "pendulum",
+        "source": {
+          "package": "pendulum",
+          "version": "3.3.0",
+          "url": "https://files.pythonhosted.org/packages/d8/3f/345b5bc712ce806f3b5fbce6eea141f46713b2c1a7654eaead1b2593d5a1/pendulum-3.3.0.tar.gz",
+          "sha256": "9aceb5b24e9f55381df08187397e88546b5ba82f698b741cbf1a05c5e2369116",
+          "filename": "pendulum-3.3.0.tar.gz",
+          "directory": ".",
+          "backend": "maturin",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "pendulum-3.3.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "b905d09671f37372ca70c269fdef0fab82ec1255f88bd8bd8eb3c56f968cd92a",
+      "binary_kind": "elf",
+      "native_modules": [
+        "pendulum/_pendulum.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "load_alignments": {
+        "pendulum/_pendulum.cpython-313-x86_64-linux-android.so": [
+          16384
+        ]
+      },
+      "run_id": 40691431216
+    },
+    {
+      "package": "rapidfuzz",
+      "target": {
+        "library": "rapidfuzz",
+        "source": {
+          "package": "rapidfuzz",
+          "version": "3.14.6",
+          "url": "https://files.pythonhosted.org/packages/18/97/226c43b7b5d957bc3840ed52ea99eed261f99834c4619be7a4742cbaeafa/rapidfuzz-3.14.6.tar.gz",
+          "sha256": "e13a8160d017b499ec7a2fa9d0ce1ae2e7377080815785819f966fb235d4eb60",
+          "filename": "rapidfuzz-3.14.6.tar.gz",
+          "directory": ".",
+          "backend": "scikit_build_core.build",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [
+          {
+            "name": "RAPIDFUZZ_BUILD_EXTENSION",
+            "value": "1"
+          }
+        ],
+        "native_dependencies": [],
+        "config_settings": [
+          {
+            "name": "cmake.define.CMAKE_CXX_STANDARD_LIBRARIES",
+            "value": "-lpython3.13 -fuse-ld=lld"
+          },
+          {
+            "name": "cmake.define.CMAKE_C_STANDARD_LIBRARIES",
+            "value": "-lpython3.13"
+          }
+        ]
+      },
+      "filename": "rapidfuzz-3.14.6-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "360d56f3979960e48800dc07c877cb9f0661bc3dc5269bdf78b39440c9e9dec9",
+      "binary_kind": "elf",
+      "native_modules": [
+        "rapidfuzz/fuzz_cpp.so",
+        "rapidfuzz/process_cpp_impl.so",
+        "rapidfuzz/utils_cpp.so",
+        "rapidfuzz/distance/_initialize_cpp.so",
+        "rapidfuzz/distance/metrics_cpp.so",
+        "rapidfuzz.libs/libc++_shared-d523468d.so"
+      ],
+      "needed": [
+        "libc++_shared-d523468d.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [
+        "$ORIGIN/../rapidfuzz.libs",
+        "$ORIGIN/../rapidfuzz.libs",
+        "$ORIGIN/../rapidfuzz.libs",
+        "$ORIGIN/../../rapidfuzz.libs",
+        "$ORIGIN/../../rapidfuzz.libs"
+      ],
+      "load_alignments": {
+        "rapidfuzz/fuzz_cpp.so": [
+          16384
+        ],
+        "rapidfuzz/process_cpp_impl.so": [
+          16384
+        ],
+        "rapidfuzz/utils_cpp.so": [
+          16384
+        ],
+        "rapidfuzz/distance/_initialize_cpp.so": [
+          16384
+        ],
+        "rapidfuzz/distance/metrics_cpp.so": [
+          16384
+        ],
+        "rapidfuzz.libs/libc++_shared-d523468d.so": [
+          16384
+        ]
+      },
+      "run_id": 40692251729
+    },
+    {
+      "package": "rapidfuzz",
+      "target": {
+        "library": "rapidfuzz",
+        "source": {
+          "package": "rapidfuzz",
+          "version": "3.14.6",
+          "url": "https://files.pythonhosted.org/packages/18/97/226c43b7b5d957bc3840ed52ea99eed261f99834c4619be7a4742cbaeafa/rapidfuzz-3.14.6.tar.gz",
+          "sha256": "e13a8160d017b499ec7a2fa9d0ce1ae2e7377080815785819f966fb235d4eb60",
+          "filename": "rapidfuzz-3.14.6.tar.gz",
+          "directory": ".",
+          "backend": "scikit_build_core.build",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [
+          {
+            "name": "RAPIDFUZZ_BUILD_EXTENSION",
+            "value": "1"
+          }
+        ],
+        "native_dependencies": [],
+        "config_settings": [
+          {
+            "name": "cmake.define.CMAKE_CXX_STANDARD_LIBRARIES",
+            "value": "-lpython3.13 -fuse-ld=lld"
+          },
+          {
+            "name": "cmake.define.CMAKE_C_STANDARD_LIBRARIES",
+            "value": "-lpython3.13"
+          }
+        ]
+      },
+      "filename": "rapidfuzz-3.14.6-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "8cbd6f202df1e2b78eedad38add495c4dad83c93ce7ea053884b4d17725c593c",
+      "binary_kind": "elf",
+      "native_modules": [
+        "rapidfuzz/_feature_detector_cpp.so",
+        "rapidfuzz/fuzz_cpp.so",
+        "rapidfuzz/fuzz_cpp_avx2.so",
+        "rapidfuzz/process_cpp_impl.so",
+        "rapidfuzz/utils_cpp.so",
+        "rapidfuzz/distance/_initialize_cpp.so",
+        "rapidfuzz/distance/metrics_cpp.so",
+        "rapidfuzz/distance/metrics_cpp_avx2.so",
+        "rapidfuzz.libs/libc++_shared-3d8817f3.so"
+      ],
+      "needed": [
+        "libc++_shared-3d8817f3.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [
+        "$ORIGIN/../rapidfuzz.libs",
+        "$ORIGIN/../rapidfuzz.libs",
+        "$ORIGIN/../rapidfuzz.libs",
+        "$ORIGIN/../rapidfuzz.libs",
+        "$ORIGIN/../rapidfuzz.libs",
+        "$ORIGIN/../../rapidfuzz.libs",
+        "$ORIGIN/../../rapidfuzz.libs",
+        "$ORIGIN/../../rapidfuzz.libs"
+      ],
+      "load_alignments": {
+        "rapidfuzz/_feature_detector_cpp.so": [
+          16384
+        ],
+        "rapidfuzz/fuzz_cpp.so": [
+          16384
+        ],
+        "rapidfuzz/fuzz_cpp_avx2.so": [
+          16384
+        ],
+        "rapidfuzz/process_cpp_impl.so": [
+          16384
+        ],
+        "rapidfuzz/utils_cpp.so": [
+          16384
+        ],
+        "rapidfuzz/distance/_initialize_cpp.so": [
+          16384
+        ],
+        "rapidfuzz/distance/metrics_cpp.so": [
+          16384
+        ],
+        "rapidfuzz/distance/metrics_cpp_avx2.so": [
+          16384
+        ],
+        "rapidfuzz.libs/libc++_shared-3d8817f3.so": [
+          16384
+        ]
+      },
+      "run_id": 40692251729
+    }
+  ],
+  "validation": "所有新增产物含实际 ELF；固定 sdist、版本、SHA-256、WHEEL/RECORD、目标架构、16 KB 对齐、Python 链接与标签、动态依赖闭合及相对加载路径均核验。仅验证 Python 3.13/API 24/双 ABI，尚未进行设备或模拟器功能测试。",
+  "native_interfaces": {
+    "pycryptodome": "通过 ctypes/CFFI 加载独立 C 库，不导入特定 libpython，保留上游 cp39-abi3 标签。",
+    "pycryptodomex": "同类 C 库以 Cryptodome 命名空间提供，不导入特定 libpython，保留上游 cp37-abi3 标签。"
+  },
+  "configuration": {
+    "tornado": "TORNADO_EXTENSION=1",
+    "lz4": "PYLZ4_USE_SYSTEM_LZ4=False，明确使用官方 sdist 自带源码",
+    "simplejson": "REQUIRE_SPEEDUPS=1",
+    "pymongo": "PYMONGO_C_EXT_MUST_BUILD=1",
+    "argon2-cffi-bindings": "CMAKE_C_STANDARD_LIBRARIES=-lpython3.13；运行依赖仓库已有 CFFI",
+    "rapidfuzz": "RAPIDFUZZ_BUILD_EXTENSION=1；CMAKE_C_STANDARD_LIBRARIES=-lpython3.13；CMAKE_CXX_STANDARD_LIBRARIES=-lpython3.13 -fuse-ld=lld，使最终链接使用 NDK LLD。"
+  },
+  "failed_preflights": [
+    {
+      "run_id": 40690215130,
+      "result": "failure",
+      "notes": "十一包共二十二个目标成功并独立核验，RapidFuzz 的 CMake LTO 错选宿主 gold；该次未发布。"
+    },
+    {
+      "run_id": 40690628276,
+      "result": "failure",
+      "notes": "六包共十二个目标成功并独立核验，Argon2 绑定缺少 Python 链接，随后通过 CMake 参数解决；该次未发布。"
+    },
+    {
+      "run_id": 40691017839,
+      "result": "failure",
+      "notes": "RapidFuzz 直接设置 LINKER_TYPE=LLD 不受 cibuildwheel 的 CMake Android 工具链支持，未发布。"
+    },
+    {
+      "run_id": 40691665431,
+      "result": "failure",
+      "notes": "传入实际 NDK 版本仍未改变 RapidFuzz 的最终 IPO gold 参数，未发布。"
+    },
+    {
+      "run_id": 40691431216,
+      "result": "failure",
+      "notes": "Pendulum 双 ABI 成功并独立核验；mypy 自举类型检查失败，删除失败 recipe，未发布。"
+    }
+  ],
+  "deferred": [
+    {
+      "package": "mypy",
+      "version": "2.4.0",
+      "run_id": 40691431216,
+      "reason": "librt 与 ast-serialize 已加入，但 mypy 终端颜色初始化提前排除 Android，mypyc 自举检查在 mypy/util.py:740 报 colors 类型无法确定及 no-any-return；不修改源码或绕过类型检查。"
+    },
+    {
+      "package": "tomli",
+      "version": "2.5.0",
+      "reason": "官方 sdist 使用 flit_core.buildapi，不包含原生构建声明；本轮不发布纯 Python 产物，也不改写 pyproject.toml。"
+    },
+    {
+      "package": "mmh3",
+      "reason": "官方已有 Android wheel，排除新增。"
+    },
+    {
+      "package": "ujson",
+      "reason": "下载量总榜第 611，不在本次原生候选前 100 范围，未加入。"
+    }
+  ]
+}

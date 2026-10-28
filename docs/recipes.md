@@ -67,7 +67,7 @@ api = 24
 | `android.abis` | ABI 构建集合，支持 `arm64-v8a`、`x86_64` |
 | `android.api` | Android API 整数，至少为 24 |
 
-目前显式建模的后端为 `maturin`、`setuptools.build_meta`、`_pyyaml_pep517`、`pep517_backend.hooks`、`mesonpy`、`hatchling.build`、`setuptools.build_meta:__legacy__` 和 Pillow 的 `backend`。新增已有后端的包只需添加 TOML；其他后端须先扩展枚举并验证构建路径。
+目前显式建模的后端为 `maturin`、`setuptools.build_meta`、`_pyyaml_pep517`、`pep517_backend.hooks`、`mesonpy`、`hatchling.build`、`setuptools.build_meta:__legacy__`、Pillow 的 `backend` 和 `scikit_build_core.build`。新增已有后端的包只需添加 TOML；其他后端须先扩展枚举并验证构建路径。
 
 固定版本 PyPI sdist 若没有声明 `build-backend`，且保留 `setup.py`，可显式选择 `setuptools.build_meta:__legacy__`。选择其他后端时仍要求源码声明与之吻合；不会因为缺少 `pyproject.toml` 自动改用 legacy，也不会生成或修改元数据。
 
@@ -97,7 +97,14 @@ jpeg = "enable"
 zlib = "enable"
 ```
 
-参数按独立的 `-C key=value` 边界交给后端，不拼接 Shell 命令，空格和特殊字符保持字面含义；键和值写入构建计划与来源清单。当前只接入现代 cibuildwheel；为 maturin 或旧版 Chaquopy 声明这些参数会在规划阶段报错。
+带点号的参数名必须用 TOML 引号包住，例如：
+
+```toml
+[config-settings]
+"cmake.define.CMAKE_C_STANDARD_LIBRARIES" = "-lpython3.13"
+```
+
+这是后端参数名中的点号，不是 TOML 子表。参数按独立的 `-C key=value` 边界交给后端，不拼接 Shell 命令，空格和特殊字符保持字面含义；键和值写入构建计划与来源清单。当前只接入现代 cibuildwheel；为 maturin 或旧版 Chaquopy 声明这些参数会在规划阶段报错。
 
 需要外部原生库时，在 TOML 顶层声明：
 
