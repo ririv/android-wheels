@@ -71,13 +71,35 @@ sdist 的地址、SHA-256、排名及全部预验证 wheel 记录见 [第二批�
 
 所有新增 wheel 均验证了实际 ELF、正确的 Android 架构、版本专用 Python 动态库与标签，以及依赖库打包和相对加载路径。本轮默认 Python 3.13 / API 24 / 双 ABI，不表示新增包的其他 Python 版本已通过测试；未在设备或模拟器中运行功能测试。完整来源和哈希见 [本批审计记录](data/native-third-batch-2026-10.json)。
 
+## 第四批收录
+
+沿用原生候选下载量前 50 的同一快照，新增以下四个包。固定 PyPI 官方 sdist，保持源码与元数据原样，默认 Python 3.13 / Android API 24 / 双 ABI。
+
+| 原生候选名次 | 包 | 版本 | 快照下载量 | 配置或原生依赖 |
+| --- | --- | --- | --- | --- |
+| 7 | [protobuf](https://pypi.org/project/protobuf/) | 7.36.2 | 619,205,877 | sdist 原有的 upb C 扩展 |
+| 15 | [Pillow](https://pypi.org/project/pillow/) | 13.0.0 | 425,694,980 | libjpeg-turbo 3.2.1、NDK zlib；PEP 517 参数关闭宿主路径猜测 |
+| 23 | [lxml](https://pypi.org/project/lxml/) | 6.1.3 | 313,948,323 | libiconv 1.19、libxml2 2.15.4、libxslt 1.1.45 |
+| 36 | [fonttools](https://pypi.org/project/fonttools/) | 4.68.0 | 193,015,590 | `FONTTOOLS_WITH_CYTHON=1` 明确要求扩展成功 |
+
+fonttools、protobuf、lxml 的发行源码没有显式 `build-backend`，因此 recipe 明确选择 `setuptools.build_meta:__legacy__`。只有存在 `setup.py` 且没有已声明后端时才接受，不创建或改写上游 `pyproject.toml`。Pillow 使用其原有本地 `backend`，通过 `[config-settings]` 传入构建参数。
+
+Pillow 本轮包含 JPEG、ZLIB（PNG/ZIP）能力；没有提供 WebP、JPEG2000、TIFF、AVIF、FreeType、Raqm、LittleCMS、libimagequant 或 XCB。构建日志确认 JPEG/zlib 可用，编译失败不会改用纯 Python 产品。其他可选格式与字体支持不在本次验证范围内。
+
+lxml 需要在后端查询构建依赖之前找到目标原生库。流水线先在任务独立前缀编译，并通过 pkg-config 供早期检查使用，再核对并安装到目标 Python 开发前缀；宿主构建钩子需要的 Android shell 路径显式映射到宿主 shell。libxslt 通过上游 `LIBXSLT_WITH_DEBUGGER=ON` 正常生成导出表中的符号，没有移除符号检查或修改源码。
+
+八个预验证 wheel 均含实际 ELF，来源、发行版本、SHA-256、WHEEL/RECORD、架构、版本专用 Python 链接、依赖闭合和相对加载路径通过核验；尚未进行设备或模拟器功能测试。来源、原生库许可证、配置和产物哈希见 [第四批审计记录](data/native-fourth-batch-2026-10.json)。
+
+- [fonttools、protobuf 双 ABI](https://github.com/ririv/py-extra-wheels/actions/runs/40678542449)：四个目标全部成功。
+- [Pillow 双 ABI](https://github.com/ririv/py-extra-wheels/actions/runs/40681765323)：两个目标成功并独立核验；该次包含随后修复的 lxml，整体失败且未发布。
+- [lxml 双 ABI](https://github.com/ririv/py-extra-wheels/actions/runs/40682056639)：两个目标全部成功。
+
 ## 暂缓项目
 
 | 包或类别 | 本次处理 |
 | --- | --- |
 | charset-normalizer、MarkupSafe、multidict、aiohttp、coverage | 当前 PyPI 已有官方 Android wheel，排除新增 |
 | grpcio 1.85.0 | 外部 OpenSSL 和 c-ares 均已编译，但上游硬编码宿主 `/usr/include`；调整搜索顺序后仍未通过，暂缓 |
-| Pillow、lxml 等 | 外部原生依赖与构建步骤需单独核验 |
 | mypy 2.4.0 | 运行依赖 librt 与 ast-serialize 尚无官方 Android wheel，本轮不单独发布主包 |
 | NumPy | 已尝试 Meson 构建，但缺少 Android BLAS；不发布关闭 BLAS 的构建 |
 | contourpy | 双 ABI 编译通过，因依赖 NumPy 暂缓发布 |

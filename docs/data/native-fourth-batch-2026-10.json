@@ -1,0 +1,616 @@
+{
+  "checked_on": "2026-10-28",
+  "ranking_snapshot": "native-top50-2026-10.json",
+  "criteria": "沿用原生扩展候选下载量前 50 快照；PyPI 所有历史发行文件无官方 Android wheel；仅配置外部环境和参数，不修改上游源码。",
+  "selection": [
+    {
+      "native_rank": 7,
+      "pypi_rank": 32,
+      "package": "protobuf",
+      "downloads": 619205877,
+      "pypi_version": "7.36.2",
+      "native_wheel_sample": "protobuf-7.36.2-cp310-abi3-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 15,
+      "pypi_rank": 59,
+      "package": "pillow",
+      "downloads": 425694980,
+      "pypi_version": "13.0.0",
+      "native_wheel_sample": "pillow-13.0.0-cp311-cp311-macosx_10_10_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 23,
+      "pypi_rank": 91,
+      "package": "lxml",
+      "downloads": 313948323,
+      "pypi_version": "6.1.3",
+      "native_wheel_sample": "lxml-6.1.3-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 36,
+      "pypi_rank": 146,
+      "package": "fonttools",
+      "downloads": 193015590,
+      "pypi_version": "4.68.0",
+      "native_wheel_sample": "fonttools-4.68.0-cp311-cp311-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    }
+  ],
+  "sources": [
+    {
+      "package": "fonttools",
+      "version": "4.68.0",
+      "url": "https://files.pythonhosted.org/packages/0c/b5/672312ae80ce8b8eb9779c56052a24c8f36652aa7293a1a420553bcf03e5/fonttools-4.68.0.tar.gz",
+      "sha256": "73294e233070f71e2b3653b6bd8564af676d57f26d075761fb06d1ab2e4a7a5d",
+      "filename": "fonttools-4.68.0.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta:__legacy__",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "protobuf",
+      "version": "7.36.2",
+      "url": "https://files.pythonhosted.org/packages/d9/89/5b8517baa72f84a67b8a307ba953c91057af618bf40bf676f3c03551f8f0/protobuf-7.36.2.tar.gz",
+      "sha256": "497d0463ff3316681da6c0b9e8d06cb465d61abce00b613ab42226175644d1bb",
+      "filename": "protobuf-7.36.2.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta:__legacy__",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "pillow",
+      "version": "13.0.0",
+      "url": "https://files.pythonhosted.org/packages/ce/a4/9cc30690a394a8305e8be4c9036aa16d0dfddadd09079860b582f562496d/pillow-13.0.0.tar.gz",
+      "sha256": "cdcd1ba258178f7356d74170c9a81ba4eab6a5d55748bc402a5a2a6fe6be3510",
+      "filename": "pillow-13.0.0.tar.gz",
+      "directory": ".",
+      "backend": "backend",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "lxml",
+      "version": "6.1.3",
+      "url": "https://files.pythonhosted.org/packages/23/ad/28ecd7cb894d172f3c9c80a075eeeb2017ac62e3632cee05a5f9493547eb/lxml-6.1.3.tar.gz",
+      "sha256": "45222d94ddd511536f3b2f7d9deae3b2339b4ce0f075f1ca25703b07cad9dd21",
+      "filename": "lxml-6.1.3.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta:__legacy__",
+      "kind": "pypi-sdist"
+    }
+  ],
+  "native_libraries": [
+    {
+      "name": "jpeg",
+      "version": "3.2.1",
+      "filename": "libjpeg-turbo-3.2.1.tar.gz",
+      "url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.1/libjpeg-turbo-3.2.1.tar.gz",
+      "sha256": "c27ad72a68da151177929aa969ae773a2da5ac2af9ce946079314fdac8cece7f",
+      "system": "cmake",
+      "args": [
+        "-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
+        "-DENABLE_SHARED=ON",
+        "-DENABLE_STATIC=OFF",
+        "-DWITH_TURBOJPEG=OFF",
+        "-DWITH_TESTS=OFF",
+        "-DWITH_TOOLS=OFF"
+      ],
+      "licenses": [
+        "LICENSE.md",
+        "README.ijg"
+      ]
+    },
+    {
+      "name": "iconv",
+      "version": "1.19",
+      "filename": "libiconv-1.19.tar.gz",
+      "url": "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.19.tar.gz",
+      "sha256": "88dd96a8c0464eca144fc791ae60cd31cd8ee78321e67397e25fc095c4a19aa6",
+      "system": "autotools",
+      "args": [
+        "--enable-shared",
+        "--disable-static",
+        "--with-pic"
+      ],
+      "licenses": [
+        "COPYING.LIB",
+        "COPYING"
+      ]
+    },
+    {
+      "name": "xml2",
+      "version": "2.15.4",
+      "filename": "libxml2-2.15.4.tar.xz",
+      "url": "https://download.gnome.org/sources/libxml2/2.15/libxml2-2.15.4.tar.xz",
+      "sha256": "98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821",
+      "system": "cmake",
+      "args": [
+        "-DBUILD_SHARED_LIBS=ON",
+        "-DLIBXML2_WITH_PYTHON=OFF",
+        "-DLIBXML2_WITH_TESTS=OFF",
+        "-DLIBXML2_WITH_PROGRAMS=OFF",
+        "-DLIBXML2_WITH_LEGACY=ON",
+        "-DLIBXML2_WITH_ICONV=ON",
+        "-DIconv_INCLUDE_DIR={prefix}/include",
+        "-DIconv_LIBRARY={prefix}/lib/libiconv.so",
+        "-DCMAKE_PREFIX_PATH={prefix}",
+        "-DCMAKE_FIND_ROOT_PATH={prefix}"
+      ],
+      "licenses": [
+        "Copyright"
+      ]
+    },
+    {
+      "name": "xslt",
+      "version": "1.1.45",
+      "filename": "libxslt-1.1.45.tar.xz",
+      "url": "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.45.tar.xz",
+      "sha256": "9acfe68419c4d06a45c550321b3212762d92f41465062ca4ea19e632ee5d216e",
+      "system": "cmake",
+      "args": [
+        "-DBUILD_SHARED_LIBS=ON",
+        "-DLIBXSLT_WITH_PYTHON=OFF",
+        "-DLIBXSLT_WITH_DEBUGGER=ON",
+        "-DLIBXSLT_WITH_TESTS=OFF",
+        "-DLIBXSLT_WITH_PROGRAMS=OFF",
+        "-DCMAKE_PREFIX_PATH={prefix}",
+        "-DCMAKE_FIND_ROOT_PATH={prefix}"
+      ],
+      "licenses": [
+        "Copyright"
+      ]
+    }
+  ],
+  "verified_preflight_wheels": [
+    {
+      "package": "fonttools",
+      "target": {
+        "library": "fonttools",
+        "source": {
+          "package": "fonttools",
+          "version": "4.68.0",
+          "url": "https://files.pythonhosted.org/packages/0c/b5/672312ae80ce8b8eb9779c56052a24c8f36652aa7293a1a420553bcf03e5/fonttools-4.68.0.tar.gz",
+          "sha256": "73294e233070f71e2b3653b6bd8564af676d57f26d075761fb06d1ab2e4a7a5d",
+          "filename": "fonttools-4.68.0.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta:__legacy__",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [
+          {
+            "name": "FONTTOOLS_WITH_CYTHON",
+            "value": "1"
+          }
+        ],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "fonttools-4.68.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "48e1460cd02646e287b8281bf0304d48a5f9b5e06db0088ba2cbc8414b33717f",
+      "binary_kind": "elf",
+      "native_modules": [
+        "fontTools/cu2qu/cu2qu.cpython-313-aarch64-linux-android.so",
+        "fontTools/feaLib/lexer.cpython-313-aarch64-linux-android.so",
+        "fontTools/misc/bezierTools.cpython-313-aarch64-linux-android.so",
+        "fontTools/pens/momentsPen.cpython-313-aarch64-linux-android.so",
+        "fontTools/qu2cu/qu2cu.cpython-313-aarch64-linux-android.so",
+        "fontTools/varLib/iup.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "run_id": 40678542449
+    },
+    {
+      "package": "fonttools",
+      "target": {
+        "library": "fonttools",
+        "source": {
+          "package": "fonttools",
+          "version": "4.68.0",
+          "url": "https://files.pythonhosted.org/packages/0c/b5/672312ae80ce8b8eb9779c56052a24c8f36652aa7293a1a420553bcf03e5/fonttools-4.68.0.tar.gz",
+          "sha256": "73294e233070f71e2b3653b6bd8564af676d57f26d075761fb06d1ab2e4a7a5d",
+          "filename": "fonttools-4.68.0.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta:__legacy__",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [
+          {
+            "name": "FONTTOOLS_WITH_CYTHON",
+            "value": "1"
+          }
+        ],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "fonttools-4.68.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "54b194cc4c3839f8e467d51e15e34e47d3edeeb162bc90427afcf2642187972b",
+      "binary_kind": "elf",
+      "native_modules": [
+        "fontTools/cu2qu/cu2qu.cpython-313-x86_64-linux-android.so",
+        "fontTools/feaLib/lexer.cpython-313-x86_64-linux-android.so",
+        "fontTools/misc/bezierTools.cpython-313-x86_64-linux-android.so",
+        "fontTools/pens/momentsPen.cpython-313-x86_64-linux-android.so",
+        "fontTools/qu2cu/qu2cu.cpython-313-x86_64-linux-android.so",
+        "fontTools/varLib/iup.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "run_id": 40678542449
+    },
+    {
+      "package": "protobuf",
+      "target": {
+        "library": "protobuf",
+        "source": {
+          "package": "protobuf",
+          "version": "7.36.2",
+          "url": "https://files.pythonhosted.org/packages/d9/89/5b8517baa72f84a67b8a307ba953c91057af618bf40bf676f3c03551f8f0/protobuf-7.36.2.tar.gz",
+          "sha256": "497d0463ff3316681da6c0b9e8d06cb465d61abce00b613ab42226175644d1bb",
+          "filename": "protobuf-7.36.2.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta:__legacy__",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "protobuf-7.36.2-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "f3b3667efcf0e48dd8e6c6ac40c2db3c45097e31397abd13d81704a1b9f5c035",
+      "binary_kind": "elf",
+      "native_modules": [
+        "google/_upb/_message.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "run_id": 40678542449
+    },
+    {
+      "package": "protobuf",
+      "target": {
+        "library": "protobuf",
+        "source": {
+          "package": "protobuf",
+          "version": "7.36.2",
+          "url": "https://files.pythonhosted.org/packages/d9/89/5b8517baa72f84a67b8a307ba953c91057af618bf40bf676f3c03551f8f0/protobuf-7.36.2.tar.gz",
+          "sha256": "497d0463ff3316681da6c0b9e8d06cb465d61abce00b613ab42226175644d1bb",
+          "filename": "protobuf-7.36.2.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta:__legacy__",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [],
+        "config_settings": []
+      },
+      "filename": "protobuf-7.36.2-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "514d34524b812f9f0d8cffe87a8179f431a67c82f13241e296916d49658f37bf",
+      "binary_kind": "elf",
+      "native_modules": [
+        "google/_upb/_message.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "run_id": 40678542449
+    },
+    {
+      "package": "pillow",
+      "target": {
+        "library": "pillow",
+        "source": {
+          "package": "pillow",
+          "version": "13.0.0",
+          "url": "https://files.pythonhosted.org/packages/ce/a4/9cc30690a394a8305e8be4c9036aa16d0dfddadd09079860b582f562496d/pillow-13.0.0.tar.gz",
+          "sha256": "cdcd1ba258178f7356d74170c9a81ba4eab6a5d55748bc402a5a2a6fe6be3510",
+          "filename": "pillow-13.0.0.tar.gz",
+          "directory": ".",
+          "backend": "backend",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [
+          "jpeg"
+        ],
+        "config_settings": [
+          {
+            "name": "jpeg",
+            "value": "enable"
+          },
+          {
+            "name": "platform-guessing",
+            "value": "disable"
+          },
+          {
+            "name": "zlib",
+            "value": "enable"
+          }
+        ]
+      },
+      "filename": "pillow-13.0.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "276c95b9670470909ff2200552d0a3da7136649f07c784351b79580a5ee2c113",
+      "binary_kind": "elf",
+      "native_modules": [
+        "PIL/_imaging.cpython-313-aarch64-linux-android.so",
+        "PIL/_imagingmath.cpython-313-aarch64-linux-android.so",
+        "PIL/_imagingmorph.cpython-313-aarch64-linux-android.so",
+        "PIL/_imagingtk.cpython-313-aarch64-linux-android.so",
+        "pillow.libs/libjpeg-7010af9f.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libjpeg-7010af9f.so",
+        "libm.so",
+        "libpython3.13.so",
+        "libz.so"
+      ],
+      "rpaths": [
+        "$ORIGIN/../pillow.libs"
+      ],
+      "run_id": 40681765323
+    },
+    {
+      "package": "pillow",
+      "target": {
+        "library": "pillow",
+        "source": {
+          "package": "pillow",
+          "version": "13.0.0",
+          "url": "https://files.pythonhosted.org/packages/ce/a4/9cc30690a394a8305e8be4c9036aa16d0dfddadd09079860b582f562496d/pillow-13.0.0.tar.gz",
+          "sha256": "cdcd1ba258178f7356d74170c9a81ba4eab6a5d55748bc402a5a2a6fe6be3510",
+          "filename": "pillow-13.0.0.tar.gz",
+          "directory": ".",
+          "backend": "backend",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [
+          "jpeg"
+        ],
+        "config_settings": [
+          {
+            "name": "jpeg",
+            "value": "enable"
+          },
+          {
+            "name": "platform-guessing",
+            "value": "disable"
+          },
+          {
+            "name": "zlib",
+            "value": "enable"
+          }
+        ]
+      },
+      "filename": "pillow-13.0.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "1c34f4c407abe869a7d0fcadc1ef645e7b763731597efded7b3eb3a28e1cc021",
+      "binary_kind": "elf",
+      "native_modules": [
+        "PIL/_imaging.cpython-313-x86_64-linux-android.so",
+        "PIL/_imagingmath.cpython-313-x86_64-linux-android.so",
+        "PIL/_imagingmorph.cpython-313-x86_64-linux-android.so",
+        "PIL/_imagingtk.cpython-313-x86_64-linux-android.so",
+        "pillow.libs/libjpeg-266dd790.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libjpeg-266dd790.so",
+        "libm.so",
+        "libpython3.13.so",
+        "libz.so"
+      ],
+      "rpaths": [
+        "$ORIGIN/../pillow.libs"
+      ],
+      "run_id": 40681765323
+    },
+    {
+      "package": "lxml",
+      "target": {
+        "library": "lxml",
+        "source": {
+          "package": "lxml",
+          "version": "6.1.3",
+          "url": "https://files.pythonhosted.org/packages/23/ad/28ecd7cb894d172f3c9c80a075eeeb2017ac62e3632cee05a5f9493547eb/lxml-6.1.3.tar.gz",
+          "sha256": "45222d94ddd511536f3b2f7d9deae3b2339b4ce0f075f1ca25703b07cad9dd21",
+          "filename": "lxml-6.1.3.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta:__legacy__",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [
+          "iconv",
+          "xml2",
+          "xslt"
+        ],
+        "config_settings": []
+      },
+      "filename": "lxml-6.1.3-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "968af804019897e460dd2429f95fcb9d037df1b0011225e0f4da2ad86edbb88c",
+      "binary_kind": "elf",
+      "native_modules": [
+        "lxml/_elementpath.cpython-313-aarch64-linux-android.so",
+        "lxml/builder.cpython-313-aarch64-linux-android.so",
+        "lxml/etree.cpython-313-aarch64-linux-android.so",
+        "lxml/objectify.cpython-313-aarch64-linux-android.so",
+        "lxml/sax.cpython-313-aarch64-linux-android.so",
+        "lxml/html/_difflib.cpython-313-aarch64-linux-android.so",
+        "lxml/html/diff.cpython-313-aarch64-linux-android.so",
+        "lxml.libs/libexslt-9a7e709a.so",
+        "lxml.libs/libiconv-132cfebd.so",
+        "lxml.libs/libxml2-db4e19dc.so",
+        "lxml.libs/libxslt-9d1d2cf1.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libexslt-9a7e709a.so",
+        "libiconv-132cfebd.so",
+        "libm.so",
+        "libpython3.13.so",
+        "libxml2-db4e19dc.so",
+        "libxslt-9d1d2cf1.so",
+        "libz.so"
+      ],
+      "rpaths": [
+        "$ORIGIN/../lxml.libs",
+        "$ORIGIN/../lxml.libs",
+        "$ORIGIN",
+        "$ORIGIN",
+        "$ORIGIN"
+      ],
+      "run_id": 40682056639
+    },
+    {
+      "package": "lxml",
+      "target": {
+        "library": "lxml",
+        "source": {
+          "package": "lxml",
+          "version": "6.1.3",
+          "url": "https://files.pythonhosted.org/packages/23/ad/28ecd7cb894d172f3c9c80a075eeeb2017ac62e3632cee05a5f9493547eb/lxml-6.1.3.tar.gz",
+          "sha256": "45222d94ddd511536f3b2f7d9deae3b2339b4ce0f075f1ca25703b07cad9dd21",
+          "filename": "lxml-6.1.3.tar.gz",
+          "directory": ".",
+          "backend": "setuptools.build_meta:__legacy__",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [
+          "iconv",
+          "xml2",
+          "xslt"
+        ],
+        "config_settings": []
+      },
+      "filename": "lxml-6.1.3-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "6cd65b87a103509ce9757a202336b62f134b7f057216924e4a0ac2cf9f6a9b64",
+      "binary_kind": "elf",
+      "native_modules": [
+        "lxml/_elementpath.cpython-313-x86_64-linux-android.so",
+        "lxml/builder.cpython-313-x86_64-linux-android.so",
+        "lxml/etree.cpython-313-x86_64-linux-android.so",
+        "lxml/objectify.cpython-313-x86_64-linux-android.so",
+        "lxml/sax.cpython-313-x86_64-linux-android.so",
+        "lxml/html/_difflib.cpython-313-x86_64-linux-android.so",
+        "lxml/html/diff.cpython-313-x86_64-linux-android.so",
+        "lxml.libs/libexslt-3b6f071a.so",
+        "lxml.libs/libiconv-54cda152.so",
+        "lxml.libs/libxml2-b51ef30b.so",
+        "lxml.libs/libxslt-83a42e6b.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libexslt-3b6f071a.so",
+        "libiconv-54cda152.so",
+        "libm.so",
+        "libpython3.13.so",
+        "libxml2-b51ef30b.so",
+        "libxslt-83a42e6b.so",
+        "libz.so"
+      ],
+      "rpaths": [
+        "$ORIGIN/../lxml.libs",
+        "$ORIGIN/../lxml.libs",
+        "$ORIGIN",
+        "$ORIGIN",
+        "$ORIGIN"
+      ],
+      "run_id": 40682056639
+    }
+  ],
+  "validation": "已核验固定 sdist、发行版本、SHA-256、WHEEL/RECORD、实际 ELF 架构、Python 动态库与标签、依赖闭合及相对加载路径；本批仅验证 Python 3.13/API 24/双 ABI，尚未进行设备或模拟器功能测试。",
+  "pillow_features": {
+    "enabled": [
+      "JPEG",
+      "ZLIB (PNG/ZIP)"
+    ],
+    "unavailable": [
+      "OpenJPEG (JPEG2000)",
+      "libimagequant",
+      "libtiff",
+      "FreeType2",
+      "Raqm",
+      "LittleCMS2",
+      "WebP",
+      "XCB",
+      "libavif"
+    ],
+    "evidence_run": 40681765323
+  },
+  "configuration_notes": [
+    "fonttools 明确 FONTTOOLS_WITH_CYTHON=1，扩展编译失败直接报错。",
+    "protobuf 使用 sdist 内原有 upb C 扩展。",
+    "fonttools、protobuf、lxml 明确使用 legacy setuptools，仅在源码未声明后端且存在 setup.py 时接受，不生成元数据。",
+    "Pillow 通过 PEP 517 config-settings 关闭宿主路径猜测，要求 JPEG/zlib。",
+    "原生依赖在后端早期检查前编译；宿主 shell 映射及 NDK sysroot 路径显式提供。",
+    "libxslt 开启上游 LIBXSLT_WITH_DEBUGGER，使导出表中的调试器符号正常生成。"
+  ],
+  "failed_preflights": [
+    {
+      "run_id": 40680017784,
+      "result": "failure",
+      "reason": "Pillow 未显式找到 NDK zlib；lxml 的 Android shell 路径在宿主不存在。后续由外部环境配置解决，未发布。"
+    },
+    {
+      "run_id": 40681765323,
+      "result": "failure",
+      "reason": "Pillow 双 ABI 成功并已独立核验；lxml 的 libxslt 共享库缺少导出表声明的调试器符号，后续开启上游选项解决。该次未发布。"
+    }
+  ]
+}

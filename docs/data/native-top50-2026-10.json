@@ -88,7 +88,7 @@
       "pypi_version": "7.36.2",
       "native_wheel_sample": "protobuf-7.36.2-cp310-abi3-macosx_10_9_universal2.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 8,
@@ -226,7 +226,7 @@
       "pypi_version": "13.0.0",
       "native_wheel_sample": "pillow-13.0.0-cp311-cp311-macosx_10_10_x86_64.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 16,
@@ -306,7 +306,7 @@
       "pypi_version": "6.1.3",
       "native_wheel_sample": "lxml-6.1.3-cp310-cp310-macosx_10_9_universal2.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 24,
@@ -443,7 +443,7 @@
       "pypi_version": "4.68.0",
       "native_wheel_sample": "fonttools-4.68.0-cp311-cp311-macosx_10_9_universal2.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 37,
