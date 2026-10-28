@@ -33,3 +33,39 @@ sha256 = "50ac512ad20ebca0be21bcf7c3c6d15aa3fcc27550b09825fab061bffe512bdf"
 system = "cmake"
 args = ["-DCMAKE_POLICY_VERSION_MINIMUM=3.5", "-DBUILD_SHARED_LIBS=ON", "-DCRC32C_BUILD_TESTS=OFF", "-DCRC32C_BUILD_BENCHMARKS=OFF", "-DCRC32C_USE_GLOG=OFF"]
 licenses = ["LICENSE"]
+
+[jpeg]
+version = "3.2.1"
+filename = "libjpeg-turbo-3.2.1.tar.gz"
+url = "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.2.1/libjpeg-turbo-3.2.1.tar.gz"
+sha256 = "c27ad72a68da151177929aa969ae773a2da5ac2af9ce946079314fdac8cece7f"
+system = "cmake"
+args = ["-DCMAKE_POLICY_VERSION_MINIMUM=3.5", "-DENABLE_SHARED=ON", "-DENABLE_STATIC=OFF", "-DWITH_TURBOJPEG=OFF", "-DWITH_TESTS=OFF", "-DWITH_TOOLS=OFF"]
+licenses = ["LICENSE.md", "README.ijg"]
+
+[iconv]
+version = "1.19"
+filename = "libiconv-1.19.tar.gz"
+url = "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.19.tar.gz"
+sha256 = "88dd96a8c0464eca144fc791ae60cd31cd8ee78321e67397e25fc095c4a19aa6"
+system = "autotools"
+args = ["--enable-shared", "--disable-static", "--with-pic"]
+licenses = ["COPYING.LIB", "COPYING"]
+
+[xml2]
+version = "2.15.4"
+filename = "libxml2-2.15.4.tar.xz"
+url = "https://download.gnome.org/sources/libxml2/2.15/libxml2-2.15.4.tar.xz"
+sha256 = "98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821"
+system = "cmake"
+args = ["-DBUILD_SHARED_LIBS=ON", "-DLIBXML2_WITH_PYTHON=OFF", "-DLIBXML2_WITH_TESTS=OFF", "-DLIBXML2_WITH_PROGRAMS=OFF", "-DLIBXML2_WITH_LEGACY=ON", "-DLIBXML2_WITH_ICONV=ON", "-DIconv_INCLUDE_DIR={prefix}/include", "-DIconv_LIBRARY={prefix}/lib/libiconv.so", "-DCMAKE_PREFIX_PATH={prefix}", "-DCMAKE_FIND_ROOT_PATH={prefix}"]
+licenses = ["Copyright"]
+
+[xslt]
+version = "1.1.45"
+filename = "libxslt-1.1.45.tar.xz"
+url = "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.45.tar.xz"
+sha256 = "9acfe68419c4d06a45c550321b3212762d92f41465062ca4ea19e632ee5d216e"
+system = "cmake"
+args = ["-DBUILD_SHARED_LIBS=ON", "-DLIBXSLT_WITH_PYTHON=OFF", "-DLIBXSLT_WITH_TESTS=OFF", "-DLIBXSLT_WITH_PROGRAMS=OFF", "-DCMAKE_PREFIX_PATH={prefix}", "-DCMAKE_FIND_ROOT_PATH={prefix}"]
+licenses = ["Copyright"]

@@ -76,6 +76,7 @@ jobs:
           CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ fromJSON(inputs.target).api }} CARGO_BUILD_TARGET=${{ fromJSON(inputs.target).triplet }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ fromJSON(inputs.target).api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ fromJSON(inputs.target).api }}-clang PYO3_CROSS=1 ${{ fromJSON(inputs.target).cibw_environment }}'
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
+          CIBW_CONFIG_SETTINGS: ${{ fromJSON(inputs.target).cibw_config_settings }}
           CIBW_TEST_SKIP: '*'
           CIBW_REPAIR_WHEEL_COMMAND_ANDROID: 'NATIVE_PREFIX="$VIRTUAL_ENV/../python/prefix" PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.repair_android_wheel {wheel} {dest_dir} {ldpaths}'
           CIBW_BEFORE_BUILD: 'PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.cibuildwheel_prepare --project "{package}" --venv "$VIRTUAL_ENV" --toolchain "$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64"'

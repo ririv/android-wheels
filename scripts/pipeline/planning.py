@@ -73,6 +73,7 @@ def recipe_plan(event_name: str, event: dict, root: Path) -> Plan:
                 recipe.android.api,
                 recipe.environment,
                 recipe.native_dependencies,
+                recipe.config_settings,
             )
             for abi in recipe.android.abis.values
         )

@@ -1,0 +1,10 @@
+name = "lxml"
+pypi-version = "6.1.3"
+directory = "."
+backend = "setuptools.build_meta:__legacy__"
+native-dependencies = ["iconv", "xml2", "xslt"]
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24

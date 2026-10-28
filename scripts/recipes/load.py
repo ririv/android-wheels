@@ -12,6 +12,7 @@ from scripts.recipes.model import (
     Android,
     Backend,
     Choices,
+    ConfigSetting,
     EnvironmentVariable,
     GitLocation,
     PyPILocation,
@@ -52,6 +53,8 @@ def load_recipe(path: Path) -> Recipe:
     common = {"name", "directory", "backend", "android"}
     if "native-dependencies" in data:
         common.add("native-dependencies")
+    if "config-settings" in data:
+        common.add("config-settings")
     if "environment" in data:
         common.add("environment")
     if "pypi-version" in data:
@@ -90,6 +93,7 @@ def load_recipe(path: Path) -> Recipe:
         directory=directory.as_posix(),
         backend=Backend(data["backend"]),
         environment=environment(data.get("environment", {})),
+        config_settings=config_settings(data.get("config-settings", {})),
         native_dependencies=(
             choices(
                 data["native-dependencies"], NativeLibrary, "native-dependencies"
@@ -157,4 +161,19 @@ def environment(data: dict) -> tuple[EnvironmentVariable, ...]:
         if type(value) is not str or any(char in value for char in "\n\r\0"):
             raise ValueError(f"{name} 必须是单行字符串")
         result.append(EnvironmentVariable(name, value))
+    return tuple(result)
+
+
+def config_settings(data: dict) -> tuple[ConfigSetting, ...]:
+    if not isinstance(data, dict):
+        raise ValueError("config-settings 必须是字符串参数表")
+    result = []
+    for name, value in sorted(data.items()):
+        if (
+            not re.fullmatch(r"[A-Za-z0-9_.-]+", name)
+            or type(value) is not str
+            or any(char in value for char in "\n\r\0")
+        ):
+            raise ValueError("config-settings 的键必须是参数名，值必须是单行字符串")
+        result.append(ConfigSetting(name, value))
     return tuple(result)

@@ -76,6 +76,7 @@ def commands(
     abi: AndroidABI,
     api: int,
 ) -> tuple[list[str], ...]:
+    args = [argument.format(prefix=prefix) for argument in library.args]
     match library.system:
         case BuildSystem.AUTOTOOLS:
             return (
@@ -84,7 +85,7 @@ def commands(
                     f"--host={abi.triplet}",
                     f"--prefix={prefix}",
                     "--libdir=" + str(prefix / "lib"),
-                    *library.args,
+                    *args,
                 ],
                 ["make", "-j2"],
                 ["make", "install"],
@@ -102,7 +103,7 @@ def commands(
                     f"-D__ANDROID_API__={api}",
                     f"--prefix={prefix}",
                     "--libdir=lib",
-                    *library.args,
+                    *args,
                 ],
                 ["make", "-j2"],
                 ["make", "install_sw"],
@@ -123,7 +124,7 @@ def commands(
                     "-DCMAKE_INSTALL_LIBDIR=lib",
                     "-DCMAKE_POSITION_INDEPENDENT_CODE=ON",
                     "-DCMAKE_BUILD_TYPE=Release",
-                    *library.args,
+                    *args,
                 ],
                 ["cmake", "--build", str(build), "--parallel", "2"],
                 ["cmake", "--install", str(build)],

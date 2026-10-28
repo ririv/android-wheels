@@ -1,0 +1,15 @@
+name = "pillow"
+pypi-version = "13.0.0"
+directory = "."
+backend = "backend"
+native-dependencies = ["jpeg"]
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24
+
+[config-settings]
+platform-guessing = "disable"
+jpeg = "enable"
+zlib = "enable"

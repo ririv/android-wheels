@@ -118,3 +118,36 @@ api=24
         )
         with self.assertRaises(ValueError):
             load_recipe(path)
+
+
+class LegacySourceTests(unittest.TestCase):
+    def test_explicit_legacy_source_preserves_missing_pep517_metadata(self):
+        from scripts.pipeline.source import backend_at, legacy_backend_at
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            setup = root / "setup.py"
+            setup.write_text("from setuptools import setup\nsetup()\n")
+            original = setup.read_bytes()
+            self.assertEqual(legacy_backend_at(root), Backend.SETUPTOOLS_LEGACY)
+            with self.assertRaises(FileNotFoundError):
+                backend_at(root)
+            self.assertFalse((root / "pyproject.toml").exists())
+            self.assertEqual(setup.read_bytes(), original)
+            metadata = root / "pyproject.toml"
+            metadata.write_text('[build-system]\nrequires=["setuptools", "Cython"]\n')
+            original_metadata = metadata.read_bytes()
+            self.assertEqual(legacy_backend_at(root), Backend.SETUPTOOLS_LEGACY)
+            self.assertEqual(metadata.read_bytes(), original_metadata)
+
+    def test_explicit_legacy_mode_cannot_replace_a_declared_backend(self):
+        from scripts.pipeline.source import legacy_backend_at
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "setup.py").write_text("from setuptools import setup\nsetup()\n")
+            (root / "pyproject.toml").write_text(
+                '[build-system]\nbuild-backend="setuptools.build_meta"\nrequires=["setuptools"]\n'
+            )
+            with self.assertRaisesRegex(ValueError, "不能覆盖"):
+                legacy_backend_at(root)

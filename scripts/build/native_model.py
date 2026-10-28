@@ -9,6 +9,10 @@ class NativeLibrary(StrEnum):
     LIBSODIUM = "libsodium"
     OPENSSL = "openssl"
     CRC32C = "crc32c"
+    JPEG = "jpeg"
+    ICONV = "iconv"
+    XML2 = "xml2"
+    XSLT = "xslt"
 
 
 class BuildSystem(StrEnum):

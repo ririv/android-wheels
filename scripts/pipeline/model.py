@@ -10,7 +10,12 @@ from typing import Literal
 
 from scripts.build.android_python import AndroidABI, PythonVersion
 from scripts.build.native_model import NativeLibrary
-from scripts.recipes.model import Backend, EnvironmentVariable, Publication
+from scripts.recipes.model import (
+    Backend,
+    ConfigSetting,
+    EnvironmentVariable,
+    Publication,
+)
 from scripts.recipes.plan import artifact_prefix
 
 
@@ -54,16 +59,26 @@ class Target:
     api: int
     environment: tuple[EnvironmentVariable, ...] = ()
     native_dependencies: tuple[NativeLibrary, ...] = ()
+    config_settings: tuple[ConfigSetting, ...] = ()
 
     def to_dict(self) -> dict:
         return {
             **asdict(self),
             "environment": [asdict(variable) for variable in self.environment],
             "native_dependencies": list(self.native_dependencies),
+            "config_settings": [asdict(setting) for setting in self.config_settings],
         }
 
     @property
     def builder(self) -> Builder:
+        if self.config_settings and (
+            self.source.backend == Backend.MATURIN
+            or self.python
+            in {PythonVersion.PY310, PythonVersion.PY311, PythonVersion.PY312}
+        ):
+            raise ValueError(
+                "config-settings 当前只接入现代 cibuildwheel，请选择 Python 3.13 或更新版本的 PEP 517 构建"
+            )
         if self.source.backend == Backend.MATURIN:
             return Builder.MATURIN
         if self.python in {
@@ -89,6 +104,10 @@ class Target:
             "artifact": self.artifact,
             "triplet": self.abi.triplet,
             "cibw_arch": self.abi.value.replace("-", "_"),
+            "cibw_config_settings": " ".join(
+                f"{setting.name}={shlex.quote(setting.value)}"
+                for setting in self.config_settings
+            ),
             "cibw_environment": " ".join(
                 f"{variable.name}={shlex.quote(variable.value)}"
                 for variable in self.environment
@@ -145,6 +164,7 @@ def load_plan(path: Path) -> Plan:
                 row["api"],
                 tuple(EnvironmentVariable(**v) for v in row["environment"]),
                 tuple(NativeLibrary(v) for v in row["native_dependencies"]),
+                tuple(ConfigSetting(**v) for v in row["config_settings"]),
             )
         )
     plan = Plan(Publication(data["publication"]), tuple(targets))

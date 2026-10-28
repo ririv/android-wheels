@@ -66,6 +66,12 @@ class EnvironmentVariable:
 
 
 @dataclass(frozen=True)
+class ConfigSetting:
+    name: str
+    value: str
+
+
+@dataclass(frozen=True)
 class Recipe(Generic[L]):
     name: str
     source: L
@@ -74,6 +80,7 @@ class Recipe(Generic[L]):
     android: Android
     environment: tuple[EnvironmentVariable, ...] = ()
     native_dependencies: tuple[NativeLibrary, ...] = ()
+    config_settings: tuple[ConfigSetting, ...] = ()
 
 
 @dataclass(frozen=True)
