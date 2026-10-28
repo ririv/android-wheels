@@ -1,6 +1,7 @@
 """Prepare the explicit host tools and target prefix used by cibuildwheel."""
 
 import argparse
+import json
 import os
 import shutil
 import subprocess
@@ -34,8 +35,6 @@ def main() -> None:
         if name
     )
     if names:
-        import json
-
         prepared = Path(os.environ["NATIVE_PREFIX"])
         specs = library_specs(Path(__file__).with_name("native-libraries.toml"))
         expected = [specs[name].to_dict() for name in names]

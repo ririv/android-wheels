@@ -123,6 +123,8 @@ def environment(data: dict) -> tuple[EnvironmentVariable, ...]:
         "NATIVE_DEPENDENCIES",
         "NATIVE_PREFIX",
         "CPPFLAGS",
+        "C_INCLUDE_PATH",
+        "LIBRARY_PATH",
         "PKG_CONFIG_LIBDIR",
         "PKG_CONFIG_PATH",
         "PKG_CONFIG_ALLOW_CROSS",

@@ -11,7 +11,9 @@ from scripts.build.native_model import NativeLibrary
 def main() -> None:
     ndk = Path(os.environ["ANDROID_NDK"])
     build_libraries(
-        tuple(NativeLibrary(name) for name in os.environ["NATIVE_DEPENDENCIES"].split(",")),
+        tuple(
+            NativeLibrary(name) for name in os.environ["NATIVE_DEPENDENCIES"].split(",")
+        ),
         Path(os.environ["NATIVE_PREFIX"]),
         ndk,
         ndk / "toolchains/llvm/prebuilt/linux-x86_64",

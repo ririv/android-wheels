@@ -67,5 +67,5 @@ filename = "libxslt-1.1.45.tar.xz"
 url = "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.45.tar.xz"
 sha256 = "9acfe68419c4d06a45c550321b3212762d92f41465062ca4ea19e632ee5d216e"
 system = "cmake"
-args = ["-DBUILD_SHARED_LIBS=ON", "-DLIBXSLT_WITH_PYTHON=OFF", "-DLIBXSLT_WITH_TESTS=OFF", "-DLIBXSLT_WITH_PROGRAMS=OFF", "-DCMAKE_PREFIX_PATH={prefix}", "-DCMAKE_FIND_ROOT_PATH={prefix}"]
+args = ["-DBUILD_SHARED_LIBS=ON", "-DLIBXSLT_WITH_PYTHON=OFF", "-DLIBXSLT_WITH_DEBUGGER=ON", "-DLIBXSLT_WITH_TESTS=OFF", "-DLIBXSLT_WITH_PROGRAMS=OFF", "-DCMAKE_PREFIX_PATH={prefix}", "-DCMAKE_FIND_ROOT_PATH={prefix}"]
 licenses = ["Copyright"]
