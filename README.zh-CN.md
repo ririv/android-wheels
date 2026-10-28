@@ -83,3 +83,5 @@ gh workflow run build-wheels.yml -f recipes=pydantic-core -f python_versions=3.1
 模块划分与开发检查见 [构建流水线](docs/pipeline.md)。
 
 新增包的筛选口径、热门原生扩展前 100 审计及各批构建验证见 [包收录记录](docs/package-selection.md)。
+
+Python 3.10–3.15 的逐版本构建范围、上游限制与完整验证见 [Python 完整构建矩阵](docs/python-matrix.md)。

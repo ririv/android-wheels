@@ -1,5 +1,7 @@
 # Android Python 构建支持
 
+完整包矩阵的目标范围和逐版本结果见 [Python 完整构建矩阵](python-matrix.md)。
+
 ## Python 版本
 
 构建入口接受 Python `3.10`、`3.11`、`3.12`、`3.13`、`3.14`、`3.15`。recipe 默认请求全部六个版本，临时仓库入口默认选择 `3.13`。版本必须使用 `主版本.次版本` 格式；不接受补丁版本、预发布标识或任意字符串。
@@ -50,7 +52,7 @@ python -B -m unittest discover -s scripts/build/tests -v
 
 单元测试覆盖运行库来源、版本和 ABI 的缓存隔离、下载失败传播、解包中断后的重建、Cargo 配置组合、环境保留，以及 wheel 标签与内部元数据的一致性。交叉编译成功还需结合 Android 设备或模拟器上的导入与功能测试，才能确认运行时兼容性。
 
-## 本次验证记录
+## 早期运行库验证记录
 
 2026-10-28 在 macOS 上完成以下本地验证。GitHub Actions 的运行结果另见仓库 Actions 页面；本次尚未在 Android 设备上执行导入测试。
 
@@ -64,6 +66,6 @@ python -B -m unittest discover -s scripts/build/tests -v
 | 单元测试 | 7 项分别在宿主 Python 3.11 和 3.15 上通过 |
 | 修改的工作流与 Python 脚本 | actionlint、Ruff 检查通过 |
 
-Rust 交叉编译使用本机 NDK r29。Chaquopy 的本地验证使用已安装的 NDK r27.0，仅在临时副本中调整其工具链版本；仓库 CI 继续使用上游固定的 r27.3。
+Rust 交叉编译使用本机 NDK r29。Chaquopy 的本地验证使用已安装的 NDK r27.0，仅在临时副本中调整其工具链版本；旧版 Chaquopy 构建器使用其上游脚本固定的 NDK 27.0.12077973；独立原生依赖及现代 maturin 路径使用 Actions 的 NDK 27.3.13750724。
 
 原始失败运行使用的 pydantic-core 源码为 `383eb95a19433754c0cecf7025b50c26b6d97a36`。其 PyO3 0.26 在 Python 3.15 下明确报错，最高支持 3.14；该限制已实际复现，需要上游升级 PyO3 后才能构建这个包的 3.15 wheel。

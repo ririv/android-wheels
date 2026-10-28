@@ -40,7 +40,7 @@ xxhash
 
 This repository uses GitHub Actions to automate building and publishing:
 
-1. **Recipe / Matrix**: `recipes/*.toml` → `build-wheels.yml` → `build-android-wheel-dispatch.yml`. [配置与并行构建说明](docs/recipes.md)。
+1. **Recipe / Matrix**: `recipes/*.toml` → `build-wheels.yml` → `build-wheel-batch.yml` → `build-android-wheel-dispatch.yml`. [配置与并行构建说明](docs/recipes.md)。
 2. **统一发布**：全部目标成功后，校验源码、目标与哈希，以一个提交更新 `wheels` 分支。
 3. **索引部署**：按下游已发布状态显式触发 `pages.yml`，并以事件通知旧地址同步；通知失败可重跑。
 
@@ -68,3 +68,5 @@ Package index names follow Python's [PEP 503](https://peps.python.org/pep-0503/)
 新增包请添加 `recipes/<包名>.toml`；统一入口为 `build-wheels.yml`。配置格式、手动构建及多 Python 版本并行见 [Recipe 与并行构建](docs/recipes.md)。
 
 新增包的筛选口径、热门原生扩展前 100 审计及各批构建验证见 [包收录记录](docs/package-selection.md)。
+
+Python 3.10–3.15 的逐版本构建范围、上游限制与完整验证见 [Python 完整构建矩阵](docs/python-matrix.md)。
