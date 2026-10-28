@@ -16,3 +16,8 @@ runs:
     - uses: actions/setup-python@v6
       with:
         python-version: ${{ steps.settings.outputs.driver_python }}
+    - name: Install pinned shared validation tools
+      shell: bash
+      run: |
+        python -B -m scripts.tooling requirements shared --output "$RUNNER_TEMP/shared-requirements.txt"
+        python -m pip install -r "$RUNNER_TEMP/shared-requirements.txt"
