@@ -1,0 +1,13 @@
+diff --git a/server/pypi/build-wheel.py b/server/pypi/build-wheel.py
+--- a/server/pypi/build-wheel.py
++++ b/server/pypi/build-wheel.py
+@@ -489,6 +489,9 @@ class BuildWheel:
+         ]
+         reqs_lib_dir = f"{self.host_env}/chaquopy/lib"
+         for filename in os.listdir(reqs_lib_dir):
++            # libpython3.so 是稳定 ABI 桩库，普通扩展应链接具体版本的运行库。
++            if filename == "libpython3.so":
++                continue
+             for pattern, repl in SONAME_PATTERNS:
+                 link_filename = re.sub(pattern, repl, filename)
+                 if link_filename in self.standard_libs:

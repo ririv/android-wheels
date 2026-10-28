@@ -21,7 +21,7 @@ on:
         type: string
         default: ''
       target_python_version:
-        description: 'Python version (e.g., 3.13)'
+        description: 'Python version: 3.10, 3.11, 3.12, 3.13, 3.14 or 3.15'
         required: false
         type: string
         default: '3.13'
@@ -39,6 +39,12 @@ jobs:
     steps:
       - name: Checkout self
         uses: actions/checkout@v4
+
+      - name: Validate Python version
+        env:
+          TARGET_PYTHON_VERSION: ${{ inputs.target_python_version }}
+        run: |
+          python -c 'import os, sys; sys.path.insert(0, "scripts/build"); from android_python import PythonVersion; PythonVersion(os.environ["TARGET_PYTHON_VERSION"])'
 
       - name: Normalize Git Repository Input
         id: normalize_repo
@@ -76,11 +82,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - abi: "arm64-v8a"
-            target: "aarch64-linux-android"
-          - abi: "x86_64"
-            target: "x86_64-linux-android"
+        abi: [arm64-v8a, x86_64]
 
     steps:
       - name: Checkout self
@@ -115,8 +117,7 @@ jobs:
           fi
           echo "project_dir=$PROJECT_DIR" >> $GITHUB_OUTPUT
 
-      # maturin needs a host python{X.Y} to parse the target's sysconfigdata in PYO3_CROSS_LIB_DIR.
-      # update-environment: false keeps the build script itself on the runner's system Python.
+      # 宿主解释器用于解析目标 sysconfigdata，驱动脚本仍使用 runner 的系统 Python。
       - name: Set up host Python matching target
         id: host_python
         uses: actions/setup-python@v6
@@ -133,23 +134,25 @@ jobs:
           TARGET_PYTHON_VERSION: ${{ inputs.target_python_version }}
           ANDROID_API: ${{ inputs.android_api }}
           TARGET_ABI: ${{ matrix.abi }}
-          TARGET_TRIPLET: ${{ matrix.target }}
           HOST_PYTHON: ${{ steps.host_python.outputs.python-path }}
         run: |
-          pip install build tomli-w
+          python -m venv "$RUNNER_TEMP/android-wheel-build-env"
+          source "$RUNNER_TEMP/android-wheel-build-env/bin/activate"
+          python -m pip install 'maturin>=1.15,<2' tomli-w 'wheel==0.45.1'
           chmod +x scripts/build/build_android_wheel.py
-          scripts/build/build_android_wheel.py
+          python scripts/build/build_android_wheel.py
 
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.library_name }}-android-wheel-${{ matrix.abi }}
           path: output/*.whl
+          if-no-files-found: error
 
   build_with_cibw:
     name: Build wheel for ${{ matrix.abi }} with cibw
     needs: dispatch
-    if: needs.dispatch.outputs.build_backend != 'maturin'
+    if: needs.dispatch.outputs.build_backend != 'maturin' && !contains(fromJSON('["3.10", "3.11", "3.12"]'), inputs.target_python_version)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -239,10 +242,76 @@ jobs:
           name: ${{ inputs.library_name }}-android-wheel-${{ matrix.abi }}
           path: ./wheelhouse/*.whl
 
+  build_with_chaquopy:
+    name: Build for ${{ matrix.abi }} with Chaquopy
+    needs: dispatch
+    if: needs.dispatch.outputs.build_backend != 'maturin' && contains(fromJSON('["3.10", "3.11", "3.12"]'), inputs.target_python_version)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        abi: [arm64-v8a, x86_64]
+    steps:
+      - name: Checkout self
+        uses: actions/checkout@v4
+
+      - name: Normalize Git Repository Input
+        id: normalize_repo
+        env:
+          GIT_REPOSITORY: ${{ inputs.git_repository }}
+        run: |
+          NORMALIZED_REPO=$(python scripts/build/normalize_repo_input.py "$GIT_REPOSITORY")
+          echo "repository=$NORMALIZED_REPO" >> "$GITHUB_OUTPUT"
+
+      - name: Clone library source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.normalize_repo.outputs.repository }}
+          ref: ${{ inputs.version_tag }}
+          path: library-source
+          submodules: recursive
+
+      - name: Checkout Chaquopy build tools
+        uses: actions/checkout@v4
+        with:
+          repository: chaquo/chaquopy
+          ref: 6e365e30f7199468d9fffe628fe9f0a7658fdbb3
+          path: chaquopy
+
+      - name: Set up host Python matching target
+        id: host_python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ inputs.target_python_version }}
+          update-environment: false
+
+      - name: Build legacy Android wheel
+        env:
+          TARGET_PYTHON_VERSION: ${{ inputs.target_python_version }}
+          TARGET_ABI: ${{ matrix.abi }}
+          ANDROID_API: ${{ inputs.android_api }}
+          PACKAGE_DIR: ${{ inputs.package_dir }}
+          HOST_PYTHON: ${{ steps.host_python.outputs.python-path }}
+        run: |
+          git -C chaquopy apply "$GITHUB_WORKSPACE/scripts/build/patches/chaquopy-libpython-link.patch"
+          sudo apt-get update
+          sudo apt-get install -y patchelf
+          python -m venv "$RUNNER_TEMP/chaquopy-build-env"
+          source "$RUNNER_TEMP/chaquopy-build-env/bin/activate"
+          python -m pip install -r chaquopy/server/pypi/requirements.txt
+          python scripts/build/build_chaquopy_wheel.py
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.library_name }}-android-wheel-${{ matrix.abi }}
+          path: output/*.whl
+          if-no-files-found: error
+
   upload-wheels:
     name: Upload Wheels
-    needs: [build_with_maturin, build_with_cibw]
-    if: always() && (needs.build_with_maturin.result == 'success' || needs.build_with_cibw.result == 'success')
+    needs: [build_with_maturin, build_with_cibw, build_with_chaquopy]
+    if: always() && (needs.build_with_maturin.result == 'success' || needs.build_with_cibw.result == 'success' || needs.build_with_chaquopy.result == 'success')
     runs-on: ubuntu-latest
     # No shared concurrency group: GitHub keeps only one pending job per group and cancels the
     # rest, which dropped uploads when several libraries finished together. Concurrent pushes

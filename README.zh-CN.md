@@ -36,6 +36,10 @@ xxhash
 * `arm64-v8a`
 * `x86_64`
 
+## 构建支持的 Python 版本
+
+构建入口支持 Python **3.10–3.15**，默认版本为 **3.13**。其中 3.10 为额外保留的兼容版本；每个包及其依赖仍须支持所选 Python 版本。运行库来源、后端路由和验证方法见 [Android Python 构建支持](docs/python-builds.md)。
+
 ## 工作原理
 
 本仓库使用 GitHub Actions 实现自动化构建和发布流程：

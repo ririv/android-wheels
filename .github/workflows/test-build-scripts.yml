@@ -1,0 +1,38 @@
+name: Test Android build scripts
+
+on:
+  push:
+    paths:
+      - 'scripts/build/**'
+      - '.github/workflows/test-build-scripts.yml'
+  pull_request:
+    paths:
+      - 'scripts/build/**'
+      - '.github/workflows/test-build-scripts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.15']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Test runtime selection and wheel processing
+        run: |
+          python -m pip install tomli-w 'wheel==0.45.1'
+          python -B -m unittest discover -s scripts/build/tests -v
+      - name: Checkout pinned Chaquopy build tools
+        uses: actions/checkout@v4
+        with:
+          repository: chaquo/chaquopy
+          ref: 6e365e30f7199468d9fffe628fe9f0a7658fdbb3
+          path: chaquopy
+      - name: Check Chaquopy patch
+        run: git -C chaquopy apply --check "$GITHUB_WORKSPACE/scripts/build/patches/chaquopy-libpython-link.patch"
