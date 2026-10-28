@@ -1,7 +1,7 @@
-name = "numpy"
-pypi-version = "2.5.4"
+name = "wcwidth"
+pypi-version = "0.9.4"
 directory = "."
-backend = "mesonpy"
+backend = "setuptools.build_meta"
 
 [android]
 python = ["3.13"]

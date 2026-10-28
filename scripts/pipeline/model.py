@@ -2,14 +2,13 @@
 
 import json
 import re
-import shlex
 from dataclasses import asdict, dataclass, field
 from enum import StrEnum
 from pathlib import Path
 from typing import Literal
 
 from scripts.build.android_python import AndroidABI, PythonVersion
-from scripts.recipes.model import Backend, LiteralEnvironment, Publication
+from scripts.recipes.model import Backend, Publication
 from scripts.recipes.plan import artifact_prefix
 
 
@@ -51,13 +50,6 @@ class Target:
     python: PythonVersion
     abi: AndroidABI
     api: int
-    environment: tuple[LiteralEnvironment, ...] = ()
-
-    def to_dict(self) -> dict:
-        return {
-            **asdict(self),
-            "environment": [asdict(variable) for variable in self.environment],
-        }
 
     @property
     def builder(self) -> Builder:
@@ -77,15 +69,11 @@ class Target:
 
     def row(self) -> dict:
         return {
-            **self.to_dict(),
+            **asdict(self),
             "builder": self.builder.value,
             "artifact": self.artifact,
             "triplet": self.abi.triplet,
             "cibw_arch": self.abi.value.replace("-", "_"),
-            "cibw_environment": " ".join(
-                f"{variable.name}={shlex.quote(variable.value)}"
-                for variable in self.environment
-            ),
         }
 
 
@@ -99,7 +87,7 @@ class Plan:
             json.dumps(
                 {
                     "publication": self.publication,
-                    "targets": [t.to_dict() for t in self.targets],
+                    "targets": [asdict(t) for t in self.targets],
                 },
                 indent=2,
             )
@@ -136,9 +124,6 @@ def load_plan(path: Path) -> Plan:
                 PythonVersion(row["python"]),
                 AndroidABI(row["abi"]),
                 row["api"],
-                tuple(
-                    LiteralEnvironment(**variable) for variable in row["environment"]
-                ),
             )
         )
     plan = Plan(Publication(data["publication"]), tuple(targets))

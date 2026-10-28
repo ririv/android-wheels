@@ -10,10 +10,8 @@ from scripts.pipeline.source import resolve_source
 from scripts.recipes.load import load_recipes
 from scripts.recipes.model import (
     GitLocation,
-    LiteralEnvironment,
     Publication,
     RecipeBuilds,
-    TargetEnvironment,
 )
 from scripts.recipes.plan import (
     affected_recipes,
@@ -62,38 +60,10 @@ def recipe_plan(event_name: str, event: dict, root: Path) -> Plan:
         if source.backend != recipe.backend:
             raise ValueError(f"{recipe.name} 后端与 recipe 不一致：{source.backend}")
         targets.extend(
-            Target(
-                recipe.name,
-                source,
-                job.python,
-                abi,
-                recipe.android.api,
-                resolve_environment(
-                    recipe.environment, job.python, abi, recipe.android.api
-                ),
-            )
+            Target(recipe.name, source, job.python, abi, recipe.android.api)
             for abi in recipe.android.abis.values
         )
     return Plan(publication, tuple(targets))
-
-
-def resolve_environment(
-    settings: tuple, python: PythonVersion, abi: AndroidABI, api: int
-) -> tuple[LiteralEnvironment, ...]:
-    fields = {
-        "triplet": abi.triplet,
-        "python": python.value,
-        "abi": abi.value,
-        "api": str(api),
-    }
-    result = []
-    for setting in settings:
-        match setting:
-            case LiteralEnvironment():
-                result.append(setting)
-            case TargetEnvironment(name=name, target=field):
-                result.append(LiteralEnvironment(name, fields[field.value]))
-    return tuple(result)
 
 
 def manual_plan(event: dict) -> Plan:

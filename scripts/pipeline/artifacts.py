@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from dataclasses import asdict
 from pathlib import Path
 
 from scripts.pipeline.model import Plan, Target
@@ -23,7 +24,7 @@ def record(directory: Path, target: Target) -> None:
     verify_wheel(wheel, target)
     (directory / "manifest.json").write_text(
         json.dumps(
-            {"target": target.to_dict(), "wheel": wheel.name, "sha256": digest(wheel)},
+            {"target": asdict(target), "wheel": wheel.name, "sha256": digest(wheel)},
             indent=2,
         )
         + "\n",
@@ -42,7 +43,7 @@ def collect(directory: Path, plan: Plan) -> dict[str, Path]:
     for target in plan.targets:
         artifact = directory / target.artifact
         manifest = json.loads((artifact / "manifest.json").read_text(encoding="utf-8"))
-        if manifest["target"] != target.to_dict():
+        if manifest["target"] != asdict(target):
             raise ValueError(f"产物来源与构建计划不匹配：{target.artifact}")
         name = manifest["wheel"]
         if Path(name).name != name or not name.endswith(".whl"):

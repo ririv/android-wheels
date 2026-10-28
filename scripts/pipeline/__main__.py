@@ -41,10 +41,6 @@ def main() -> None:
         else:
             command.add_argument("--artifact", required=True)
             command.add_argument("--directory", type=Path, required=True)
-    environment = commands.add_parser("build-environment")
-    environment.add_argument("--plan", type=Path, default=Path("build-plan.json"))
-    environment.add_argument("--artifact", required=True)
-    environment.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.command in {"notify-index", "notify-legacy"}:
         print(
@@ -81,11 +77,6 @@ def main() -> None:
         print(args.output.read_text(encoding="utf-8"))
         return
     plan = load_plan(args.plan)
-    if args.command == "build-environment":
-        with args.output.open("a", encoding="utf-8") as output:
-            for variable in plan.target(args.artifact).environment:
-                output.write(f"{variable.name}={variable.value}\n")
-        return
     if args.command == "prepare-source":
         source = plan.target(args.artifact).source
         match source:
