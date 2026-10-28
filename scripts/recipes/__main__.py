@@ -5,16 +5,11 @@ import json
 from pathlib import Path
 
 from scripts.build.android_python import AndroidABI, PythonVersion
-from scripts.recipes.load import choices, load_recipes, validate_ref
+from scripts.recipes.load import choices, load_recipes
 from scripts.recipes.model import (
-    AllRecipes,
     Backend,
     Publication,
     RecipeBuilds,
-    RecipePython,
-    RefBuild,
-    SelectedPython,
-    SelectedRecipes,
 )
 from scripts.recipes.plan import (
     affected_recipes,
@@ -23,9 +18,9 @@ from scripts.recipes.plan import (
     build_jobs,
     changed_paths,
     matrix,
-    select_recipes,
     write_outputs,
 )
+from scripts.recipes.request import requested_builds
 
 
 def main() -> None:
@@ -81,25 +76,9 @@ def main() -> None:
         print(f"已校验 {len(recipes)} 个 recipe")
         return
     if args.command == "plan":
-        selection = (
-            AllRecipes()
-            if args.recipes == "all"
-            else SelectedRecipes(choices(args.recipes.split(","), str, "recipes"))
+        request = requested_builds(
+            recipes, args.recipes, args.python_versions, args.version_tag
         )
-        selected = select_recipes(recipes, selection)
-        python = (
-            RecipePython()
-            if args.python_versions == "recipe"
-            else SelectedPython(
-                choices(args.python_versions.split(","), PythonVersion, "Python 版本")
-            )
-        )
-        if args.version_tag:
-            if len(selected) != 1:
-                raise ValueError("覆盖 Git ref 时必须只选择一个 recipe")
-            request = RefBuild(selected[0], validate_ref(args.version_tag), python)
-        else:
-            request = RecipeBuilds(selected, python)
         jobs = build_jobs(request)
     else:
         if args.before == "0" * 40:

@@ -8,13 +8,13 @@ on:
     paths:
       # Trigger when the index script on main changes, or when any wheel on wheels changes.
       - 'scripts/generate_index.py'
+      - 'scripts/index/**'
+      - '!scripts/index/tests/**'
       - '.github/workflows/pages.yml'
       - '**/*.whl'
   workflow_dispatch:
 
-# Wheel uploads run in parallel and each triggers a deploy. Every deploy rebuilds from the latest
-# 'wheels' head, so serialize them and let a newer pending deploy replace an older one; this keeps
-# an older snapshot from finishing last and overwriting the site.
+# 不同构建运行可能同时发布；串行部署最新 wheels，合并等待中的重复通知。
 concurrency:
   group: pages-deploy
   cancel-in-progress: false
@@ -35,19 +35,26 @@ jobs:
           fi
           gh api repos/ririv/ririv.github.io/actions/workflows/sync-wheel-index.yml --silent
 
-      - name: Checkout wheels branch
+      - name: Checkout index code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Checkout wheel metadata without wheel binaries
         uses: actions/checkout@v4
         with:
           ref: wheels
-          fetch-depth: 0 # Fetch all history for git log to work correctly
-
-      - name: Download index script
-        run: |
-          mkdir -p scripts
-          curl -L -o scripts/generate_index.py https://raw.githubusercontent.com/${{ github.repository }}/main/scripts/generate_index.py
-
-      - name: Generate index
-        run: python scripts/generate_index.py
+          path: wheel-store
+          fetch-depth: 0
+          sparse-checkout: .index-metadata
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Generate index with batched Git metadata
+        env:
+          WHEEL_REPOSITORY: ${{ github.repository }}
+        run: python -B -m scripts.generate_index --checkout wheel-store --repository "$WHEEL_REPOSITORY" --output public
 
       - name: Record published index tree
         id: previous_index

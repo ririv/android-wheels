@@ -41,8 +41,8 @@ xxhash
 This repository uses GitHub Actions to automate building and publishing:
 
 1. **Recipe / Matrix**: `recipes/*.toml` → `build-wheels.yml` → `build-android-wheel-dispatch.yml`. [配置与并行构建说明](docs/recipes.md)。
-2. **Commit to the `wheels` branch**: Successfully built `.whl` files are committed to the `wheels` branch.
-3. **Deploy the index**: Pushing to the `wheels` branch triggers the `pages.yml` workflow, which generates a PEP 503 compliant "simple" package index and deploys it to GitHub Pages.
+2. **统一发布**：全部目标成功后，校验源码、目标与哈希，以一个提交更新 `wheels` 分支。
+3. **索引部署**：内容变化后显式触发一次 `pages.yml`；新索引变化后以事件通知旧地址同步。
 
 This keeps the package index in sync with the latest successfully built wheels.
 

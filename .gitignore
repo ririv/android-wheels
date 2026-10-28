@@ -2,3 +2,8 @@
 .env
 .claude
 /.idea/
+__pycache__/
+*.py[cod]
+.venv/
+.ruff_cache/
+build-plan.json

@@ -1,0 +1,24 @@
+name: Prepare pinned source
+description: Download the build plan and verify the exact upstream checkout
+inputs:
+  target:
+    description: Resolved build target JSON
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: build-plan
+    - uses: actions/checkout@v4
+      with:
+        repository: ${{ fromJSON(inputs.target).source.repository }}
+        ref: ${{ fromJSON(inputs.target).source.sha }}
+        path: library-source
+        submodules: recursive
+        persist-credentials: false
+    - name: Verify source
+      shell: bash
+      env:
+        ARTIFACT: ${{ fromJSON(inputs.target).artifact }}
+      run: python -B -m scripts.pipeline verify-source --artifact "$ARTIFACT" --directory library-source

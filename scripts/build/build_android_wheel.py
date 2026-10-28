@@ -52,21 +52,6 @@ def run(cmd, **kwargs):
     return subprocess.run(cmd, check=True, **kwargs)
 
 
-def clone_library_source(repo_url: str, version: str | None, path: Path):
-    """Clones the library source code from the given repository."""
-    print(f"--- Cloning {repo_url} ---", flush=True)
-    if path.exists():
-        print("Library source directory already exists. Skipping clone.", flush=True)
-        return
-
-    cmd = ["git", "clone", "--depth=1"]
-    if version:
-        cmd += ["--branch", version]
-    cmd += [f"https://github.com/{repo_url}.git", str(path)]
-    run(cmd)
-    run(["git", "submodule", "update", "--init", "--recursive"], cwd=path)
-
-
 def prepare_build_environment(
     ndk_path: Path,
     target_triplet: str,
@@ -248,8 +233,6 @@ def process_wheel(
 def main():
     # 读取环境变量（与现有 CI 对齐）
     library_name = os.environ["LIBRARY_NAME"]
-    git_repository = os.environ["GIT_REPOSITORY"]
-    version_tag = os.environ.get("VERSION_TAG")
     source_dir = os.environ.get("SOURCE_DIR", ".")
     target_python_version = os.environ["TARGET_PYTHON_VERSION"]  # e.g. "3.13"
     android_api = os.environ["ANDROID_API"]  # e.g. "24"
@@ -281,7 +264,6 @@ def main():
         python_version=target_python_version,
         target_triplet=target_triplet,
     )
-    clone_library_source(git_repository, version_tag, library_source_path)
 
     print("--- Using default native build process ---", flush=True)
     build_env = prepare_build_environment(

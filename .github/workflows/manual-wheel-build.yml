@@ -16,7 +16,8 @@ on:
         required: false
         type: string
       package_dir:
-        description: 'Python project directory inside the repo, e.g. crates/jiter-python (optional, auto-detected if empty)'
+        description: 'Explicit project directory containing pyproject.toml'
+        default: '.'
         required: false
         type: string
       target_python_version:
@@ -31,16 +32,56 @@ on:
         default: '24'
         type: string
 
+      publication:
+        description: 'Publish wheels or retain Actions artifacts only'
+        required: true
+        default: publish
+        type: choice
+        options: [publish, build]
+
+permissions:
+  contents: read
+
 jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      publication: ${{ steps.plan.outputs.publication }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Resolve source and plan targets
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -B -m scripts.pipeline plan-source --event "$GITHUB_EVENT_PATH" --event-name "$GITHUB_EVENT_NAME" --github-output "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-plan
+          path: build-plan.json
+          if-no-files-found: error
   build:
+    name: ${{ matrix.library }} / Python ${{ matrix.python }} / ${{ matrix.abi }}
+    needs: plan
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     uses: ./.github/workflows/build-android-wheel-dispatch.yml
+    with:
+      target: ${{ toJSON(matrix) }}
+  publish:
+    needs: [plan, build]
+    if: needs.plan.outputs.publication == 'publish'
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       actions: write
-    with:
-      library_name: ${{ inputs.library_name }}
-      git_repository: ${{ inputs.git_repository }}
-      version_tag: ${{ inputs.version_tag }}
-      package_dir: ${{ inputs.package_dir }}
-      target_python_version: ${{ inputs.target_python_version }}
-      android_api: ${{ inputs.android_api }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: ./.github/actions/publish-wheels

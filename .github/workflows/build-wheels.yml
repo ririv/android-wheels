@@ -8,6 +8,11 @@ on:
       - 'scripts/recipes/**'
       - 'scripts/__init__.py'
       - 'scripts/build/**'
+      - 'scripts/pipeline/**'
+      - '.github/actions/**'
+      - 'requirements/build.txt'
+      - '!scripts/**/tests/**'
+      - '!scripts/**/*.pyc'
       - '.github/workflows/build-wheels.yml'
       - '.github/workflows/build-android-wheel-dispatch.yml'
   workflow_dispatch:
@@ -42,48 +47,44 @@ jobs:
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
       has_jobs: ${{ steps.plan.outputs.has_jobs }}
+      publication: ${{ steps.plan.outputs.publication }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
-      - name: Build independent job matrix
+      - name: Plan pinned independent targets
         id: plan
         env:
-          EVENT_NAME: ${{ github.event_name }}
-          BEFORE_SHA: ${{ github.event.before }}
-          RECIPES: ${{ inputs.recipes }}
-          PYTHON_VERSIONS: ${{ inputs.python_versions }}
-          VERSION_TAG: ${{ inputs.version_tag }}
-          PUBLICATION: ${{ inputs.publication }}
-        run: |
-          if [ "$EVENT_NAME" = 'push' ]; then
-            if [ "$BEFORE_SHA" != '0000000000000000000000000000000000000000' ]; then
-              git fetch --no-tags --depth=1 origin "$BEFORE_SHA"
-            fi
-            python -m scripts.recipes plan-changes --before "$BEFORE_SHA" --after "$GITHUB_SHA" --github-output "$GITHUB_OUTPUT"
-          else
-            python -m scripts.recipes plan --recipes "$RECIPES" --python-versions "$PYTHON_VERSIONS" --version-tag "$VERSION_TAG" --publication "$PUBLICATION" --github-output "$GITHUB_OUTPUT"
-          fi
+          GH_TOKEN: ${{ github.token }}
+        run: python -B -m scripts.pipeline plan --event "$GITHUB_EVENT_PATH" --event-name "$GITHUB_EVENT_NAME" --github-output "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-plan
+          path: build-plan.json
+          if-no-files-found: error
 
   build:
-    name: ${{ matrix.name }} / ${{ matrix.platform }} / Python ${{ matrix.python }}
+    name: ${{ matrix.library }} / Python ${{ matrix.python }} / ${{ matrix.abi }}
     needs: plan
     if: needs.plan.outputs.has_jobs == 'true'
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     uses: ./.github/workflows/build-android-wheel-dispatch.yml
+    with:
+      target: ${{ toJSON(matrix) }}
+
+  publish:
+    needs: [plan, build]
+    if: needs.plan.outputs.publication == 'publish' && needs.plan.outputs.has_jobs == 'true'
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       actions: write
-    with:
-      library_name: ${{ matrix.name }}
-      git_repository: ${{ matrix.repository }}
-      version_tag: ${{ matrix.ref }}
-      package_dir: ${{ matrix.directory }}
-      expected_backend: ${{ matrix.backend }}
-      target_python_version: ${{ matrix.python }}
-      android_abis: ${{ matrix.abis }}
-      android_api: ${{ matrix.android_api }}
-      publication: ${{ matrix.publication }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: ./.github/actions/publish-wheels

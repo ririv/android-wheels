@@ -47,8 +47,8 @@ xxhash
 本仓库使用 GitHub Actions 实现自动化构建和发布流程：
 
 1. **Recipe 与构建矩阵**：每个包的配置位于 `recipes/<包名>.toml`。统一入口 `build-wheels.yml` 选择变更的包并生成并行矩阵，再调用现有 Android 构建器。包、Python 版本和 ABI 均可并行。
-2. **提交到 `wheels` 分支**: 成功构建的 `.whl` 文件会被提交到 `wheels` 分支。
-3. **部署索引**: 推送到 `wheels` 分支会触发 `pages.yml` 工作流，该工作流会生成一个符合 PEP 503 规范的“简单”包索引，并将其部署到 GitHub Pages。
+2. **统一发布**：所有目标成功后，按固定源码与哈希清单校验完整产物，再以一个提交更新 `wheels` 分支。
+3. **部署索引**：汇总发布确认内容变化后，显式触发一次 `pages.yml`，生成 PEP 503 索引并部署。新索引内容变化时，再通知旧地址同步。
 
 这确保了包索引始终与最新成功构建的 wheel 文件保持同步。
 
@@ -79,3 +79,5 @@ wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#
 ```sh
 gh workflow run build-wheels.yml -f recipes=pydantic-core -f python_versions=3.10 -f version_tag=v2.41.5
 ```
+
+模块划分与开发检查见 [构建流水线](docs/pipeline.md)。

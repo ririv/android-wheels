@@ -19,7 +19,7 @@
 
 ## 构建路由
 
-`build-wheels.yml` 从 `recipes/*.toml` 生成包与 Python 版本的并行矩阵，再调用 `build-android-wheel-dispatch.yml`。后者校验目标并检测源码的实际后端，recipe 声明与源码不一致时直接失败。配置格式、变更范围选择及 artifact 隔离方式见 [Recipe 与并行构建](recipes.md)。
+`build-wheels.yml` 从 `recipes/*.toml` 生成包 × Python × ABI 的并行矩阵，规划时固定上游提交 SHA 并校验后端，再调用 `build-android-wheel-dispatch.yml` 编译单个目标。编译前再次核验源码提交和后端，声明与源码不一致时直接失败。配置格式、变更范围选择及 artifact 隔离方式见 [Recipe 与并行构建](recipes.md)。
 
 - maturin 项目由 `build_android_wheel.py` 构建，支持上述全部版本。3.10–3.12 的 Chaquopy target 没有 sysconfigdata，因此使用包含 Python 版本、64 位指针宽度、共享库路径及扩展后缀的 `PYO3_CONFIG_FILE`。3.13–3.15 使用归档内的目标 sysconfigdata。
 - 其他后端在 3.10–3.12 上使用固定提交的 [Chaquopy build-wheel](https://github.com/chaquo/chaquopy/blob/6e365e30f7199468d9fffe628fe9f0a7658fdbb3/server/pypi/README-old.md)。包版本由项目后端生成的元数据提供，Git 标签仅用于选择源码。
@@ -29,7 +29,7 @@ Chaquopy 构建工具应用仓库内的 `chaquopy-libpython-link.patch`：忽略
 
 源码项目仍须支持所选 Python 版本。构建器支持某个版本，并不代表任意上游库及其依赖已经适配；例如旧版 PyO3 可能拒绝 Python 3.15。此类错误会直接报告，不启用 `PYO3_USE_ABI3_FORWARD_COMPATIBILITY`，也不修改上游依赖来掩盖兼容性问题。有额外原生依赖的包仍需相应的构建配方或依赖产物。
 
-`Build CPython for Android` 工作流只用于具有官方 `Android/android.py` 的 3.13–3.15。3.10–3.12 使用 Chaquopy 已发布的运行库，不经过该工作流。
+旧的 `Build CPython for Android` 工作流已删除。当前构建直接使用上表固定的外部运行库，不再维护没有被消费的自建 CPython 产物。
 
 ## 缓存与产物
 

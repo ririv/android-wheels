@@ -24,10 +24,16 @@ from scripts.recipes.model import (
 
 SHARED_FILES = {
     "scripts/__init__.py",
+    "requirements/build.txt",
     ".github/workflows/build-wheels.yml",
     ".github/workflows/build-android-wheel-dispatch.yml",
 }
-SHARED_PREFIXES = ("scripts/build/", "scripts/recipes/")
+SHARED_PREFIXES = (
+    "scripts/build/",
+    "scripts/recipes/",
+    "scripts/pipeline/",
+    ".github/actions/",
+)
 
 
 def select_recipes(
@@ -48,7 +54,10 @@ def affected_recipes(
     recipes: tuple[Recipe, ...], changed: tuple[str, ...]
 ) -> tuple[Recipe, ...]:
     if any(
-        path in SHARED_FILES or path.startswith(SHARED_PREFIXES) for path in changed
+        (path in SHARED_FILES or path.startswith(SHARED_PREFIXES))
+        and "tests" not in path.split("/")
+        and not path.endswith(".pyc")
+        for path in changed
     ):
         return recipes
     return tuple(

@@ -2,23 +2,25 @@
 
 ## 配置与调度分离
 
-每个包的源码、后端和默认构建目标存放在 `recipes/<包名>.toml`。统一入口 `.github/workflows/build-wheels.yml` 生成包与 Python 版本的矩阵，再调用现有 `build-android-wheel-dispatch.yml`。
+每个包的源码、后端和默认构建目标存放在 `recipes/<包名>.toml`。统一入口 `.github/workflows/build-wheels.yml` 调用 `scripts.pipeline`，解析上游 Git ref 为完整提交 SHA，并生成包 × Python × ABI 的独立任务矩阵。
 
-TOML 只描述数据，现有 maturin、cibuildwheel 和旧版 Chaquopy 构建器保持原有实现。解析器只生成任务清单，真正的编译仍分发到独立的 Actions job。
+TOML 描述包配置；Python 负责规划、源码校验、环境组合、产物校验与发布；YAML 负责事件、权限、runner、并行矩阵及 Actions 产物传输。现有 maturin、cibuildwheel 和旧版 Chaquopy 构建能力继续使用。
 
 ```text
 recipes/*.toml
        ↓
-统一入口生成包 × Python 矩阵
+解析固定源码 SHA，生成完整构建计划
        ↓
-各任务调用现有 Android 构建工作流
+包 × Python × ABI 独立并行编译
        ↓
-每个任务继续按 ABI 并行构建
+验证每个 wheel，生成来源与 SHA-256 清单
        ↓
-按包和 Python 版本收集产物并发布
+全部目标成功后，统一校验并提交 wheels
+       ↓
+内容变化时触发一次索引部署，再事件通知旧索引
 ```
 
-两层矩阵均设置 `fail-fast: false`。一个任务失败不会取消其他任务；实际同时运行数量仍受 GitHub runner 和账户并发配额限制。
+矩阵设置 `fail-fast: false`，一个目标失败不会取消其他编译。发布要求本次计划的全部目标成功、产物齐全且校验通过；不会把不完整构建当成成功发布。成功目标的 Actions 产物仍保留，可以重新运行失败任务。实际并发数受 GitHub runner 和账户配额限制。
 
 ## TOML 格式
 
@@ -63,6 +65,8 @@ api = 24
 - 删除 recipe 不会重新构建已删除的包；仅删除文件时，空矩阵直接跳过构建。
 - 文档变化不会触发 native wheel 构建。
 
+仅修改 `scripts/**/tests/` 不触发 native 构建；修改公共构建依赖清单也会重建全部 recipe。
+
 规划会先校验全部 recipe，再根据 Git diff 选择目标。新增或重命名的 TOML 可以被识别，不依赖 GitHub push 事件里可能被截断的文件列表。
 
 规划任务采用浅克隆，并显式获取推送前的提交，只读取比较前后源码树所需的对象。
@@ -91,7 +95,7 @@ gh workflow run build-wheels.yml \
 
 `publication=publish` 是默认值，会提交 wheel 并触发现有索引发布链路；`publication=build` 只上传 Actions artifacts，跳过 `wheels` 分支和索引发布。
 
-`manual-wheel-build.yml` 保留为临时仓库构建入口，用于尚未收录进 recipe 的源码；原来的 `wheel-*.yml` 包专用入口由 `build-wheels.yml` 替代。
+`manual-wheel-build.yml` 保留为临时仓库构建入口，用于尚未收录进 recipe 的源码；必须明确项目目录（根目录填写 `.`），该目录必须有显式声明受支持后端的 `pyproject.toml`，不再递归猜测子项目；原来的 `wheel-*.yml` 包专用入口由 `build-wheels.yml` 替代。
 
 ## Artifact 隔离
 
@@ -104,12 +108,15 @@ pydantic-core-android-3.13-wheel-arm64-v8a
 pydantic-core-android-3.13-wheel-x86_64
 ```
 
-每个发布任务只下载自己的包与 Python 版本的产物。多版本构建不会出现同名 artifact 或误收集其他 Python 版本的问题。
+每个 artifact 包含一个 wheel 和 `manifest.json`，记录固定源码 SHA、目标信息与 wheel SHA-256。统一发布任务按 `build-plan.json` 核验完整产物集合、来源、哈希、文件名、平台、Python/ABI 标签和 METADATA，再用一个提交更新 `wheels` 分支。缺失、多余、错配或冲突的产物会使发布失败；多个目标生成同名且内容不同的 wheel 时也直接失败。
+
+编译任务只有读权限，写入仓库和触发索引的权限仅授予汇总发布任务。只有 wheel 内容变化才触发索引，`publication=build` 始终跳过发布。
 
 ## 本地校验
 
 ```sh
-python -B -m scripts.recipes validate
+uv sync --locked --no-install-project
+uv run python -B -m scripts.recipes validate
 python -B -m unittest discover -s scripts/recipes/tests -v
 python -B -m scripts.recipes plan \
   --recipes pydantic-core,xxhash \
@@ -119,3 +126,5 @@ python -B -m scripts.recipes plan \
 ```
 
 规划输出独立任务的 JSON，不在本地编译。运行这些命令的 Python 至少为 3.11，且不需要安装 TOML 第三方库。
+
+整体模块边界、工作流职责与测试方式见 [构建流水线](pipeline.md)。

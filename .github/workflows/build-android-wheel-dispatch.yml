@@ -1,318 +1,93 @@
-name: Reusable - Build Android Wheel (dispatch)
+name: Reusable - Build one Android target
 
 on:
   workflow_call:
     inputs:
-      library_name:
-        description: 'Name of the library'
+      target:
+        description: Resolved source and one Python/ABI target as JSON
         required: true
         type: string
-      git_repository:
-        description: 'Git repository of the library source'
-        required: true
-        type: string
-      version_tag:
-        description: 'Git ref (tag/branch) of the library version'
-        required: false
-        type: string
-      package_dir:
-        description: 'Directory of the Python project inside the library source (e.g. crates/jiter-python). Auto-detected if empty.'
-        required: false
-        type: string
-        default: ''
-      expected_backend:
-        description: 'Expected PEP 517 backend; detect keeps ad-hoc source discovery'
-        required: false
-        type: string
-        default: 'detect'
-      android_abis:
-        description: 'JSON array of Android ABIs'
-        required: false
-        type: string
-        default: '["arm64-v8a", "x86_64"]'
-      publication:
-        description: 'publish commits wheels and updates indexes; build uploads artifacts only'
-        required: false
-        type: string
-        default: 'publish'
-      target_python_version:
-        description: 'Python version: 3.10, 3.11, 3.12, 3.13, 3.14 or 3.15'
-        required: false
-        type: string
-        default: '3.13'
-      android_api:
-        description: 'Android API level'
-        required: false
-        type: string
-        default: '24'
+
+permissions:
+  contents: read
 
 jobs:
-  dispatch:
+  build:
+    name: ${{ fromJSON(inputs.target).builder }} / ${{ fromJSON(inputs.target).abi }}
     runs-on: ubuntu-latest
-    outputs:
-      build_backend: ${{ steps.check_backend.outputs.build_backend }}
-      android_matrix: ${{ steps.android_targets.outputs.matrix }}
-      artifact_prefix: ${{ steps.android_targets.outputs.artifact_prefix }}
+    env:
+      LIBRARY_NAME: ${{ fromJSON(inputs.target).library }}
+      GIT_REPOSITORY: ${{ fromJSON(inputs.target).source.repository }}
+      VERSION_TAG: ${{ fromJSON(inputs.target).source.sha }}
+      SOURCE_DIR: ${{ fromJSON(inputs.target).source.directory }}
+      PACKAGE_DIR: ${{ fromJSON(inputs.target).source.directory }}
+      TARGET_PYTHON_VERSION: ${{ fromJSON(inputs.target).python }}
+      ANDROID_API: ${{ fromJSON(inputs.target).api }}
+      TARGET_ABI: ${{ fromJSON(inputs.target).abi }}
+      ARTIFACT: ${{ fromJSON(inputs.target).artifact }}
+      WHEEL_DIRECTORY: ${{ fromJSON(inputs.target).builder == 'cibuildwheel' && 'wheelhouse' || 'output' }}
     steps:
-      - name: Checkout self
-        uses: actions/checkout@v4
-
-      - name: Validate Python version
-        env:
-          TARGET_PYTHON_VERSION: ${{ inputs.target_python_version }}
-        run: |
-          python -c 'import os, sys; sys.path.insert(0, "scripts/build"); from android_python import PythonVersion; PythonVersion(os.environ["TARGET_PYTHON_VERSION"])'
-
-      - name: Plan Android targets
-        id: android_targets
-        env:
-          ANDROID_ABIS: ${{ inputs.android_abis }}
-          LIBRARY_NAME: ${{ inputs.library_name }}
-          PYTHON_VERSION: ${{ inputs.target_python_version }}
-          PUBLICATION: ${{ inputs.publication }}
-        run: |
-          python -m scripts.recipes targets --abis "$ANDROID_ABIS" --library "$LIBRARY_NAME" --python-version "$PYTHON_VERSION" --publication "$PUBLICATION" --github-output "$GITHUB_OUTPUT"
-
-      - name: Normalize Git Repository Input
-        id: normalize_repo
-        run: |
-          chmod +x scripts/build/normalize_repo_input.py
-          NORMALIZED_REPO=$(python scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
-          echo "repository=$NORMALIZED_REPO" >> $GITHUB_OUTPUT
-
-      - name: Clone library source
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
         with:
-          repository: ${{ steps.normalize_repo.outputs.repository }}
-          ref: ${{ inputs.version_tag }}
-          path: library-source
-          submodules: recursive
-
-      - name: Check build backend
-        id: check_backend
-        env:
-          PACKAGE_DIR: ${{ inputs.package_dir }}
-          EXPECTED_BACKEND: ${{ inputs.expected_backend }}
-        run: |
-          if [ -n "$PACKAGE_DIR" ] && [ ! -f "library-source/$PACKAGE_DIR/pyproject.toml" ] && [ ! -f "library-source/$PACKAGE_DIR/setup.py" ]; then
-            echo "::error::package_dir '$PACKAGE_DIR' does not contain pyproject.toml or setup.py"
-            exit 1
-          fi
-          chmod +x scripts/build/check_backend.py
-          BACKEND=$(python scripts/build/check_backend.py "library-source/$PACKAGE_DIR")
-          python -m scripts.recipes check-backend --actual "$BACKEND" --expected "$EXPECTED_BACKEND"
-          echo "build_backend=$BACKEND" >> $GITHUB_OUTPUT
-
-  build_with_maturin:
-    name: Build for ${{ matrix.abi }} with maturin
-    needs: dispatch
-    if: needs.dispatch.outputs.build_backend == 'maturin'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.dispatch.outputs.android_matrix) }}
-
-    steps:
-      - name: Checkout self
-        uses: actions/checkout@v4
-
-      - name: Normalize Git Repository Input
-        id: normalize_repo
-        run: |
-          chmod +x scripts/build/normalize_repo_input.py
-          NORMALIZED_REPO=$(python scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
-          echo "repository=$NORMALIZED_REPO" >> $GITHUB_OUTPUT
-
-      - name: Clone library source
-        uses: actions/checkout@v4
+          python-version: '3.12'
+      - uses: ./.github/actions/prepare-source
         with:
-          repository: ${{ steps.normalize_repo.outputs.repository }}
-          ref: ${{ inputs.version_tag }}
-          path: library-source
-          fetch-depth: 1
-
-      - name: Find project directory
-        id: find_proj
-        env:
-          PACKAGE_DIR: ${{ inputs.package_dir }}
-        run: |
-          cd library-source
-          if [ -n "$PACKAGE_DIR" ]; then
-            PROJECT_DIR="$PACKAGE_DIR"
-          else
-            PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
-            PROJECT_DIR=$(dirname "$PROJECT_FILE")
-          fi
-          echo "project_dir=$PROJECT_DIR" >> $GITHUB_OUTPUT
-
-      # 宿主解释器用于解析目标 sysconfigdata，驱动脚本仍使用 runner 的系统 Python。
+          target: ${{ inputs.target }}
       - name: Set up host Python matching target
+        if: fromJSON(inputs.target).builder != 'cibuildwheel'
         id: host_python
         uses: actions/setup-python@v6
         with:
-          python-version: ${{ inputs.target_python_version }}
+          python-version: ${{ fromJSON(inputs.target).python }}
           update-environment: false
 
-      - name: Run build script
+      - name: Build with maturin
+        if: fromJSON(inputs.target).builder == 'maturin'
         env:
-          LIBRARY_NAME: ${{ inputs.library_name }}
-          GIT_REPOSITORY: ${{ inputs.git_repository }}
-          VERSION_TAG: ${{ inputs.version_tag }}
-          SOURCE_DIR: ${{ steps.find_proj.outputs.project_dir }}
-          TARGET_PYTHON_VERSION: ${{ inputs.target_python_version }}
-          ANDROID_API: ${{ inputs.android_api }}
-          TARGET_ABI: ${{ matrix.abi }}
           HOST_PYTHON: ${{ steps.host_python.outputs.python-path }}
         run: |
           python -m venv "$RUNNER_TEMP/android-wheel-build-env"
           source "$RUNNER_TEMP/android-wheel-build-env/bin/activate"
-          python -m pip install 'maturin>=1.15,<2' tomli-w 'wheel==0.45.1'
-          chmod +x scripts/build/build_android_wheel.py
+          python -m pip install -r requirements/build.txt
           python scripts/build/build_android_wheel.py
 
-      - name: Upload wheel artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact_name }}
-          path: output/*.whl
-          if-no-files-found: error
-
-  build_with_cibw:
-    name: Build wheel for ${{ matrix.abi }} with cibw
-    needs: dispatch
-    if: needs.dispatch.outputs.build_backend != 'maturin' && !contains(fromJSON('["3.10", "3.11", "3.12"]'), inputs.target_python_version)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.dispatch.outputs.android_matrix) }}
-
-    steps:
-      - name: Checkout self
-        uses: actions/checkout@v4
-
-      - name: Normalize Git Repository Input
-        id: normalize_repo
-        run: |
-          chmod +x scripts/build/normalize_repo_input.py
-          NORMALIZED_REPO=$(python scripts/build/normalize_repo_input.py "${{ inputs.git_repository }}")
-          echo "repository=$NORMALIZED_REPO" >> $GITHUB_OUTPUT
-
-      - name: Clone library source
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ steps.normalize_repo.outputs.repository }}
-          ref: ${{ inputs.version_tag }}
-          path: library-source
-          submodules: recursive
-
-      - name: Install Rust target
-        run: rustup target add ${{ matrix.target }}
-
-      - name: Prepare cibuildwheel environment
-        run: |
-          PYTHON_VERSION_NODOT=$(echo "${{ inputs.target_python_version }}" | tr -d '.')
-          echo "CIBW_BUILD=cp${PYTHON_VERSION_NODOT}-*" >> $GITHUB_ENV
-
-      - name: Find project directory
-        id: find_proj
+      - name: Install Rust target for cibuildwheel
+        if: fromJSON(inputs.target).builder == 'cibuildwheel'
         env:
-          PACKAGE_DIR: ${{ inputs.package_dir }}
-        run: |
-          cd library-source
-          if [ -n "$PACKAGE_DIR" ]; then
-            PROJECT_DIR="$PACKAGE_DIR"
-          else
-            PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
-            PROJECT_DIR=$(dirname "$PROJECT_FILE")
-          fi
-          echo "project_dir=$PROJECT_DIR" >> $GITHUB_OUTPUT
-
-      - name: Build wheels with cibuildwheel
+          RUST_TARGET: ${{ fromJSON(inputs.target).triplet }}
+        run: rustup target add "$RUST_TARGET"
+      - name: Select cibuildwheel Python
+        if: fromJSON(inputs.target).builder == 'cibuildwheel'
+        run: echo "CIBW_BUILD=cp${TARGET_PYTHON_VERSION//./}-*" >> "$GITHUB_ENV"
+      - name: Build with cibuildwheel
+        if: fromJSON(inputs.target).builder == 'cibuildwheel'
         uses: pypa/cibuildwheel@v4.3.4
         with:
-          package-dir: library-source/${{ steps.find_proj.outputs.project_dir }}
+          package-dir: library-source/${{ fromJSON(inputs.target).source.directory }}
         env:
           CIBW_PLATFORM: android
-          CIBW_ARCHS: ${{ matrix.cibw_arch }}
-          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android_api }} CARGO_BUILD_TARGET=${{ matrix.target }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ inputs.android_api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ inputs.android_api }}-clang PYO3_CROSS=1'
+          CIBW_ARCHS: ${{ fromJSON(inputs.target).cibw_arch }}
+          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ fromJSON(inputs.target).api }} CARGO_BUILD_TARGET=${{ fromJSON(inputs.target).triplet }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ fromJSON(inputs.target).api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ fromJSON(inputs.target).api }}-clang PYO3_CROSS=1'
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
-          CIBW_TEST_SKIP: "*"
-          # cibuildwheel's default Android repair (auditwheel), but wheels without native code pass through
+          CIBW_TEST_SKIP: '*'
           CIBW_REPAIR_WHEEL_COMMAND_ANDROID: 'python "$GITHUB_WORKSPACE/scripts/build/repair_android_wheel.py" {wheel} {dest_dir} {ldpaths}'
           CIBW_BEFORE_BUILD: |
-            set -e
-            # This command runs inside the cibuildwheel container.
-            # It creates a config file that cargo will automatically read,
-            # bypassing any shell scoping issues with `export`.
-            mkdir -p "{package}/.cargo"
-            CONFIG_PATH="{package}/.cargo/config.toml"
-
-            # Derive the python library path from the VIRTUAL_ENV variable.
-            BASE_DIR=$(dirname "$VIRTUAL_ENV")
-            LIB_PATH="$BASE_DIR/python/prefix/lib"
-
-            # Write the pyo3-specific variables to the config file.
-            echo "[env]" > "$CONFIG_PATH"
-            echo "PYO3_CROSS_LIB_DIR = \"$LIB_PATH\"" >> "$CONFIG_PATH"
-
-            echo "Cargo config created at $CONFIG_PATH:"
-            cat "$CONFIG_PATH"
-
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact_name }}
-          path: ./wheelhouse/*.whl
-
-  build_with_chaquopy:
-    name: Build for ${{ matrix.abi }} with Chaquopy
-    needs: dispatch
-    if: needs.dispatch.outputs.build_backend != 'maturin' && contains(fromJSON('["3.10", "3.11", "3.12"]'), inputs.target_python_version)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.dispatch.outputs.android_matrix) }}
-    steps:
-      - name: Checkout self
-        uses: actions/checkout@v4
-
-      - name: Normalize Git Repository Input
-        id: normalize_repo
-        env:
-          GIT_REPOSITORY: ${{ inputs.git_repository }}
-        run: |
-          NORMALIZED_REPO=$(python scripts/build/normalize_repo_input.py "$GIT_REPOSITORY")
-          echo "repository=$NORMALIZED_REPO" >> "$GITHUB_OUTPUT"
-
-      - name: Clone library source
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ steps.normalize_repo.outputs.repository }}
-          ref: ${{ inputs.version_tag }}
-          path: library-source
-          submodules: recursive
+            python -m pip install 'tomli-w==1.2.0'
+            python "$GITHUB_WORKSPACE/scripts/pipeline/cargo_env.py" "{package}" "$VIRTUAL_ENV"
 
       - name: Checkout Chaquopy build tools
+        if: fromJSON(inputs.target).builder == 'chaquopy'
         uses: actions/checkout@v4
         with:
           repository: chaquo/chaquopy
           ref: 6e365e30f7199468d9fffe628fe9f0a7658fdbb3
           path: chaquopy
-
-      - name: Set up host Python matching target
-        id: host_python
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ inputs.target_python_version }}
-          update-environment: false
-
-      - name: Build legacy Android wheel
+          persist-credentials: false
+      - name: Build with Chaquopy
+        if: fromJSON(inputs.target).builder == 'chaquopy'
         env:
-          TARGET_PYTHON_VERSION: ${{ inputs.target_python_version }}
-          TARGET_ABI: ${{ matrix.abi }}
-          ANDROID_API: ${{ inputs.android_api }}
-          PACKAGE_DIR: ${{ inputs.package_dir }}
           HOST_PYTHON: ${{ steps.host_python.outputs.python-path }}
         run: |
           git -C chaquopy apply "$GITHUB_WORKSPACE/scripts/build/patches/chaquopy-libpython-link.patch"
@@ -323,84 +98,10 @@ jobs:
           python -m pip install -r chaquopy/server/pypi/requirements.txt
           python scripts/build/build_chaquopy_wheel.py
 
-      - name: Upload wheel artifact
-        uses: actions/upload-artifact@v4
+      - name: Validate wheel and record build provenance
+        run: python -B -m scripts.pipeline record --artifact "$ARTIFACT" --directory "$WHEEL_DIRECTORY"
+      - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact_name }}
-          path: output/*.whl
+          name: ${{ env.ARTIFACT }}
+          path: ${{ env.WHEEL_DIRECTORY }}/*
           if-no-files-found: error
-
-  upload-wheels:
-    name: Upload Wheels
-    needs: [dispatch, build_with_maturin, build_with_cibw, build_with_chaquopy]
-    if: always() && inputs.publication == 'publish' && (needs.build_with_maturin.result == 'success' || needs.build_with_cibw.result == 'success' || needs.build_with_chaquopy.result == 'success')
-    runs-on: ubuntu-latest
-    # No shared concurrency group: GitHub keeps only one pending job per group and cancels the
-    # rest, which dropped uploads when several libraries finished together. Concurrent pushes
-    # to 'wheels' are handled by the retry loop below instead.
-    permissions:
-      contents: write
-      actions: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Download all wheel artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: wheels
-          pattern: ${{ needs.dispatch.outputs.artifact_prefix }}-*
-          merge-multiple: true
-      - name: Commit wheels to 'wheels' branch
-        run: |
-          set -ex
-          if [ ! -d "wheels" ] || [ -z "$(ls -A wheels)" ]; then
-            echo "No wheels to commit"
-            exit 0
-          fi
-
-          mkdir wheels_repo
-          cd wheels_repo
-
-          git init
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-
-          PACKAGE_DIR="${{ inputs.library_name }}"
-
-          # Other libraries may push to 'wheels' at the same time. When our push is rejected,
-          # re-apply this library's wheels on top of the latest remote branch and try again.
-          for attempt in $(seq 1 10); do
-            if git fetch --depth=1 origin wheels; then
-              echo "Checked out existing 'wheels' branch."
-              git checkout -f -B wheels FETCH_HEAD
-            elif [ "$attempt" -eq 1 ]; then
-              echo "Creating new 'wheels' branch."
-              git checkout -b wheels
-            else
-              sleep $((attempt * 3 + RANDOM % 10))
-              continue
-            fi
-
-            mkdir -p "$PACKAGE_DIR"
-            cp ../wheels/* "$PACKAGE_DIR/"
-
-            git add .
-            if git diff --staged --quiet; then
-              echo "No new or updated wheels to commit."
-              exit 0
-            fi
-            git commit -m "Build: Add/Update ${{ inputs.library_name }} wheels for version ${{ inputs.version_tag || 'latest' }}"
-            if git push --set-upstream origin wheels; then
-              exit 0
-            fi
-            echo "Push rejected (attempt $attempt); retrying on top of the latest 'wheels'..."
-            sleep $((attempt * 3 + RANDOM % 10))
-          done
-          echo "::error::Failed to push wheels after 10 attempts"
-          exit 1
-
-      - name: Trigger pages deployment
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh workflow run pages.yml --ref main

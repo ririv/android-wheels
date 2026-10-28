@@ -1,24 +1,23 @@
-name: Test Android build scripts
+name: Validate build pipeline
 
 on:
   push:
+    branches: [main]
     paths:
-      - 'scripts/build/**'
-      - 'scripts/recipes/**'
-      - 'scripts/__init__.py'
+      - 'scripts/**'
       - 'recipes/**'
-      - '.github/workflows/build-wheels.yml'
-      - '.github/workflows/build-android-wheel-dispatch.yml'
-      - '.github/workflows/test-build-scripts.yml'
+      - '.github/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - 'requirements/**'
   pull_request:
     paths:
-      - 'scripts/build/**'
-      - 'scripts/recipes/**'
-      - 'scripts/__init__.py'
+      - 'scripts/**'
       - 'recipes/**'
-      - '.github/workflows/build-wheels.yml'
-      - '.github/workflows/build-android-wheel-dispatch.yml'
-      - '.github/workflows/test-build-scripts.yml'
+      - '.github/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - 'requirements/**'
 
 permissions:
   contents: read
@@ -27,6 +26,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python: ['3.11', '3.15']
     steps:
@@ -34,19 +34,34 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
-      - name: Test runtime selection and wheel processing
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.8.4'
+      - name: Install locked development tools
+        run: uv sync --locked --no-install-project --python "$(command -v python)"
+      - name: Check Python and TOML
         run: |
-          python -m pip install tomli-w 'wheel==0.45.1'
-          python -B -m unittest discover -s scripts/build/tests -v
-      - name: Validate recipes and test matrix planning
+          uv run --no-sync ruff check scripts/pipeline scripts/recipes scripts/index scripts/generate_index.py
+          uv run --no-sync ruff format --check scripts/pipeline scripts/recipes scripts/index scripts/generate_index.py
+          uv run --no-sync python -B -m scripts.recipes validate
+      - name: Test pipeline components
         run: |
-          python -B -m scripts.recipes validate
-          python -B -m unittest discover -s scripts/recipes/tests -v
+          uv run --no-sync python -B -m unittest discover -s scripts/build/tests -v
+          uv run --no-sync python -B -m unittest discover -s scripts/recipes/tests -v
+          uv run --no-sync python -B -m unittest discover -s scripts/pipeline/tests -v
+          uv run --no-sync python -B -m unittest discover -s scripts/index/tests -v
       - name: Checkout pinned Chaquopy build tools
         uses: actions/checkout@v4
         with:
           repository: chaquo/chaquopy
           ref: 6e365e30f7199468d9fffe628fe9f0a7658fdbb3
           path: chaquopy
-      - name: Check Chaquopy patch
+          persist-credentials: false
+      - name: Check build-tool patch
         run: git -C chaquopy apply --check "$GITHUB_WORKSPACE/scripts/build/patches/chaquopy-libpython-link.patch"
+  workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Actions workflows
+        run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
