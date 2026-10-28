@@ -18,6 +18,7 @@ from scripts.build.android_python import (
 from scripts.build.build_android_wheel import process_wheel
 from scripts.build.chaquopy_adapter import prepare_builder
 from scripts.build.repair_android_wheel import repair
+from scripts.build.wheel_extensions import normalize_extensions
 from scripts.pipeline.model import SdistSource, load_plan
 
 
@@ -88,6 +89,7 @@ def main() -> None:
                 abi.value,
                 wheel.parent / "tagged",
             )
+            normalize_extensions(wheel)
             ndk = Path(os.environ["ANDROID_NDK"])
             libraries = (
                 ndk

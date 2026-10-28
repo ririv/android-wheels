@@ -1,0 +1,14 @@
+# 仅记录有实际证据的上游限制，源码更新后自动重新尝试。
+[[unsupported]]
+library = "pydantic-core"
+python = "3.15"
+source = {kind = "git", sha = "383eb95a19433754c0cecf7025b50c26b6d97a36"}
+detail = "当前锁定的 PyO3 0.26.0 最高支持 Python 3.14，拒绝 3.15；需要上游升级依赖。"
+evidence = "https://github.com/ririv/py-extra-wheels/actions/runs/40711131628/job/122896689320"
+
+[[unsupported]]
+library = "fastuuid"
+python = "3.15"
+source = {kind = "pypi-sdist", sha256 = "178947fc2f995b38497a74172adee64fdeb8b7ec18f2a5934d037641ba265d26"}
+detail = "当前发行版本锁定 PyO3 0.26.0，最高支持 Python 3.14，拒绝 3.15。"
+evidence = "https://github.com/ririv/py-extra-wheels/actions/runs/40711596750/job/122898581412"

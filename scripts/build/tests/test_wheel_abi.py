@@ -54,8 +54,13 @@ class WheelABITests(unittest.TestCase):
             {
                 "example.abi3.so": elf_with_dependency(dependency),
                 prefix + "METADATA": b"Name: example\nVersion: 1.0\n",
-                prefix
-                + "WHEEL": f"Wheel-Version: 1.0\nTag: {python}-{abi}-android_24_arm64_v8a\n".encode(),
+                prefix + "WHEEL": (
+                    "Wheel-Version: 1.0\n"
+                    + "".join(
+                        f"Tag: {python}-{item}-android_24_arm64_v8a\n"
+                        for item in abi.split(".")
+                    )
+                ).encode(),
             },
         )
         return path
@@ -77,6 +82,16 @@ class WheelABITests(unittest.TestCase):
                 24,
             )
             verify_wheel(result, target)
+
+    def test_compressed_stable_tags_narrow_to_the_actual_gil_runtime(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            wheel = self.make_wheel(
+                Path(tmp), "libpython3.15.so", "cp315", "abi3.abi3t"
+            )
+            self.assertEqual(
+                constrain_abi(wheel).name,
+                "example-1.0-cp315-cp315-android_24_arm64_v8a.whl",
+            )
 
     def test_unversioned_python_dependency_preserves_upstream_abi3(self):
         with tempfile.TemporaryDirectory() as tmp:

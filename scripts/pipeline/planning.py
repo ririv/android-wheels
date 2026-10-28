@@ -7,7 +7,12 @@ from pathlib import Path
 from packaging.specifiers import SpecifierSet
 
 from scripts.build.android_python import AndroidABI, PythonVersion
-from scripts.pipeline.model import Plan, Target, UnsupportedPython
+from scripts.pipeline.compatibility import (
+    GitCommit,
+    SdistArchive,
+    load_incompatibilities,
+)
+from scripts.pipeline.model import GitSource, Plan, Target, UnsupportedPython
 from scripts.pipeline.source import resolve_legacy_sdist, resolve_source
 from scripts.recipes.load import load_recipes
 from scripts.recipes.model import (
@@ -53,6 +58,10 @@ def recipe_plan(event_name: str, event: dict, root: Path) -> Plan:
         publication = Publication(inputs["publication"])
     else:
         raise ValueError(f"不支持的事件：{event_name}")
+    incompatibilities = {
+        (e.library, e.python, e.source): e
+        for e in load_incompatibilities(root / "build-compatibility.toml")
+    }
     sources = {}
     targets = []
     skipped = []
@@ -72,6 +81,14 @@ def recipe_plan(event_name: str, event: dict, root: Path) -> Plan:
             skipped.append(
                 UnsupportedPython(recipe.name, job.python, source.requires_python)
             )
+            continue
+        identity = (
+            GitCommit(source.sha)
+            if isinstance(source, GitSource)
+            else SdistArchive(source.sha256)
+        )
+        if entry := incompatibilities.get((recipe.name, job.python, identity)):
+            skipped.append(entry)
             continue
         targets.extend(
             Target(

@@ -44,10 +44,15 @@ class AndroidPythonTests(unittest.TestCase):
                         case ChaquopyArchive():
                             with zipfile.ZipFile(archive, "w") as zf:
                                 zf.writestr(f"jniLibs/{abi.value}/{lib}", b"\x7fELF")
+                                zf.writestr(
+                                    f"include/python{version}/Python.h",
+                                    b"/* target header */",
+                                )
                         case CPythonArchive():
                             with tarfile.open(archive, "w:gz") as tf:
                                 for name, data in {
                                     f"prefix/lib/{lib}": b"\x7fELF",
+                                    f"prefix/include/python{version}/Python.h": b"/* target header */",
                                     f"prefix/lib/python{version}/_sysconfigdata_android.py": b"build_time_vars = {}",
                                 }.items():
                                     info = tarfile.TarInfo(name)
@@ -144,6 +149,7 @@ class AndroidPythonTests(unittest.TestCase):
             (runtime_dir / "incomplete").touch()
             with zipfile.ZipFile(archive, "w") as zf:
                 zf.writestr("jniLibs/arm64-v8a/libpython3.11.so", b"\x7fELF")
+                zf.writestr("include/python3.11/Python.h", b"/* target header */")
             with patch(
                 "scripts.build.android_python.download_archive", return_value=archive
             ):
@@ -182,7 +188,10 @@ class AndroidPythonTests(unittest.TestCase):
                         self.assertEqual(
                             env["PYO3_CONFIG_FILE"], "/target/pyo3-config.txt"
                         )
-                        self.assertNotIn("PYO3_CROSS_LIB_DIR", env)
+                        self.assertEqual(
+                            env["PYO3_CROSS_LIB_DIR"],
+                            str(runtime.lib_dir / "python3.11"),
+                        )
                     case SysconfigRuntime():
                         self.assertEqual(env["PYO3_CROSS_LIB_DIR"], "/target/lib")
                         self.assertNotIn("PYO3_CONFIG_FILE", env)

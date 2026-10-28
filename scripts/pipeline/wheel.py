@@ -11,6 +11,7 @@ from email.parser import BytesParser
 from itertools import product
 from pathlib import Path
 
+from elftools.elf.elffile import ELFFile
 from packaging.specifiers import SpecifierSet
 
 from scripts.build.native_libraries import library_specs
@@ -137,4 +138,12 @@ def verify_wheel(path: Path, target: Target) -> None:
                 continue
             with archive.open(entry) as stream:
                 if stream.read(4) == b"\x7fELF":
-                    verify_alignment(io.BytesIO(archive.read(entry)), entry.filename)
+                    data = archive.read(entry)
+                    expected_machine = {
+                        "arm64-v8a": "EM_AARCH64",
+                        "x86_64": "EM_X86_64",
+                    }[target.abi.value]
+                    elf = ELFFile(io.BytesIO(data))
+                    if elf.header["e_machine"] != expected_machine:
+                        raise ValueError(f"ELF 架构与目标不一致：{entry.filename}")
+                    verify_alignment(io.BytesIO(data), entry.filename)

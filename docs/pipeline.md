@@ -11,6 +11,8 @@
 | `scripts/pipeline/sdists.py` | 校验源码包 SHA-256，安全解包并保留上游发行内容 |
 | `scripts/pipeline/cargo_env.py` | 组合 cibuildwheel 所需的 Cargo 环境配置，保留已有配置 |
 | `scripts/build` | Android 运行库、maturin/Chaquopy 构建与 wheel 修复 |
+| `scripts/build/chaquopy_adapter.py` | 组合旧版目标环境、原生依赖与共用 wheel 修复 |
+| `scripts/build/pep517_settings.py` | 将相同构建参数传入依赖发现和 wheel 构建 |
 | `scripts/build/cibuildwheel_native.py` | 在后端依赖探测之前准备目标原生库 |
 | `scripts/build/cibuildwheel_prepare.py` | 核对并安装已编译依赖，组合宿主工具与 Cargo 环境 |
 | `scripts/build/native_model.py` | 原生依赖名、互斥构建系统和固定来源数据 |
@@ -31,7 +33,7 @@
 
 ## Actions 职责
 
-主仓库保留五个工作流：recipe 入口、单目标 Android 构建器、临时仓库入口、索引部署、统一 CI。两个构建入口共享源码准备与发布 composite action。
+主仓库保留六个工作流：recipe 入口、有界矩阵批次、单目标 Android 构建器、临时仓库入口、索引部署、统一 CI。两个构建入口共享源码准备与发布 composite action。
 
 构建计划记录在 `build-plan` artifact 内的 `build-plan.json`，源码使用 `GitSource | SdistSource` 和类型建模。Git ref 在规划时解析为完整 SHA；PyPI 源明确固定版本、地址、文件名和 SHA-256。不同 Python 和 ABI 使用同一固定来源，构建器在编译前重新校验 checkout 或源码包哈希、后端、`PKG-INFO`。sdist 的产物版本还必须等于所选发行版本。临时仓库入口未填写 ref 时，显式读取上游默认分支后固定其提交。
 

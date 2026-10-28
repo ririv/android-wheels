@@ -21,6 +21,7 @@ from scripts.recipes.model import (
 )
 
 SHARED_FILES = {
+    "build-compatibility.toml",
     "scripts/__init__.py",
     "pyproject.toml",
     "scripts/tooling.py",

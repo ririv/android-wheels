@@ -12,6 +12,7 @@ on:
       - '.github/actions/**'
       - 'scripts/tooling.py'
       - 'pyproject.toml'
+      - 'build-compatibility.toml'
       - '!scripts/pipeline/publish.py'
       - '!scripts/pipeline/notifications.py'
       - '!.github/actions/publish-wheels/**'

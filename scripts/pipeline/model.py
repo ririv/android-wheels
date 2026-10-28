@@ -10,6 +10,7 @@ from typing import Literal
 
 from scripts.build.android_python import AndroidABI, PythonVersion
 from scripts.build.native_model import NativeLibrary
+from scripts.pipeline.compatibility import UpstreamUnsupported, upstream_unsupported
 from scripts.recipes.model import (
     Backend,
     ConfigSetting,
@@ -119,7 +120,7 @@ class UnsupportedPython:
 class Plan:
     publication: Publication
     targets: tuple[Target, ...]
-    skipped: tuple[UnsupportedPython, ...] = ()
+    skipped: tuple[UnsupportedPython | UpstreamUnsupported, ...] = ()
 
     def write(self, path: Path) -> None:
         path.write_text(
@@ -171,13 +172,20 @@ def load_plan(path: Path) -> Plan:
         )
     skipped = []
     for row in data["skipped"]:
-        if row["reason"] != "requires-python":
-            raise ValueError(f"未知跳过原因：{row['reason']}")
-        skipped.append(
-            UnsupportedPython(
-                row["library"], PythonVersion(row["python"]), row["requires_python"]
-            )
-        )
+        fields = dict(row)
+        match fields.pop("reason"):
+            case "requires-python":
+                skipped.append(
+                    UnsupportedPython(
+                        fields["library"],
+                        PythonVersion(fields["python"]),
+                        fields["requires_python"],
+                    )
+                )
+            case "upstream-incompatibility":
+                skipped.append(upstream_unsupported(fields))
+            case reason:
+                raise ValueError(f"未知跳过原因：{reason}")
     plan = Plan(Publication(data["publication"]), tuple(targets), tuple(skipped))
     if len({t.artifact for t in plan.targets}) != len(plan.targets):
         raise ValueError("构建计划存在重复目标")

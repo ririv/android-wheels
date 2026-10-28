@@ -8,6 +8,7 @@ on:
       - 'recipes/**'
       - '.github/**'
       - 'pyproject.toml'
+      - 'build-compatibility.toml'
       - 'uv.lock'
   pull_request:
     paths:
@@ -15,6 +16,7 @@ on:
       - 'recipes/**'
       - '.github/**'
       - 'pyproject.toml'
+      - 'build-compatibility.toml'
       - 'uv.lock'
 
 permissions:

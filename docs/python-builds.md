@@ -2,7 +2,7 @@
 
 ## Python 版本
 
-构建入口接受 Python `3.10`、`3.11`、`3.12`、`3.13`、`3.14`、`3.15`，默认仍为 `3.13`。版本必须使用 `主版本.次版本` 格式；不接受补丁版本、预发布标识或任意字符串。
+构建入口接受 Python `3.10`、`3.11`、`3.12`、`3.13`、`3.14`、`3.15`。recipe 默认请求全部六个版本，临时仓库入口默认选择 `3.13`。版本必须使用 `主版本.次版本` 格式；不接受补丁版本、预发布标识或任意字符串。
 
 按 [Python 官方维护状态](https://devguide.python.org/versions/)，2026 年 10 月仍在维护的稳定版本为 3.11–3.15。3.10 已结束维护，本仓库额外保留其构建能力。
 
@@ -19,10 +19,10 @@
 
 ## 构建路由
 
-`build-wheels.yml` 从 `recipes/*.toml` 生成包 × Python × ABI 的并行矩阵，规划时固定上游提交 SHA 并校验后端，再调用 `build-android-wheel-dispatch.yml` 编译单个目标。编译前再次核验源码提交和后端，声明与源码不一致时直接失败。配置格式、变更范围选择及 artifact 隔离方式见 [Recipe 与并行构建](recipes.md)。
+`build-wheels.yml` 从 `recipes/*.toml` 生成包 × Python × ABI 的并行矩阵，规划时固定上游提交 SHA 并校验后端，通过 `build-wheel-batch.yml` 分批后，调用 `build-android-wheel-dispatch.yml` 编译单个目标。编译前再次核验源码提交和后端，声明与源码不一致时直接失败。配置格式、变更范围选择及 artifact 隔离方式见 [Recipe 与并行构建](recipes.md)。
 
 - maturin 项目由 `build_android_wheel.py` 构建，支持上述全部版本。3.10–3.12 的 Chaquopy target 没有 sysconfigdata，因此使用包含 Python 版本、64 位指针宽度、共享库路径及扩展后缀的 `PYO3_CONFIG_FILE`。3.13–3.15 使用归档内的目标 sysconfigdata。
-- 其他后端在 3.10–3.12 上使用固定提交的 [Chaquopy build-wheel](https://github.com/chaquo/chaquopy/blob/6e365e30f7199468d9fffe628fe9f0a7658fdbb3/server/pypi/README-old.md)。包版本由项目后端生成的元数据提供，Git 标签仅用于选择源码。
+- 其他后端在 3.10–3.12 上使用固定提交的 [Chaquopy build-wheel](https://github.com/chaquo/chaquopy/blob/6e365e30f7199468d9fffe628fe9f0a7658fdbb3/server/pypi/README-old.md)。使用其 `--no-build` 准备阶段，再调用项目原始 PEP 517 后端构建与共用 repair；不经过 Chaquopy 的旧 wheel 元数据改写。PyPI 包版本直接使用已验证的固定 sdist 元数据，Git 包版本由项目后端提供。
 - 其他后端在 3.13–3.15 上使用 cibuildwheel。其 Android 支持从 Python 3.13 开始。
 
 Chaquopy 构建工具应用仓库内的 `chaquopy-libpython-link.patch`：忽略稳定 ABI 桩库 `libpython3.so` 的普通库别名，只为版本专用库生成 `libpython.so`，避免同时存在两种库时重复创建符号链接。补丁必须适用于固定的上游提交；应用失败会中止构建。

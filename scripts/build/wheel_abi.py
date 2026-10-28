@@ -38,7 +38,7 @@ def constrain_abi(wheel: Path) -> Path:
     version = next(iter(versions))
     _, python, abi, _ = wheel.stem.rsplit("-", 3)
     target = f"cp{version.replace('.', '')}"
-    if abi == "abi3":
+    if "abi3" in abi.split("."):
         # Android 的版本专用 libpython 依赖限制了实际可加载的解释器。
         name = tags(str(wheel), python_tags=target, abi_tags=target, remove=True)
         return wheel.with_name(name)

@@ -93,6 +93,7 @@ def prepare_build_environment(
     host_python = os.environ.get("HOST_PYTHON")
     if host_python:
         path_entries.append(str(Path(host_python).parent))
+        env["PYO3_PYTHON"] = host_python
     path_entries.append(os.environ["PATH"])
     env["PATH"] = ":".join(path_entries)
 
@@ -109,18 +110,19 @@ def prepare_build_environment(
     env["CARGO_BUILD_TARGET"] = target_triplet
     env["ANDROID_API_LEVEL"] = android_api
 
+    include = runtime.lib_dir.parent / "include" / f"python{python_version}"
+    env["CFLAGS"] += f" -I{include}"
+    env["CXXFLAGS"] = env["CFLAGS"]
     env["PYO3_CROSS"] = "1"
     env["PYO3_CROSS_PYTHON_VERSION"] = python_version
     match runtime:
         case PyO3ConfigRuntime(config_file=config_file):
             # 旧版 Chaquopy 没有 sysconfigdata，显式使用目标 ABI 配置。
-            env.pop("PYO3_CROSS_LIB_DIR", None)
+            # PyO3 读取显式配置；标准 lib/pythonX.Y 路径供 CFFI 构建脚本定位目标头文件。
+            cross_lib = runtime.lib_dir / f"python{python_version}"
+            env["PYO3_CROSS_LIB_DIR"] = str(cross_lib)
             env["PYO3_CONFIG_FILE"] = str(config_file)
         case SysconfigRuntime(lib_dir=lib_dir):
-            # Rust 构建脚本调用的 C 编译器也需要真实目标头文件路径。
-            include = lib_dir.parent / "include" / f"python{python_version}"
-            env["CFLAGS"] += f" -I{include}"
-            env["CXXFLAGS"] = env["CFLAGS"]
             env.pop("PYO3_CONFIG_FILE", None)
             env["PYO3_CROSS_LIB_DIR"] = str(lib_dir)
 
@@ -235,7 +237,7 @@ def process_wheel(
         return destination
     requested_tag = f"cp{python_version.replace('.', '')}"
     abi3_compatible = (
-        wheel_abi == "abi3"
+        "abi3" in wheel_abi.split(".")
         and wheel_python.startswith("cp")
         and wheel_python[2:].isdigit()
         and int(wheel_python[2:]) <= int(requested_tag[2:])

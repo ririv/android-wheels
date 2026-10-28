@@ -49,6 +49,7 @@ def prepare_builder(pypi: Path, target: Target):
         env["NATIVE_PREFIX"] = str(prefix)
 
     def get_rust_env_vars(env):
+        declared_flags = os.environ.get("RUSTFLAGS", "")
         rust_environment(env)
         prefix = Path(builder.host_env) / "chaquopy"
         env.pop("PYO3_NO_PYTHON", None)
@@ -57,7 +58,7 @@ def prepare_builder(pypi: Path, target: Target):
         )
         env["RUSTFLAGS"] = " ".join(
             rust_link_flags(
-                env["RUSTFLAGS"].split(),
+                declared_flags + " " + env["RUSTFLAGS"],
                 (
                     "-Wl,--no-as-needed",
                     f"-lpython{builder.python}",

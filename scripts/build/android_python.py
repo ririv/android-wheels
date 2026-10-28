@@ -134,7 +134,11 @@ def setup_python_cross_build(
         / archive.name.removesuffix(".tar.gz").removesuffix(".zip")
     )
     lib_dir = runtime_dir / "prefix" / "lib"
-    if not (runtime_dir / ".complete").is_file():
+    include_dir = lib_dir.parent / "include" / f"python{version.value}"
+    if (
+        not (runtime_dir / ".complete").is_file()
+        or not (include_dir / "Python.h").is_file()
+    ):
         if runtime_dir.exists():
             shutil.rmtree(runtime_dir)
         runtime_dir.mkdir(parents=True)
@@ -142,6 +146,15 @@ def setup_python_cross_build(
             case ChaquopyArchive():
                 lib_dir.mkdir(parents=True)
                 with zipfile.ZipFile(archive) as zf:
+                    for header in zf.namelist():
+                        if header.startswith(
+                            f"include/python{version.value}/"
+                        ) and not header.endswith("/"):
+                            if ".." in Path(header).parts:
+                                raise ValueError("运行库头文件路径越界")
+                            destination = runtime_dir / "prefix" / header
+                            destination.parent.mkdir(parents=True, exist_ok=True)
+                            destination.write_bytes(zf.read(header))
                     member = f"jniLibs/{abi.value}/libpython{version.value}.so"
                     with (
                         zf.open(member) as src,
@@ -157,10 +170,13 @@ def setup_python_cross_build(
                     )
         if not (lib_dir / f"libpython{version.value}.so").is_file():
             raise FileNotFoundError(f"归档缺少 libpython{version.value}.so：{archive}")
+        if not (include_dir / "Python.h").is_file():
+            raise FileNotFoundError(f"归档缺少目标 Python.h：{archive}")
         (runtime_dir / ".complete").touch()
 
     match source:
         case ChaquopyArchive():
+            (lib_dir / f"python{version.value}").mkdir(exist_ok=True)
             return PyO3ConfigRuntime(lib_dir, write_pyo3_config(lib_dir, version))
         case CPythonArchive():
             return SysconfigRuntime(lib_dir)
