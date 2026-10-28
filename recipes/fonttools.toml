@@ -1,0 +1,12 @@
+name = "fonttools"
+pypi-version = "4.68.0"
+directory = "."
+backend = "setuptools.build_meta:__legacy__"
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24
+
+[environment]
+FONTTOOLS_WITH_CYTHON = "1"

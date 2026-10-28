@@ -6,9 +6,10 @@ from pathlib import Path
 
 from scripts.build.android_python import AndroidABI, PythonVersion
 from scripts.pipeline.model import Plan, Target
-from scripts.pipeline.source import resolve_source
+from scripts.pipeline.source import resolve_legacy_sdist, resolve_source
 from scripts.recipes.load import load_recipes
 from scripts.recipes.model import (
+    Backend,
     GitLocation,
     Publication,
     RecipeBuilds,
@@ -55,7 +56,11 @@ def recipe_plan(event_name: str, event: dict, root: Path) -> Plan:
         recipe = job.recipe
         key = (recipe.source, recipe.directory)
         if key not in sources:
-            sources[key] = resolve_source(recipe.source, recipe.directory)
+            sources[key] = (
+                resolve_legacy_sdist(recipe.source, recipe.directory)
+                if recipe.backend == Backend.SETUPTOOLS_LEGACY
+                else resolve_source(recipe.source, recipe.directory)
+            )
         source = sources[key]
         if source.backend != recipe.backend:
             raise ValueError(f"{recipe.name} 后端与 recipe 不一致：{source.backend}")

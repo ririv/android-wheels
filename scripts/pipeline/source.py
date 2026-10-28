@@ -7,6 +7,7 @@ import subprocess
 import tempfile
 import tomllib
 import urllib.request
+from collections.abc import Callable
 from email.parser import BytesParser
 from pathlib import Path, PurePosixPath
 from urllib.parse import quote
@@ -35,7 +36,7 @@ def backend_at(project: Path) -> Backend:
 
 def resolve_source(location: Location, directory: str) -> Source:
     if isinstance(location, PyPILocation):
-        return resolve_sdist(location, directory)
+        return resolve_sdist(location, directory, backend_at)
     repository = normalize_repo_input(location.repository)
     ref = location.ref
     if not directory:
@@ -63,9 +64,29 @@ def verify_checkout(source: GitSource, checkout: Path) -> None:
         raise ValueError(f"源码后端不匹配：{actual} != {source.backend}")
 
 
+def legacy_backend_at(project: Path) -> Backend:
+    if not (project / "setup.py").is_file():
+        raise FileNotFoundError("显式 legacy setuptools 项目必须有 setup.py")
+    metadata = project / "pyproject.toml"
+    if metadata.is_file():
+        build = tomllib.loads(metadata.read_text(encoding="utf-8")).get(
+            "build-system", {}
+        )
+        if "build-backend" in build or "backend-path" in build:
+            raise ValueError("显式 legacy 模式不能覆盖项目已声明的后端")
+    return Backend.SETUPTOOLS_LEGACY
+
+
+def resolve_legacy_sdist(location: PyPILocation, directory: str) -> SdistSource:
+    return resolve_sdist(location, directory, legacy_backend_at)
+
+
 def verify_sdist_project(source: SdistSource, root: Path) -> None:
     project = root / source.directory
-    if backend_at(project) != source.backend:
+    reader = (
+        legacy_backend_at if source.backend == Backend.SETUPTOOLS_LEGACY else backend_at
+    )
+    if reader(project) != source.backend:
         raise ValueError("PyPI 源码后端与构建计划不一致")
     metadata = BytesParser().parsebytes((root / "PKG-INFO").read_bytes())
     if (
@@ -75,7 +96,9 @@ def verify_sdist_project(source: SdistSource, root: Path) -> None:
         raise ValueError("sdist PKG-INFO 与所选包或版本不一致")
 
 
-def resolve_sdist(location: PyPILocation, directory: str) -> SdistSource:
+def resolve_sdist(
+    location: PyPILocation, directory: str, reader: Callable[[Path], Backend]
+) -> SdistSource:
     path = PurePosixPath(directory)
     if not directory or path.is_absolute() or ".." in path.parts or "\\" in directory:
         raise ValueError("项目目录必须明确位于源码根目录内")
@@ -105,7 +128,7 @@ def resolve_sdist(location: PyPILocation, directory: str) -> SdistSource:
             release["digests"]["sha256"],
             filename,
             path.as_posix(),
-            backend_at(root / path),
+            reader(root / path),
         )
         verify_sdist_project(source, root)
     return source

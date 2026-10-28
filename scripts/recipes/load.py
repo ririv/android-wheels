@@ -76,6 +76,10 @@ def load_recipe(path: Path) -> Recipe:
     directory = PurePosixPath(data["directory"])
     if directory.is_absolute() or ".." in directory.parts or "\\" in data["directory"]:
         raise ValueError(f"{path}: directory 必须在源码仓库内")
+    if Backend(data["backend"]) == Backend.SETUPTOOLS_LEGACY and not isinstance(
+        source, PyPILocation
+    ):
+        raise ValueError("显式 legacy setuptools 当前只接受固定版本的 PyPI sdist")
     android = data["android"]
     require_keys(android, {"python", "abis", "api"}, f"{path}: android")
     if type(android["api"]) is not int or android["api"] < 24:

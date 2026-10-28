@@ -27,6 +27,8 @@ class Backend(StrEnum):
     AIO_LIBS = "pep517_backend.hooks"
     MESON = "mesonpy"
     HATCHLING = "hatchling.build"
+    SETUPTOOLS_LEGACY = "setuptools.build_meta:__legacy__"
+    PILLOW = "backend"
 
 
 class Publication(StrEnum):

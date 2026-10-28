@@ -74,9 +74,15 @@ class PipelineTests(unittest.TestCase):
                     r.backend,
                 )
             by_source[r.source, r.directory] = source
-        with patch(
-            "scripts.pipeline.planning.resolve_source",
-            side_effect=lambda *key: by_source[key],
+        with (
+            patch(
+                "scripts.pipeline.planning.resolve_source",
+                side_effect=lambda *key: by_source[key],
+            ),
+            patch(
+                "scripts.pipeline.planning.resolve_legacy_sdist",
+                side_effect=lambda *key: by_source[key],
+            ),
         ):
             plan = recipe_plan("push", {"before": "0" * 40}, ROOT)
         expected = {
