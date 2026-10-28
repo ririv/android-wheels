@@ -1,18 +1,20 @@
 # Android Wheels
 
-本仓库用于为 Android 构建和托管预编译的 Python wheel 文件，例如用于 [Chaquopy](https://chaquo.com/chaquopy/) 安卓 Python SDK、或手动嵌入方式启动Python，具体请看[在安卓上使用Python](https://docs.python.org/zh-cn/3.14/using/android.html#using-python-on-android)。
+**English** | [简体中文](README.zh-CN.md)
 
-索引地址：https://ririv.github.io/android-wheels/
+This repository builds and hosts prebuilt Python wheels for Android, for example for the [Chaquopy](https://chaquo.com/chaquopy/) Python SDK for Android, or for embedding Python in an Android app manually. See [Using Python on Android](https://docs.python.org/3.14/using/android.html#using-python-on-android) for details.
 
-## 如何使用
+Index URL: https://ririv.github.io/android-wheels/
 
-使用 `pip` 并指定 `--extra-index-url` 参数指向本仓库的包索引地址，即可安装这些 wheel 文件。
+## Usage
+
+To install these wheels, run `pip` with `--extra-index-url` pointing to this repository's package index:
 
 ```bash
-pip install --extra-index-url https://ririv.github.io/android-wheels/ <包名>
+pip install --extra-index-url https://ririv.github.io/android-wheels/ <package-name>
 ```
 
-例如，安装 `zstandard`:
+For example, to install `zstandard`:
 
 ```bash
 pip install --extra-index-url https://ririv.github.io/android-wheels/ zstandard
@@ -20,7 +22,7 @@ pip install --extra-index-url https://ririv.github.io/android-wheels/ zstandard
 
 ### requirements.txt
 
-您也可以将索引地址添加到您的 `requirements.txt` 文件中：
+You can also add the index URL to your `requirements.txt` file:
 
 ```txt
 --extra-index-url https://ririv.github.io/android-wheels/
@@ -29,57 +31,56 @@ zstandard
 xxhash
 ```
 
-## 支持的 ABI:
+## Supported ABIs
 
 * `arm64-v8a`
 * `x86_64`
 
-## 工作原理
+## How it works
 
-本仓库使用 GitHub Actions 实现自动化构建和发布流程：
+This repository uses GitHub Actions to automate building and publishing:
 
-1. **构建工作流**: 每个包都有一个对应的工作流文件（例如 `wheel-zstandard.yml`），它会获取库的源码，并使用一个可复用的工作流（`build-android-wheel.yml`）通过 Android NDK为不同的 Android ABI 进行交叉编译。
-2. **提交到 `wheels` 分支**: 成功构建的 `.whl` 文件会被提交到 `wheels` 分支。
-3. **部署索引**: 推送到 `wheels` 分支会触发 `pages.yml` 工作流，该工作流会生成一个符合 PEP 503 规范的“简单”包索引，并将其部署到 GitHub Pages。
+1. **Build workflows**: Each package has its own workflow file (e.g. `wheel-zstandard.yml`). It fetches the library's source code and uses a reusable workflow (`build-android-wheel-dispatch.yml`) to cross-compile it for each Android ABI with the Android NDK.
+2. **Commit to the `wheels` branch**: Successfully built `.whl` files are committed to the `wheels` branch.
+3. **Deploy the index**: Pushing to the `wheels` branch triggers the `pages.yml` workflow, which generates a PEP 503 compliant "simple" package index and deploys it to GitHub Pages.
 
-这确保了包索引始终与最新成功构建的 wheel 文件保持同步。
+This keeps the package index in sync with the latest successfully built wheels.
 
-## 命名规范
+## Naming conventions
 
-### wheel 文件命名规范
+### Wheel file names
 
-wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#recommended-installer-features) 规范，格式通常是：{distribution}-{version}-{python tag}-{abi tag}-{platform tag}.whl。
+Wheel file names follow Python's [PEP 427](https://peps.python.org/pep-0427/#recommended-installer-features), usually in the form `{distribution}-{version}-{python tag}-{abi tag}-{platform tag}.whl`.
 
-### 包索引命名规范
+### Package index names
 
-包索引命名遵循 Python 的 [PEP 503](https://peps.python.org/pep-0503/) 规范和用于[安卓的wheel tag格式](https://peps.python.org/pep-0738/#packaging)
-规范化命名需要注意 [Normalized Names](https://peps.python.org/pep-0503/#normalized-names)
+Package index names follow Python's [PEP 503](https://peps.python.org/pep-0503/) and the [wheel tag format for Android](https://peps.python.org/pep-0738/#packaging). Note the rules for [normalized names](https://peps.python.org/pep-0503/#normalized-names).
 
-| API           | 作用                                                |
-| ------------- | --------------------------------------------------- |
-| PEP 503       | 索引：提供 HTML 索引文件。                          |
-| PEP 691       | 索引：提供 JSON 索引文件。                          |
-| PEP 658       | 索引：提供元数据，加速依赖解析。                    |
-| PEP 738       | 平台：安卓平台支持，包含Packaging格式               |
+| API           | Purpose                                                     |
+| ------------- | ----------------------------------------------------------- |
+| PEP 503       | Index: serves HTML index files.                             |
+| PEP 691       | Index: serves JSON index files.                             |
+| PEP 658       | Index: serves metadata to speed up dependency resolution.   |
+| PEP 738       | Platform: Android support, including the packaging format.  |
 
-## 如何添加新的包
+## How to add a new package
 
-我们欢迎社区贡献新的包。如果您想添加一个新的包到本仓库的构建系统中，请遵循以下步骤：
+Community contributions of new packages are welcome. To add a new package to this repository's build system, follow these steps:
 
-1.  **Fork 本仓库**
-    点击页面右上角的 "Fork" 按钮，将此仓库复刻到您自己的 GitHub 账户下。
+1.  **Fork this repository**
+    Click the "Fork" button at the top right of the page to fork this repository to your own GitHub account.
 
-2.  **创建新的工作流文件**
-    在您的 Fork 中，进入 `.github/workflows/` 目录。复制一个现有的工作流文件（例如 `wheel-zstandard.yml`）并将其重命名为您想添加的包名，例如 `wheel-<new-package>.yml`。
+2.  **Create a new workflow file**
+    In your fork, go to the `.github/workflows/` directory. Copy an existing workflow file (e.g. `wheel-zstandard.yml`) and rename it after the package you want to add, e.g. `wheel-<new-package>.yml`.
 
-3.  **修改工作流文件**
-    打开您新创建的文件，并修改 `with:` 部分的参数：
-    *   `library_name`: 设置为您要构建的包的名称（通常是 PyPI 上的名称）。
-    *   `git_repository`: 设置为该包的源码 Git 仓库地址（例如 `author/repo`）。
-    *   `version_tag`: (可选) 您可以指定一个固定的 Git 标签或分支。如果留空，将使用默认分支的最新代码。
-    *   `package_dir`: (可选) Python 项目（`pyproject.toml`/`setup.py`）在源码仓库中的子目录，例如 jiter 的 `crates/jiter-python`。如果留空，将自动查找。
+3.  **Edit the workflow file**
+    Open the new file and edit the parameters in the `with:` section:
+    *   `library_name`: The name of the package to build (usually its name on PyPI).
+    *   `git_repository`: The package's source Git repository (e.g. `author/repo`).
+    *   `version_tag`: (Optional) A fixed Git tag or branch to build. If empty, the latest code on the default branch is used.
+    *   `package_dir`: (Optional) The subdirectory of the source repository that contains the Python project (`pyproject.toml`/`setup.py`), e.g. `crates/jiter-python` for jiter. If empty, it is detected automatically.
 
-4.  **提交 Pull Request**
-    提交您的更改，并向上游仓库（`ririv/android-wheels`）发起一个 Pull Request。
+4.  **Open a pull request**
+    Commit your changes and open a pull request against the upstream repository (`ririv/android-wheels`).
 
-在您的 Pull Request 被合并后，仓库维护者会手动触发一次新的工作流来构建您的包。构建成功后，新的 wheel 文件会自动发布到包索引中。
+After your pull request is merged, a maintainer will manually trigger the workflow to build your package. Once the build succeeds, the new wheels are automatically published to the package index.
