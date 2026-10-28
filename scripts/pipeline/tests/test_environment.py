@@ -8,8 +8,13 @@ from pathlib import Path
 from scripts.build.android_python import AndroidABI, PythonVersion
 from scripts.pipeline.artifacts import collect, record
 from scripts.pipeline.model import GitSource, Plan, Target, load_plan
-from scripts.recipes.load import environment, load_recipe
-from scripts.recipes.model import Backend, EnvironmentVariable, Publication
+from scripts.recipes.load import config_settings, environment, load_recipe
+from scripts.recipes.model import (
+    Backend,
+    ConfigSetting,
+    EnvironmentVariable,
+    Publication,
+)
 from scripts.testing.wheels import write_wheel
 
 
@@ -64,6 +69,7 @@ class EnvironmentTests(unittest.TestCase):
             AndroidABI.ARM64,
             24,
             (EnvironmentVariable("PACKAGE_FLAGS", "native"),),
+            config_settings=(ConfigSetting("platform-guessing", "disable"),),
         )
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -87,3 +93,23 @@ class EnvironmentTests(unittest.TestCase):
             self.assertEqual(
                 list(collect(root / "artifacts", loaded).values()), [wheel]
             )
+
+    def test_pep517_settings_keep_argument_boundaries_and_reject_non_strings(self):
+        settings = config_settings(
+            {"platform-guessing": "disable", "setup-args": "-Dvalue=a b"}
+        )
+        target = Target(
+            "example",
+            GitSource("owner/repo", "main", "a" * 40, ".", Backend.SETUPTOOLS),
+            PythonVersion.PY313,
+            AndroidABI.ARM64,
+            24,
+            config_settings=settings,
+        )
+        self.assertEqual(
+            shlex.split(target.row()["cibw_config_settings"]),
+            ["platform-guessing=disable", "setup-args=-Dvalue=a b"],
+        )
+        for value in (True, 1, "first\nsecond"):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                config_settings({"platform-guessing": value})

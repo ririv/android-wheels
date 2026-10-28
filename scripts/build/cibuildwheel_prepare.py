@@ -2,12 +2,12 @@
 
 import argparse
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-from scripts.build.android_python import AndroidABI
-from scripts.build.native_libraries import build_libraries
+from scripts.build.native_libraries import library_specs
 from scripts.build.native_model import NativeLibrary
 from scripts.tooling import configuration, requirements
 
@@ -16,7 +16,6 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--venv", type=Path, required=True)
-    parser.add_argument("--toolchain", type=Path, required=True)
     args = parser.parse_args()
     subprocess.run(
         [
@@ -34,14 +33,16 @@ def main() -> None:
         for name in os.environ["NATIVE_DEPENDENCIES"].split(",")
         if name
     )
-    build_libraries(
-        names,
-        prefix,
-        Path(os.environ["ANDROID_NDK"]),
-        args.toolchain,
-        AndroidABI(os.environ["TARGET_ABI"]),
-        int(os.environ["ANDROID_API"]),
-    )
+    if names:
+        import json
+
+        prepared = Path(os.environ["NATIVE_PREFIX"])
+        specs = library_specs(Path(__file__).with_name("native-libraries.toml"))
+        expected = [specs[name].to_dict() for name in names]
+        actual = json.loads((prepared / "native-libraries.json").read_text())
+        if actual != expected:
+            raise ValueError("提前编译的原生依赖与当前目标不一致")
+        shutil.copytree(prepared, prefix, dirs_exist_ok=True)
     # tomli-w 由上面的固定 shared 依赖组安装，之后再加载 Cargo 配置模块。
     from scripts.pipeline.cargo_env import configure
 

@@ -64,6 +64,14 @@ jobs:
       - name: Select cibuildwheel Python
         if: fromJSON(inputs.target).builder == 'cibuildwheel'
         run: echo "CIBW_BUILD=cp${TARGET_PYTHON_VERSION//./}-*" >> "$GITHUB_ENV"
+      - name: Prepare native libraries before backend dependency discovery
+        if: fromJSON(inputs.target).builder == 'cibuildwheel' && join(fromJSON(inputs.target).native_dependencies, ',') != ''
+        run: python -B -m scripts.build.cibuildwheel_native
+      - name: Provide host shell for Android build hooks
+        if: fromJSON(inputs.target).builder == 'cibuildwheel'
+        run: |
+          sudo install -d /system/bin
+          sudo ln -s /bin/sh /system/bin/sh
       - name: Build with cibuildwheel
         if: fromJSON(inputs.target).builder == 'cibuildwheel'
         uses: pypa/cibuildwheel@v4.3.4
@@ -73,13 +81,13 @@ jobs:
         env:
           CIBW_PLATFORM: android
           CIBW_ARCHS: ${{ fromJSON(inputs.target).cibw_arch }}
-          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ fromJSON(inputs.target).api }} CARGO_BUILD_TARGET=${{ fromJSON(inputs.target).triplet }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ fromJSON(inputs.target).api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ fromJSON(inputs.target).api }}-clang PYO3_CROSS=1 ${{ fromJSON(inputs.target).cibw_environment }}'
+          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ fromJSON(inputs.target).api }} CARGO_BUILD_TARGET=${{ fromJSON(inputs.target).triplet }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ fromJSON(inputs.target).api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ fromJSON(inputs.target).api }}-clang PYO3_CROSS=1 PKG_CONFIG_PATH=$NATIVE_PREFIX/lib/pkgconfig C_INCLUDE_PATH=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include LIBRARY_PATH=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/${{ fromJSON(inputs.target).triplet }}/${{ fromJSON(inputs.target).api }} ${{ fromJSON(inputs.target).cibw_environment }}'
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
           CIBW_CONFIG_SETTINGS: ${{ fromJSON(inputs.target).cibw_config_settings }}
           CIBW_TEST_SKIP: '*'
           CIBW_REPAIR_WHEEL_COMMAND_ANDROID: 'NATIVE_PREFIX="$VIRTUAL_ENV/../python/prefix" PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.repair_android_wheel {wheel} {dest_dir} {ldpaths}'
-          CIBW_BEFORE_BUILD: 'PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.cibuildwheel_prepare --project "{package}" --venv "$VIRTUAL_ENV" --toolchain "$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64"'
+          CIBW_BEFORE_BUILD: 'PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.cibuildwheel_prepare --project "{package}" --venv "$VIRTUAL_ENV"'
 
       - name: Checkout Chaquopy build tools
         if: fromJSON(inputs.target).builder == 'chaquopy'
