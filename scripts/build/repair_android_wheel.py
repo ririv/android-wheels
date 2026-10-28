@@ -9,6 +9,7 @@ such wheels are passed through unchanged, as cibuildwheel v3 did.
 Usage: repair_android_wheel.py <wheel> <dest_dir> <ldpaths>
 """
 
+import os
 import shutil
 import subprocess
 import sys
@@ -33,7 +34,18 @@ def contains_elf(wheel: str) -> bool:
 def repair(wheel: str, dest_dir: str, ldpaths: str) -> None:
     Path(dest_dir).mkdir(parents=True, exist_ok=True)
     if contains_elf(wheel):
-        cmd = ["auditwheel", "repair", "--ldpaths", ldpaths, "-w", dest_dir, wheel]
+        paths = ldpaths.split(os.pathsep)
+        if os.environ["NATIVE_DEPENDENCIES"]:
+            paths.insert(0, str(Path(os.environ["NATIVE_PREFIX"]) / "lib"))
+        cmd = [
+            "auditwheel",
+            "repair",
+            "--ldpaths",
+            os.pathsep.join(dict.fromkeys(paths)),
+            "-w",
+            dest_dir,
+            wheel,
+        ]
         subprocess.run(cmd, check=True)
         repaired = list(Path(dest_dir).glob("*.whl"))
         if len(repaired) != 1:
