@@ -53,6 +53,12 @@ class Target:
     api: int
     environment: tuple[LiteralEnvironment, ...] = ()
 
+    def to_dict(self) -> dict:
+        return {
+            **asdict(self),
+            "environment": [asdict(variable) for variable in self.environment],
+        }
+
     @property
     def builder(self) -> Builder:
         if self.source.backend == Backend.MATURIN:
@@ -71,7 +77,7 @@ class Target:
 
     def row(self) -> dict:
         return {
-            **asdict(self),
+            **self.to_dict(),
             "builder": self.builder.value,
             "artifact": self.artifact,
             "triplet": self.abi.triplet,
@@ -93,7 +99,7 @@ class Plan:
             json.dumps(
                 {
                     "publication": self.publication,
-                    "targets": [asdict(t) for t in self.targets],
+                    "targets": [t.to_dict() for t in self.targets],
                 },
                 indent=2,
             )

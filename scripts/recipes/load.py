@@ -97,6 +97,17 @@ def environment(data: dict) -> tuple:
     if not isinstance(data, dict):
         raise ValueError("environment 必须是变量表")
     result = []
+    framework = {
+        "LIBRARY_NAME",
+        "PROJECT_DIR",
+        "TARGET_PYTHON_VERSION",
+        "ANDROID_API",
+        "TARGET_ABI",
+        "ARTIFACT",
+        "WHEEL_DIRECTORY",
+        "HOST_PYTHON",
+        "RUNNER_TEMP",
+    }
     reserved = {
         "PATH",
         "CC",
@@ -115,7 +126,7 @@ def environment(data: dict) -> tuple:
     for name, value in sorted(data.items()):
         if (
             not re.fullmatch(r"[A-Z][A-Z0-9_]*", name)
-            or name in reserved
+            or name in reserved | framework
             or name.startswith(("CIBW_", "CARGO_TARGET_", "GITHUB_"))
         ):
             raise ValueError(f"不允许覆盖构建器变量：{name}")
