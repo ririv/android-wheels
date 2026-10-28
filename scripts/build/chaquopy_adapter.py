@@ -47,6 +47,12 @@ def prepare_builder(pypi: Path, target: Target):
         env["PKG_CONFIG_PATH"] = str(prefix / "lib/pkgconfig")
         env["PKG_CONFIG_ALLOW_CROSS"] = "1"
         env["NATIVE_PREFIX"] = str(prefix)
+        # 使用当前编译器的 NDK，而不是宿主系统路径，供后端显式探测系统库。
+        sysroot = Path(env["AR"]).parent.parent / "sysroot"
+        env["C_INCLUDE_PATH"] = str(sysroot / "usr/include")
+        env["LIBRARY_PATH"] = str(
+            sysroot / "usr/lib" / target.abi.triplet / str(target.api)
+        )
 
     def get_rust_env_vars(env):
         declared_flags = os.environ.get("RUSTFLAGS", "")
