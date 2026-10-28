@@ -1,23 +1,25 @@
-# Android Wheels
+# Py Extra Wheels
 
 [English](README.md) | **简体中文**
 
 本仓库用于为 Android 构建和托管预编译的 Python wheel 文件，例如用于 [Chaquopy](https://chaquo.com/chaquopy/) 安卓 Python SDK、或手动嵌入方式启动Python，具体请看[在安卓上使用Python](https://docs.python.org/zh-cn/3.14/using/android.html#using-python-on-android)。
 
-索引地址：https://ririv.github.io/android-wheels/
+索引地址：https://ririv.github.io/py-extra-wheels/
+
+旧地址 https://ririv.github.io/android-wheels/ 继续可用，由兼容站点约每 15 分钟同步一次；定时任务可能延迟。详见 [包索引地址迁移](docs/index-migration.md)。
 
 ## 如何使用
 
 使用 `pip` 并指定 `--extra-index-url` 参数指向本仓库的包索引地址，即可安装这些 wheel 文件。
 
 ```bash
-pip install --extra-index-url https://ririv.github.io/android-wheels/ <包名>
+pip install --extra-index-url https://ririv.github.io/py-extra-wheels/ <包名>
 ```
 
 例如，安装 `zstandard`:
 
 ```bash
-pip install --extra-index-url https://ririv.github.io/android-wheels/ zstandard
+pip install --extra-index-url https://ririv.github.io/py-extra-wheels/ zstandard
 ```
 
 ### requirements.txt
@@ -25,7 +27,7 @@ pip install --extra-index-url https://ririv.github.io/android-wheels/ zstandard
 您也可以将索引地址添加到您的 `requirements.txt` 文件中：
 
 ```txt
---extra-index-url https://ririv.github.io/android-wheels/
+--extra-index-url https://ririv.github.io/py-extra-wheels/
 
 zstandard
 xxhash
@@ -86,6 +88,6 @@ wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#
     *   `package_dir`: (可选) Python 项目（`pyproject.toml`/`setup.py`）在源码仓库中的子目录，例如 jiter 的 `crates/jiter-python`。如果留空，将自动查找。
 
 4.  **提交 Pull Request**
-    提交您的更改，并向上游仓库（`ririv/android-wheels`）发起一个 Pull Request。
+    提交您的更改，并向上游仓库（`ririv/py-extra-wheels`）发起一个 Pull Request。
 
 在您的 Pull Request 被合并后，仓库维护者会手动触发一次新的工作流来构建您的包。构建成功后，新的 wheel 文件会自动发布到包索引中。

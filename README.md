@@ -1,23 +1,23 @@
-# Android Wheels
+# Py Extra Wheels
 
 **English** | [简体中文](README.zh-CN.md)
 
 This repository builds and hosts prebuilt Python wheels for Android, for example for the [Chaquopy](https://chaquo.com/chaquopy/) Python SDK for Android, or for embedding Python in an Android app manually. See [Using Python on Android](https://docs.python.org/3.14/using/android.html#using-python-on-android) for details.
 
-Index URL: https://ririv.github.io/android-wheels/
+Index URL: https://ririv.github.io/py-extra-wheels/
 
 ## Usage
 
 To install these wheels, run `pip` with `--extra-index-url` pointing to this repository's package index:
 
 ```bash
-pip install --extra-index-url https://ririv.github.io/android-wheels/ <package-name>
+pip install --extra-index-url https://ririv.github.io/py-extra-wheels/ <package-name>
 ```
 
 For example, to install `zstandard`:
 
 ```bash
-pip install --extra-index-url https://ririv.github.io/android-wheels/ zstandard
+pip install --extra-index-url https://ririv.github.io/py-extra-wheels/ zstandard
 ```
 
 ### requirements.txt
@@ -25,7 +25,7 @@ pip install --extra-index-url https://ririv.github.io/android-wheels/ zstandard
 You can also add the index URL to your `requirements.txt` file:
 
 ```txt
---extra-index-url https://ririv.github.io/android-wheels/
+--extra-index-url https://ririv.github.io/py-extra-wheels/
 
 zstandard
 xxhash
@@ -81,6 +81,6 @@ Community contributions of new packages are welcome. To add a new package to thi
     *   `package_dir`: (Optional) The subdirectory of the source repository that contains the Python project (`pyproject.toml`/`setup.py`), e.g. `crates/jiter-python` for jiter. If empty, it is detected automatically.
 
 4.  **Open a pull request**
-    Commit your changes and open a pull request against the upstream repository (`ririv/android-wheels`).
+    Commit your changes and open a pull request against the upstream repository (`ririv/py-extra-wheels`).
 
 After your pull request is merged, a maintainer will manually trigger the workflow to build your package. Once the build succeeds, the new wheels are automatically published to the package index.
