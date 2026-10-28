@@ -13,4 +13,4 @@ api = 24
 GRPC_PYTHON_BUILD_SYSTEM_OPENSSL = "true"
 GRPC_PYTHON_CFLAGS = "-std=c++17 -fvisibility=hidden -fno-wrapv -fno-exceptions"
 GRPC_PYTHON_LDFLAGS = "-latomic"
-GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS = "2"
+GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS = "4"

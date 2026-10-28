@@ -11,6 +11,7 @@
 | `scripts/pipeline/sdists.py` | 校验源码包 SHA-256，安全解包并保留上游发行内容 |
 | `scripts/pipeline/cargo_env.py` | 组合 cibuildwheel 所需的 Cargo 环境配置，保留已有配置 |
 | `scripts/build` | Android 运行库、maturin/Chaquopy 构建与 wheel 修复 |
+| `scripts/build/cibuildwheel_prepare.py` | 用明确的目标开发前缀组合宿主工具、原生依赖与 Cargo 环境 |
 | `scripts/build/native_model.py` | 原生依赖名、互斥构建系统和固定来源数据 |
 | `scripts/build/native_libraries.py` | 验证并直接编译固定原生依赖，不改源码 |
 | `scripts/build/wheel_native.py` | 将依赖来源和许可证写入 wheel 并更新 RECORD |
