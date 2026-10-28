@@ -36,7 +36,7 @@ def attach_native_metadata(wheel: Path) -> None:
             if len(info) != 1:
                 raise ValueError("wheel 必须包含唯一发行元数据")
             for member in source.infolist():
-                if not member.filename.endswith(
+                if not member.is_dir() and not member.filename.endswith(
                     (
                         ".dist-info/RECORD",
                         ".dist-info/RECORD.jws",
@@ -45,11 +45,11 @@ def attach_native_metadata(wheel: Path) -> None:
                 ):
                     output.writestr(member, source.read(member))
             output.writestr(info[0] + "native-libraries.json", metadata)
-            for license_file in sorted((prefix / "licenses").rglob("*")):
-                if license_file.is_file():
-                    relative = license_file.relative_to(prefix / "licenses").as_posix()
+            for library in json.loads(metadata):
+                for license_file in library["licenses"]:
+                    relative = library["name"] + "/" + license_file
                     output.writestr(
                         info[0] + "licenses/native/" + relative,
-                        license_file.read_bytes(),
+                        (prefix / "licenses" / relative).read_bytes(),
                     )
         os.replace(destination, wheel)

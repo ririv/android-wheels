@@ -11,6 +11,10 @@
 | `scripts/pipeline/sdists.py` | 校验源码包 SHA-256，安全解包并保留上游发行内容 |
 | `scripts/pipeline/cargo_env.py` | 组合 cibuildwheel 所需的 Cargo 环境配置，保留已有配置 |
 | `scripts/build` | Android 运行库、maturin/Chaquopy 构建与 wheel 修复 |
+| `scripts/build/native_model.py` | 原生依赖名、互斥构建系统和固定来源数据 |
+| `scripts/build/native_libraries.py` | 验证并直接编译固定原生依赖，不改源码 |
+| `scripts/build/wheel_native.py` | 将依赖来源和许可证写入 wheel 并更新 RECORD |
+| `scripts/build/requirements.py` | 读取选定项目的宿主构建依赖声明 |
 | `scripts/build/wheel_abi.py` | 根据实际 ELF 的版本专用 libpython 依赖约束 wheel 兼容标签 |
 | `scripts/pipeline/artifacts.py` | 记录并核验完整产物集合、来源与文件哈希 |
 | `scripts/pipeline/wheel.py` | 核验 wheel 文件名、WHEEL 标签和全部 RECORD 条目 |
@@ -19,7 +23,7 @@
 | `scripts/pipeline/publish.py` | 将完整构建汇总为一个 Git 提交 |
 | `scripts/index` | 批量读取 Git 元数据，生成确定的 HTML 索引 |
 
-模块通过明确的数据和文件交互，不提供任意 Shell hook、自定义参数或源码补丁入口。
+模块通过明确的数据和文件交互，支持声明式单行环境和固定原生依赖，不提供任意 Shell hook 或源码补丁入口。
 
 ## Actions 职责
 

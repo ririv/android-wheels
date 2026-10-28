@@ -60,8 +60,8 @@ def compiler_environment(
         "RANLIB": str(binary / "llvm-ranlib"),
         "CFLAGS": "-O2 -fPIC",
         "CXXFLAGS": "-O2 -fPIC",
-        "CPPFLAGS": f"-I{prefix / 'include'}",
-        "LDFLAGS": f"-L{prefix / 'lib'}",
+        "CPPFLAGS": "",
+        "LDFLAGS": "",
         "PKG_CONFIG_LIBDIR": str(prefix / "lib" / "pkgconfig"),
         "PKG_CONFIG_PATH": "",
         "PKG_CONFIG_ALLOW_CROSS": "1",
@@ -141,9 +141,9 @@ def build_libraries(
 ) -> None:
     if not names:
         return
-    if prefix.exists():
-        raise FileExistsError(f"原生依赖目录必须不存在：{prefix}")
-    prefix.mkdir(parents=True)
+    if (prefix / "native-libraries.json").exists():
+        raise FileExistsError(f"原生依赖不能重复编译：{prefix}")
+    prefix.mkdir(parents=True, exist_ok=True)
     specs = library_specs(Path(__file__).with_name("native-libraries.toml"))
     env = compiler_environment(ndk, toolchain, abi, api, prefix)
     metadata = []

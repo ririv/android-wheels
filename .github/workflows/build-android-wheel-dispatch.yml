@@ -77,9 +77,10 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
           CIBW_TEST_SKIP: '*'
-          CIBW_REPAIR_WHEEL_COMMAND_ANDROID: 'PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.repair_android_wheel {wheel} {dest_dir} {ldpaths}'
+          CIBW_REPAIR_WHEEL_COMMAND_ANDROID: 'NATIVE_PREFIX="$VIRTUAL_ENV/../python/prefix" PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.repair_android_wheel {wheel} {dest_dir} {ldpaths}'
           CIBW_BEFORE_BUILD: |
             set -eu
+            export NATIVE_PREFIX="$VIRTUAL_ENV/../python/prefix"
             python "$GITHUB_WORKSPACE/scripts/tooling.py" requirements shared --output "$RUNNER_TEMP/cibw-requirements.txt"
             python -m pip install -r "$RUNNER_TEMP/cibw-requirements.txt"
             PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.native_libraries --libraries "$NATIVE_DEPENDENCIES" --prefix "$NATIVE_PREFIX" --ndk "$ANDROID_NDK" --toolchain "$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64" --abi "$TARGET_ABI" --api "$ANDROID_API"

@@ -4,6 +4,7 @@ import json
 import os
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -52,6 +53,9 @@ class NativeLibraryTests(unittest.TestCase):
                     + "WHEEL": b"Wheel-Version: 1.0\nTag: cp313-cp313-android_24_arm64_v8a\n",
                 },
             )
+            # auditwheel 产物会包含显式目录项；它们不属于 RECORD 文件集合。
+            with zipfile.ZipFile(wheel, "a") as archive:
+                archive.writestr("example-1.0.dist-info/licenses/", b"")
             with patch.dict(
                 os.environ,
                 {"NATIVE_DEPENDENCIES": "libffi", "NATIVE_PREFIX": str(prefix)},

@@ -92,11 +92,6 @@ class Target:
             "cibw_environment": " ".join(
                 f"{variable.name}={shlex.quote(variable.value)}"
                 for variable in self.environment
-            )
-            + (
-                ' CFLAGS="-I$NATIVE_PREFIX/include $CFLAGS" CXXFLAGS="-I$NATIVE_PREFIX/include $CXXFLAGS" CPPFLAGS="$CPPFLAGS -I$NATIVE_PREFIX/include" LDFLAGS="$LDFLAGS -L$NATIVE_PREFIX/lib" PKG_CONFIG_LIBDIR="$NATIVE_PREFIX/lib/pkgconfig" PKG_CONFIG_PATH="" PKG_CONFIG_ALLOW_CROSS=1'
-                if self.native_dependencies
-                else ""
             ),
         }
 

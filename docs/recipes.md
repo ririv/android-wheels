@@ -53,7 +53,7 @@ api = 24
 
 `pypi-version` 与 `repository` / `ref` 互斥。规划器要求指定版本只有一个未撤回的官方 sdist，下载并核验 SHA-256、`PKG-INFO` 包名和版本、实际后端；构建器再次核验后直接解包构建。不会在 Git 构建失败时自动切换来源，也不生成或修改上游源码。
 
-所有字段都必须显式提供，未知字段、重复目标和非法值会使规划阶段失败。
+来源、后端和 Android 目标必须显式提供；`environment` 与 `native-dependencies` 是可选配置，省略表示不设置额外环境或原生依赖。未知字段、重复目标和非法值会使规划阶段失败。
 
 | 字段 | 含义 |
 | --- | --- |
@@ -67,13 +67,47 @@ api = 24
 | `android.abis` | ABI 构建集合，支持 `arm64-v8a`、`x86_64` |
 | `android.api` | Android API 整数，至少为 24 |
 
-目前显式建模的后端为 `maturin`、`setuptools.build_meta`、`_pyyaml_pep517`、`pep517_backend.hooks`、`mesonpy`。新增已有后端的包只需添加 TOML；其他后端须先扩展枚举并验证构建路径。
+目前显式建模的后端为 `maturin`、`setuptools.build_meta`、`_pyyaml_pep517`、`pep517_backend.hooks`、`mesonpy`、`hatchling.build`。新增已有后端的包只需添加 TOML；其他后端须先扩展枚举并验证构建路径。
 
 `jiter` 使用 `directory = "crates/jiter-python"`。迁移保留了原有默认分支的行为，包括 `regex` 的 `hg`、`orjson` 和 `xxhash` 的 `master`；`ormsgpack` 使用原仓库重定向后的规范地址 `ormsgpack/ormsgpack`。
 
-cibuildwheel 明确读取仓库的 `scripts/build/cibuildwheel.toml`，目标、环境和产物处理由流水线提供；不读取上游项目的 cibuildwheel 发布配置。PEP 517 构建后端仍读取原始 `pyproject.toml`，不提供 recipe 自定义命令、环境或补丁入口。
+cibuildwheel 明确读取仓库的 `scripts/build/cibuildwheel.toml`，目标、环境和产物处理由流水线提供；不读取上游项目的 cibuildwheel 发布配置。PEP 517 构建后端仍读取原始 `pyproject.toml`，recipe 只接受下述声明式环境和受支持的原生依赖，不提供任意 Shell hook 或源码补丁入口。
 
 配置只支持当前已实现的 Android 目标；未来添加其他平台时应新增对应的目标类型和构建器，不能依赖缺省字段把其他平台当作 Android 执行。
+
+## 编译环境与原生依赖
+
+包专用的上游开关可放入 `[environment]`，值必须是单行字符串，按字面值传递，不执行 Shell 表达式：
+
+```toml
+[environment]
+SODIUM_INSTALL = "system"
+```
+
+`PATH`、`CC`、`CFLAGS`、`LDFLAGS`、目标 Python/ABI、`CIBW_*`、`GITHUB_*` 等流水线变量不能被 recipe 覆盖。环境值会进入构建计划和产物来源清单；maturin 与 cibuildwheel 使用同一份声明。不能在变量里换行添加其他设置。
+
+需要外部原生库时，在 TOML 顶层声明：
+
+```toml
+name = "cffi"
+pypi-version = "2.1.1"
+directory = "."
+backend = "setuptools.build_meta"
+native-dependencies = ["libffi"]
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24
+```
+
+依赖名由 `NativeLibrary` 枚举限制，固定源码 URL、版本、SHA-256、构建系统、配置参数和许可证文件在 `scripts/build/native-libraries.toml`。目前提供 libffi、libsodium、OpenSSL、CRC32C；它们是构建依赖，不计作新增 Python 包。
+
+每个矩阵任务使用自己的 NDK 工具链、目标 ABI/API 和全新安装前缀，下载并验证依赖源码后直接编译，不改源码。Autotools、OpenSSL Configure 和 CMake 使用互斥枚举分派；命令以参数数组调用。依赖编译失败立即终止，不切换系统库或纯 Python 实现。静态库供 Python 扩展链接，非系统共享运行库仍由 auditwheel 打包。
+
+最终 wheel 的 `.dist-info/native-libraries.json` 记录实际依赖来源，`.dist-info/licenses/native/` 保存许可证；发布阶段核验这些记录与固定配置一致，并照常验证 RECORD 哈希。当前依赖步骤接入 maturin 与现代 cibuildwheel；旧版 Chaquopy 不接受 `native-dependencies`，规划阶段直接报错。
+
+maturin 构建还会读取原始 `build-system.requires`，在匹配目标版本的宿主 Python 环境安装其构建依赖，继续使用统一固定的 maturin 构建器。驱动 Python 与宿主、目标 Python 分离，保留已有 Python 3.10 构建路径。
 
 ## 自动选择构建范围
 
