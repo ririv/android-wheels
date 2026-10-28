@@ -1,0 +1,35 @@
+[libffi]
+version = "3.8.0"
+filename = "libffi-3.8.0.tar.gz"
+url = "https://github.com/libffi/libffi/releases/download/v3.8.0/libffi-3.8.0.tar.gz"
+sha256 = "7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4"
+system = "autotools"
+args = ["--disable-shared", "--enable-static", "--with-pic", "--disable-docs"]
+licenses = ["LICENSE"]
+
+[libsodium]
+version = "1.0.22"
+filename = "libsodium-1.0.22.tar.gz"
+url = "https://github.com/jedisct1/libsodium/releases/download/1.0.22-RELEASE/libsodium-1.0.22.tar.gz"
+sha256 = "adbdd8f16149e81ac6078a03aca6fc03b592b89ef7b5ed83841c086191be3349"
+system = "autotools"
+args = ["--disable-shared", "--enable-static", "--with-pic"]
+licenses = ["LICENSE"]
+
+[openssl]
+version = "3.5.9"
+filename = "openssl-3.5.9.tar.gz"
+url = "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz"
+sha256 = "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a"
+system = "openssl"
+args = ["no-shared", "no-tests"]
+licenses = ["LICENSE.txt"]
+
+[crc32c]
+version = "1.1.2"
+filename = "crc32c-02e65f4fd3065d27b2e29324800ca6d04df16126.tar.gz"
+url = "https://codeload.github.com/google/crc32c/tar.gz/02e65f4fd3065d27b2e29324800ca6d04df16126"
+sha256 = "50ac512ad20ebca0be21bcf7c3c6d15aa3fcc27550b09825fab061bffe512bdf"
+system = "cmake"
+args = ["-DCMAKE_POLICY_VERSION_MINIMUM=3.5", "-DBUILD_SHARED_LIBS=OFF", "-DCRC32C_BUILD_TESTS=OFF", "-DCRC32C_BUILD_BENCHMARKS=OFF", "-DCRC32C_USE_GLOG=OFF"]
+licenses = ["LICENSE"]

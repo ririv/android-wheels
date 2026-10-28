@@ -16,6 +16,7 @@ import zipfile
 from pathlib import Path
 
 from scripts.build.wheel_abi import constrain_abi
+from scripts.build.wheel_native import attach_native_metadata
 
 
 def contains_elf(wheel: str) -> bool:
@@ -37,6 +38,7 @@ def repair(wheel: str, dest_dir: str, ldpaths: str) -> None:
         repaired = list(Path(dest_dir).glob("*.whl"))
         if len(repaired) != 1:
             raise ValueError("Android repair 必须生成恰好一个 wheel")
+        attach_native_metadata(repaired[0])
         constrain_abi(repaired[0])
         return
 

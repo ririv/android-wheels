@@ -19,7 +19,7 @@ def download(url: str, expected: str, destination: Path) -> Path:
         actual = hashlib.file_digest(stream, "sha256").hexdigest()
     if actual != expected:
         destination.unlink()
-        raise ValueError("PyPI sdist SHA-256 不匹配")
+        raise ValueError("源码包 SHA-256 不匹配")
     return destination
 
 

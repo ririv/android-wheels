@@ -1,0 +1,10 @@
+name = "cryptography"
+pypi-version = "50.0.2"
+directory = "."
+backend = "maturin"
+native-dependencies = ["openssl"]
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24

@@ -22,7 +22,7 @@ class EnvironmentTests(unittest.TestCase):
             recipe.environment,
             (
                 EnvironmentVariable("HATCH_BUILD_HOOK_ENABLE_CUSTOM", "true"),
-                EnvironmentVariable("HATCH_BUILD_HOOK_ENABLE_MYPYC", "true"),
+                EnvironmentVariable("HATCH_BUILD_HOOK_ENABLE_MYPYC", "false"),
             ),
         )
 

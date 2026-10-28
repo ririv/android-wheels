@@ -22,6 +22,8 @@ jobs:
       ANDROID_API: ${{ fromJSON(inputs.target).api }}
       TARGET_ABI: ${{ fromJSON(inputs.target).abi }}
       ARTIFACT: ${{ fromJSON(inputs.target).artifact }}
+      NATIVE_PREFIX: ${{ github.workspace }}/.native-prefix
+      NATIVE_DEPENDENCIES: ${{ join(fromJSON(inputs.target).native_dependencies, ',') }}
       WHEEL_DIRECTORY: ${{ fromJSON(inputs.target).builder == 'cibuildwheel' && 'wheelhouse' || 'output' }}
     steps:
       - uses: actions/checkout@v4
@@ -49,7 +51,10 @@ jobs:
           source "$RUNNER_TEMP/android-wheel-build-env/bin/activate"
           python -B -m scripts.tooling requirements build --output "$RUNNER_TEMP/build-requirements.txt"
           python -m pip install -r "$RUNNER_TEMP/build-requirements.txt"
-          python -B -m scripts.build.build_android_wheel
+          python -B -m scripts.build.requirements --project "$GITHUB_WORKSPACE/library-source/$PROJECT_DIR" --output "$RUNNER_TEMP/source-build-requirements.txt"
+          "$HOST_PYTHON" -m venv "$RUNNER_TEMP/android-source-host-env"
+          "$RUNNER_TEMP/android-source-host-env/bin/python" -m pip install -r "$RUNNER_TEMP/source-build-requirements.txt" -c "$RUNNER_TEMP/build-requirements.txt"
+          HOST_PYTHON="$RUNNER_TEMP/android-source-host-env/bin/python" python -B -m scripts.build.build_android_wheel
 
       - name: Install Rust target for cibuildwheel
         if: fromJSON(inputs.target).builder == 'cibuildwheel'
@@ -76,6 +81,7 @@ jobs:
           CIBW_BEFORE_BUILD: |
             python "$GITHUB_WORKSPACE/scripts/tooling.py" requirements shared --output "$RUNNER_TEMP/cibw-requirements.txt"
             python -m pip install -r "$RUNNER_TEMP/cibw-requirements.txt"
+            PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.native_libraries --libraries "$NATIVE_DEPENDENCIES" --prefix "$NATIVE_PREFIX" --ndk "$ANDROID_NDK" --abi "$TARGET_ABI" --api "$ANDROID_API"
             python "$GITHUB_WORKSPACE/scripts/pipeline/cargo_env.py" "{package}" "$VIRTUAL_ENV"
 
       - name: Checkout Chaquopy build tools

@@ -19,6 +19,8 @@ from scripts.build.android_python import (
     SysconfigRuntime,
     setup_python_cross_build,
 )
+from scripts.build.native_libraries import build_libraries
+from scripts.build.native_model import NativeLibrary
 from scripts.build.repair_android_wheel import repair
 from scripts.build.wheel_abi import constrain_abi
 
@@ -288,6 +290,23 @@ def main():
     build_env = prepare_build_environment(
         ndk_path, target_triplet, android_api, target_python_version, runtime
     )
+
+    dependencies = tuple(
+        NativeLibrary(name)
+        for name in os.environ["NATIVE_DEPENDENCIES"].split(",")
+        if name
+    )
+    prefix = Path(os.environ["NATIVE_PREFIX"])
+    build_libraries(dependencies, prefix, ndk_path, abi, int(android_api))
+    if dependencies:
+        build_env["CPPFLAGS"] = f"-I{prefix / 'include'}"
+        build_env["LDFLAGS"] += f" -L{prefix / 'lib'}"
+        build_env["PKG_CONFIG_LIBDIR"] = str(prefix / "lib" / "pkgconfig")
+        build_env["PKG_CONFIG_PATH"] = ""
+        build_env["PKG_CONFIG_ALLOW_CROSS"] = "1"
+    if NativeLibrary.OPENSSL in dependencies:
+        build_env["OPENSSL_DIR"] = str(prefix)
+        build_env["OPENSSL_STATIC"] = "1"
 
     print(f"Android Python runtime: {runtime}", flush=True)
 

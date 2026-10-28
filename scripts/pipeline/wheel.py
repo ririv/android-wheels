@@ -4,12 +4,14 @@ import base64
 import csv
 import hashlib
 import io
+import json
 import re
 import zipfile
 from email.parser import BytesParser
 from itertools import product
 from pathlib import Path
 
+from scripts.build.native_libraries import library_specs
 from scripts.pipeline.model import SdistSource, Target
 
 
@@ -98,6 +100,19 @@ def verify_wheel(path: Path, target: Target) -> None:
             or metadata["Version"].replace("-", "_") != version
         ):
             raise ValueError(f"wheel 元数据不匹配：{path}")
+        if target.native_dependencies:
+            specs = library_specs(
+                Path(__file__).parents[1] / "build" / "native-libraries.toml"
+            )
+            expected = [specs[name].to_dict() for name in target.native_dependencies]
+            if json.loads(archive.read(prefix + "native-libraries.json")) != expected:
+                raise ValueError("wheel 原生依赖来源与固定配置不一致")
+            for name in target.native_dependencies:
+                for license_file in specs[name].licenses:
+                    if not archive.read(
+                        prefix + f"licenses/native/{name}/{license_file}"
+                    ):
+                        raise ValueError("原生依赖许可证不能为空")
         wheel_name, record_name = prefix + "WHEEL", prefix + "RECORD"
         if not {wheel_name, record_name}.issubset(archive.namelist()):
             raise ValueError("wheel 必须包含 WHEEL 和 RECORD")

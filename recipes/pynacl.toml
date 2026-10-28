@@ -1,0 +1,13 @@
+name = "pynacl"
+pypi-version = "1.6.2"
+directory = "."
+backend = "setuptools.build_meta"
+native-dependencies = ["libsodium"]
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24
+
+[environment]
+SODIUM_INSTALL = "system"

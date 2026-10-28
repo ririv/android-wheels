@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Literal
 
 from scripts.build.android_python import AndroidABI, PythonVersion
+from scripts.build.native_model import NativeLibrary
 from scripts.recipes.model import Backend, EnvironmentVariable, Publication
 from scripts.recipes.plan import artifact_prefix
 
@@ -52,11 +53,13 @@ class Target:
     abi: AndroidABI
     api: int
     environment: tuple[EnvironmentVariable, ...] = ()
+    native_dependencies: tuple[NativeLibrary, ...] = ()
 
     def to_dict(self) -> dict:
         return {
             **asdict(self),
             "environment": [asdict(variable) for variable in self.environment],
+            "native_dependencies": list(self.native_dependencies),
         }
 
     @property
@@ -85,6 +88,11 @@ class Target:
             "cibw_environment": " ".join(
                 f"{variable.name}={shlex.quote(variable.value)}"
                 for variable in self.environment
+            )
+            + (
+                ' CPPFLAGS="$CPPFLAGS -I$NATIVE_PREFIX/include" LDFLAGS="$LDFLAGS -L$NATIVE_PREFIX/lib" PKG_CONFIG_LIBDIR="$NATIVE_PREFIX/lib/pkgconfig" PKG_CONFIG_PATH="" PKG_CONFIG_ALLOW_CROSS=1'
+                if self.native_dependencies
+                else ""
             ),
         }
 
@@ -137,6 +145,7 @@ def load_plan(path: Path) -> Plan:
                 AndroidABI(row["abi"]),
                 row["api"],
                 tuple(EnvironmentVariable(**v) for v in row["environment"]),
+                tuple(NativeLibrary(v) for v in row["native_dependencies"]),
             )
         )
     plan = Plan(Publication(data["publication"]), tuple(targets))

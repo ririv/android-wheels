@@ -7,6 +7,7 @@ from pathlib import Path, PurePosixPath
 from typing import TypeVar
 
 from scripts.build.android_python import AndroidABI, PythonVersion
+from scripts.build.native_model import NativeLibrary
 from scripts.recipes.model import (
     Android,
     Backend,
@@ -49,6 +50,8 @@ def require_keys(data: dict, expected: set[str], label: str) -> None:
 def load_recipe(path: Path) -> Recipe:
     data = tomllib.loads(path.read_text(encoding="utf-8"))
     common = {"name", "directory", "backend", "android"}
+    if "native-dependencies" in data:
+        common.add("native-dependencies")
     if "environment" in data:
         common.add("environment")
     if "pypi-version" in data:
@@ -83,6 +86,13 @@ def load_recipe(path: Path) -> Recipe:
         directory=directory.as_posix(),
         backend=Backend(data["backend"]),
         environment=environment(data.get("environment", {})),
+        native_dependencies=(
+            choices(
+                data["native-dependencies"], NativeLibrary, "native-dependencies"
+            ).values
+            if "native-dependencies" in data
+            else ()
+        ),
         android=Android(
             python=choices(android["python"], PythonVersion, "android.python"),
             abis=choices(android["abis"], AndroidABI, "android.abis"),
@@ -102,6 +112,12 @@ def environment(data: dict) -> tuple[EnvironmentVariable, ...]:
     if not isinstance(data, dict):
         raise ValueError("environment 必须是字符串变量表")
     reserved = {
+        "NATIVE_DEPENDENCIES",
+        "NATIVE_PREFIX",
+        "CPPFLAGS",
+        "PKG_CONFIG_LIBDIR",
+        "PKG_CONFIG_PATH",
+        "PKG_CONFIG_ALLOW_CROSS",
         "PATH",
         "CC",
         "CXX",
