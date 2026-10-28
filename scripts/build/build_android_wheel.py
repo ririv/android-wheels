@@ -19,10 +19,16 @@ from scripts.build.android_python import (
     SysconfigRuntime,
     setup_python_cross_build,
 )
+from scripts.build.repair_android_wheel import repair
+from scripts.build.wheel_abi import constrain_abi
 
 
 def create_cargo_config(
-    project_path: Path, target_triplet: str, python_lib_dir: Path, linker_name: str
+    project_path: Path,
+    target_triplet: str,
+    python_lib_dir: Path,
+    linker_name: str,
+    python_version: str,
 ):
     """Creates a .cargo/config.toml file to configure the build."""
     print("--- Creating .cargo/config.toml for cross-compilation ---")
@@ -41,6 +47,15 @@ def create_cargo_config(
     library_flag = ["-L", str(python_lib_dir)]
     if not any(rustflags[i : i + 2] == library_flag for i in range(len(rustflags))):
         rustflags.extend(library_flag)
+    # extension-module/abi3 会禁用 PyO3 的自动链接；Android 必须显式保留该依赖。
+    for flag in (
+        "-Wl,--no-as-needed",
+        f"-lpython{python_version}",
+        "-Wl,--as-needed",
+    ):
+        pair = ["-C", f"link-arg={flag}"]
+        if not any(rustflags[i : i + 2] == pair for i in range(len(rustflags))):
+            rustflags.extend(pair)
     target_config["rustflags"] = rustflags
     with open(config_path, "wb") as f:
         tomli_w.dump(existing, f)
@@ -130,7 +145,9 @@ def build_wheel(
     project_path = library_source_path / source_dir
     print(f"Project path: {project_path}", flush=True)
 
-    create_cargo_config(project_path, target_triplet, python_lib_dir, build_env["CC"])
+    create_cargo_config(
+        project_path, target_triplet, python_lib_dir, build_env["CC"], python_version
+    )
 
     pyproject_path = project_path / "pyproject.toml"
     if not pyproject_path.is_file():
@@ -201,8 +218,8 @@ def process_wheel(
     wheel_path = wheel_files[0]
     print(f"Found wheel: {wheel_path}", flush=True)
 
-    # 使用 wheel 工具同时更新文件名、WHEEL 与 RECORD，保留原有 Python/ABI 标签。
-    # abi3 的最小版本由上游决定，不得强行改成所选解释器的 cp 标签。
+    # 使用 wheel 工具同时更新文件名、WHEEL 与 RECORD。
+    # 先保留上游 ABI，随后根据实际的版本专用动态库约束收窄标签。
     _, wheel_python, wheel_abi, _ = wheel_path.stem.rsplit("-", 3)
     requested_tag = f"cp{python_version.replace('.', '')}"
     abi3_compatible = (
@@ -221,7 +238,8 @@ def process_wheel(
         platform_tags=f"android_{android_api}_{platform_arch}",
         remove=True,
     )
-    wheel_path = wheel_path.parent / new_wheel_name
+    wheel_path = constrain_abi(wheel_path.parent / new_wheel_name)
+    new_wheel_name = wheel_path.name
     print(f"Android wheel: {new_wheel_name}", flush=True)
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -293,12 +311,22 @@ def main():
         output_dir=wheel_dir,
     )
 
-    process_wheel(
+    wheel = process_wheel(
         wheel_dir=wheel_dir,
         python_version=target_python_version,
         android_api=android_api,
         target_abi=target_abi,
-        output_dir=Path.cwd() / "output",
+        output_dir=wheel_dir / "tagged",
+    )
+
+    # 与 cibuildwheel 共用修复步骤，打包 NDK C++ 运行库并核对兼容标签。
+    ndk_libraries = (
+        Path(build_env["CC"]).parent.parent / "sysroot" / "usr" / "lib" / target_triplet
+    )
+    repair(
+        str(wheel),
+        str(Path.cwd() / "output"),
+        os.pathsep.join((str(runtime.lib_dir), str(ndk_libraries))),
     )
 
 

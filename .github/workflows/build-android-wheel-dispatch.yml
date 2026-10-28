@@ -70,9 +70,9 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
           CIBW_TEST_SKIP: '*'
-          CIBW_REPAIR_WHEEL_COMMAND_ANDROID: 'python "$GITHUB_WORKSPACE/scripts/build/repair_android_wheel.py" {wheel} {dest_dir} {ldpaths}'
+          CIBW_REPAIR_WHEEL_COMMAND_ANDROID: 'PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.repair_android_wheel {wheel} {dest_dir} {ldpaths}'
           CIBW_BEFORE_BUILD: |
-            python "$GITHUB_WORKSPACE/scripts/tooling.py" requirements toml --output "$RUNNER_TEMP/cibw-requirements.txt"
+            python "$GITHUB_WORKSPACE/scripts/tooling.py" requirements shared --output "$RUNNER_TEMP/cibw-requirements.txt"
             python -m pip install -r "$RUNNER_TEMP/cibw-requirements.txt"
             python "$GITHUB_WORKSPACE/scripts/pipeline/cargo_env.py" "{package}" "$VIRTUAL_ENV"
 

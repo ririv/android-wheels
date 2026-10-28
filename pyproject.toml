@@ -5,8 +5,8 @@ requires-python = ">=3.11"
 
 [dependency-groups]
 toml = ["tomli-w==1.2.0"]
-shared = [{include-group = "toml"}, "wheel==0.45.1"]
-build = [{include-group = "shared"}, "maturin==1.15.0"]
+shared = [{include-group = "toml"}, "wheel==0.45.1", "pyelftools==0.32"]
+build = [{include-group = "shared"}, "maturin==1.15.0", "auditwheel==6.8.2", "patchelf==0.17.2.4; sys_platform == 'linux'"]
 dev = [{include-group = "shared"}, "ruff==0.14.0"]
 
 [tool.py-extra-wheels]

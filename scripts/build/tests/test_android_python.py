@@ -196,7 +196,11 @@ class AndroidPythonTests(unittest.TestCase):
                 '[build]\njobs=2\n[target.aarch64-linux-android]\nrustflags=["-C", "opt-level=2"]\n'
             )
             create_cargo_config(
-                root, AndroidABI.ARM64.triplet, Path("/python/lib"), "/ndk/clang"
+                root,
+                AndroidABI.ARM64.triplet,
+                Path("/python/lib"),
+                "/ndk/clang",
+                "3.13",
             )
             actual = tomllib.loads(config.read_text())
             self.assertEqual(actual["build"]["jobs"], 2)
@@ -204,11 +208,26 @@ class AndroidPythonTests(unittest.TestCase):
                 actual["target"][AndroidABI.ARM64.triplet],
                 {
                     "linker": "/ndk/clang",
-                    "rustflags": ["-C", "opt-level=2", "-L", "/python/lib"],
+                    "rustflags": [
+                        "-C",
+                        "opt-level=2",
+                        "-L",
+                        "/python/lib",
+                        "-C",
+                        "link-arg=-Wl,--no-as-needed",
+                        "-C",
+                        "link-arg=-lpython3.13",
+                        "-C",
+                        "link-arg=-Wl,--as-needed",
+                    ],
                 },
             )
             create_cargo_config(
-                root, AndroidABI.ARM64.triplet, Path("/python/lib"), "/ndk/clang"
+                root,
+                AndroidABI.ARM64.triplet,
+                Path("/python/lib"),
+                "/ndk/clang",
+                "3.13",
             )
             self.assertEqual(tomllib.loads(config.read_text()), actual)
 
@@ -236,7 +255,7 @@ class WheelTagsTests(unittest.TestCase):
                         f"{info}/METADATA",
                         "Metadata-Version: 2.1\nName: example\nVersion: 1.0\n",
                     )
-                    wf.writestr("example.so", b"\x7fELF")
+                    wf.writestr("example.so", b"test extension placeholder")
                 process_wheel(wheel_dir, "3.11", "24", "arm64-v8a", root / "output")
                 result = (
                     root

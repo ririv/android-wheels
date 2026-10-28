@@ -13,6 +13,9 @@ import shutil
 import subprocess
 import sys
 import zipfile
+from pathlib import Path
+
+from scripts.build.wheel_abi import constrain_abi
 
 
 def contains_elf(wheel: str) -> bool:
@@ -26,17 +29,25 @@ def contains_elf(wheel: str) -> bool:
     return False
 
 
-def main() -> None:
-    if len(sys.argv) != 4:
-        sys.exit(f"usage: {sys.argv[0]} <wheel> <dest_dir> <ldpaths>")
-    wheel, dest_dir, ldpaths = sys.argv[1:]
-
+def repair(wheel: str, dest_dir: str, ldpaths: str) -> None:
+    Path(dest_dir).mkdir(parents=True, exist_ok=True)
     if contains_elf(wheel):
         cmd = ["auditwheel", "repair", "--ldpaths", ldpaths, "-w", dest_dir, wheel]
-        sys.exit(subprocess.run(cmd).returncode)
+        subprocess.run(cmd, check=True)
+        repaired = list(Path(dest_dir).glob("*.whl"))
+        if len(repaired) != 1:
+            raise ValueError("Android repair 必须生成恰好一个 wheel")
+        constrain_abi(repaired[0])
+        return
 
     print(f"{wheel} contains no ELF files, skipping auditwheel repair")
     shutil.copy2(wheel, dest_dir)
+
+
+def main() -> None:
+    if len(sys.argv) != 4:
+        sys.exit(f"usage: {sys.argv[0]} <wheel> <dest_dir> <ldpaths>")
+    repair(*sys.argv[1:])
 
 
 if __name__ == "__main__":
