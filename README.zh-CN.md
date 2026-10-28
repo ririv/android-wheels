@@ -2,21 +2,21 @@
 
 [English](README.md) | **简体中文**
 
-本仓库用于为 Android 构建和托管预编译的 Python wheel 文件，例如用于 [Chaquopy](https://chaquo.com/chaquopy/) 安卓 Python SDK、或手动嵌入方式启动Python，具体请看[在安卓上使用Python](https://docs.python.org/zh-cn/3.14/using/android.html#using-python-on-android)。
+Py Extra Wheels 为 Android 构建和托管预编译的 Python wheel，可用于 [Chaquopy](https://chaquo.com/chaquopy/) Python SDK，或将 Python 嵌入 Android 应用。嵌入方式详见 [在 Android 上使用 Python](https://docs.python.org/zh-cn/3.14/using/android.html#using-python-on-android)。
 
-索引地址：https://ririv.github.io/py-extra-wheels/
+包索引：[https://ririv.github.io/py-extra-wheels/](https://ririv.github.io/py-extra-wheels/)
 
-旧地址 https://ririv.github.io/android-wheels/ 继续可用。兼容站点不做定时扫描，新索引内容发布后通过事件通知同步。详见 [包索引地址迁移](docs/index-migration.md)。
+旧索引 [https://ririv.github.io/android-wheels/](https://ririv.github.io/android-wheels/) 继续可用。内容发布后通过事件同步，不做定时扫描。
 
-## 如何使用
+## 使用方法
 
-使用 `pip` 并指定 `--extra-index-url` 参数指向本仓库的包索引地址，即可安装这些 wheel 文件。
+使用 `pip` 安装包，将本仓库作为额外包索引。把 `<package-name>` 替换为要安装的包名：
 
 ```bash
-pip install --extra-index-url https://ririv.github.io/py-extra-wheels/ <包名>
+pip install --extra-index-url https://ririv.github.io/py-extra-wheels/ <package-name>
 ```
 
-例如，安装 `zstandard`:
+例如，安装 `zstandard`：
 
 ```bash
 pip install --extra-index-url https://ririv.github.io/py-extra-wheels/ zstandard
@@ -24,7 +24,7 @@ pip install --extra-index-url https://ririv.github.io/py-extra-wheels/ zstandard
 
 ### requirements.txt
 
-您也可以将索引地址添加到您的 `requirements.txt` 文件中：
+也可以将索引和包名写入 `requirements.txt`：
 
 ```txt
 --extra-index-url https://ririv.github.io/py-extra-wheels/
@@ -33,55 +33,61 @@ zstandard
 xxhash
 ```
 
-## 支持的 ABI:
+## 构建目标
 
-* `arm64-v8a`
-* `x86_64`
+- Python：**3.10–3.15**，其中 Python 3.10 为额外保留的兼容目标。
+- Android API：默认 **24**。
+- ABI：**`arm64-v8a`** 和 **`x86_64`**。
 
-## 构建支持的 Python 版本
+当前 recipe 默认请求全部六个 Python 版本；用于构建未收录源码仓库的独立工作流默认使用 Python **3.13**。每个包及其构建依赖都必须支持所选版本。上游声明或已经验证的不兼容组合会记录原因并跳过；其他构建失败会直接报告。构建使用 recipe 中选定的包版本，不会自动选择较早发行版。
 
-构建入口支持 Python **3.10–3.15**，默认版本为 **3.13**。其中 3.10 为额外保留的兼容版本；每个包及其依赖仍须支持所选 Python 版本。运行库来源、后端路由和验证方法见 [Android Python 构建支持](docs/python-builds.md)。
+**2026-10-29** 验证的矩阵包含 **54 个包、624 个 wheel**，其中 Python 3.15 覆盖 **52 个包、104 个 wheel**。这些结果涵盖构建和静态检查，尚未进行设备或模拟器运行测试。详见 [完整矩阵与验证记录](docs/python-matrix.md)。
 
-## 工作原理
+## 构建与发布
 
-本仓库使用 GitHub Actions 实现自动化构建和发布流程：
+GitHub Actions 执行统一流水线：
 
-1. **Recipe 与构建矩阵**：每个包的配置位于 `recipes/<包名>.toml`。统一入口 `build-wheels.yml` 选择变更的包并生成并行矩阵，再调用现有 Android 构建器。包、Python 版本和 ABI 均可并行。
-2. **统一发布**：所有目标成功后，按固定源码与哈希清单校验完整产物，再以一个提交更新 `wheels` 分支。
-3. **部署索引**：汇总发布发现下游尚未同步时，显式触发 `pages.yml`，生成 PEP 503 索引并部署。新旧索引状态不一致时，再通知旧地址同步；通知失败可独立重跑。
+1. **规划**：读取 `recipes/*.toml`，选择受影响的包，固定 Git 提交或 PyPI 官方源码发行包，生成独立的包 × Python × ABI 构建目标。
+2. **构建**：`build-wheels.yml` 调用 `build-wheel-batch.yml`，再通过 `build-android-wheel-dispatch.yml` 分派目标。各目标使用 maturin、cibuildwheel 或 Chaquopy 并行构建。
+3. **发布**：核验计划内的完整产物集合、源码来源、哈希、wheel 标签及 ELF 对齐，然后以一个提交更新 `wheels` 分支。
+4. **部署**：通过 `pages.yml` 发布 HTML 包索引，并通知兼容站点同步。通知失败可独立重试。
 
-这确保了包索引始终与最新成功构建的 wheel 文件保持同步。
+## 添加包
 
-## 命名规范
+对于使用已支持构建后端的包，新增 `recipes/<package-name>.toml`，声明 Git 仓库和 ref 或固定版本的 PyPI 官方 sdist、项目目录、构建后端及 Android 目标。TOML 也支持配置外部环境、PEP 517 参数和原生依赖。新的构建后端需先接入相应构建器。
 
-### wheel 文件命名规范
+所有 recipe 共用统一工作流。recipe 变更合入 `main` 后构建对应包；共享构建代码变更后重建全部 recipe。
 
-wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#recommended-installer-features) 规范，格式通常是：{distribution}-{version}-{python tag}-{abi tag}-{platform tag}.whl。
-
-### 包索引命名规范
-
-包索引命名遵循 Python 的 [PEP 503](https://peps.python.org/pep-0503/) 规范和用于[安卓的wheel tag格式](https://peps.python.org/pep-0738/#packaging)
-规范化命名需要注意 [Normalized Names](https://peps.python.org/pep-0503/#normalized-names)
-
-| API           | 作用                                                |
-| ------------- | --------------------------------------------------- |
-| PEP 503       | 索引：提供 HTML 索引文件。                          |
-| PEP 691       | 索引：提供 JSON 索引文件。                          |
-| PEP 658       | 索引：提供元数据，加速依赖解析。                    |
-| PEP 738       | 平台：安卓平台支持，包含Packaging格式               |
-
-## 如何添加新的包
-
-在 `recipes/` 新增 `<包名>.toml`，显式填写 Git 仓库与 ref，或固定版本的 PyPI 官方 sdist，并声明项目目录、构建后端及 Android 默认目标。外部环境、PEP 517 参数和原生依赖也由 TOML 声明。不要为每个包新增工作流。
-
-配置合并到 `main` 后，只构建变更对应的包。手动构建、多 Python 版本、仅生成 Actions 产物和配置校验见 [Recipe 与并行构建](docs/recipes.md)。
+例如，构建两个 Python 版本，并将结果保留为 Actions 产物：
 
 ```sh
-gh workflow run build-wheels.yml -f recipes=pydantic-core -f python_versions=3.10 -f version_tag=v2.41.5
+gh workflow run build-wheels.yml \
+  -f recipes=pydantic-core \
+  -f python_versions=3.10,3.14 \
+  -f publication=build
 ```
 
-模块划分与开发检查见 [构建流水线](docs/pipeline.md)。
+`publication=build` 仅保留产物；默认的 `publication=publish` 还会发布已校验的 wheel 并更新包索引。配置与手动构建选项见 [Recipe 指南](docs/recipes.md)。
 
-新增包的筛选口径、热门原生扩展前 100 审计及各批构建验证见 [包收录记录](docs/package-selection.md)。
+## 打包规范
 
-Python 3.10–3.15 的逐版本构建范围、上游限制与完整验证见 [Python 完整构建矩阵](docs/python-matrix.md)。
+wheel 文件名遵循 [PEP 427](https://peps.python.org/pep-0427/#recommended-installer-features)，通常采用 `{distribution}-{version}-{python tag}-{abi tag}-{platform tag}.whl` 格式。
+
+| 规范 | 用途 |
+| --- | --- |
+| [PEP 427](https://peps.python.org/pep-0427/) | wheel 文件格式与文件名。 |
+| [PEP 503](https://peps.python.org/pep-0503/) | HTML 包索引及规范化包名。 |
+| [PEP 738](https://peps.python.org/pep-0738/#packaging) | Android 平台支持及 wheel 标签。 |
+
+当前包索引提供 HTML 页面。
+
+## 详细文档
+
+以下详细指南以中文维护：
+
+- [Recipe 与并行构建](docs/recipes.md)
+- [流水线架构与开发检查](docs/pipeline.md)
+- [Android Python 运行库与构建路由](docs/python-builds.md)
+- [Python 完整矩阵与验证](docs/python-matrix.md)
+- [包收录口径与原生扩展排名审计](docs/package-selection.md)
+- [索引迁移与兼容地址](docs/index-migration.md)

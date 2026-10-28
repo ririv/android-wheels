@@ -2,13 +2,15 @@
 
 **English** | [简体中文](README.zh-CN.md)
 
-This repository builds and hosts prebuilt Python wheels for Android, for example for the [Chaquopy](https://chaquo.com/chaquopy/) Python SDK for Android, or for embedding Python in an Android app manually. See [Using Python on Android](https://docs.python.org/3.14/using/android.html#using-python-on-android) for details.
+Py Extra Wheels builds and hosts prebuilt Python wheels for Android. Use them with the [Chaquopy](https://chaquo.com/chaquopy/) Python SDK or when embedding Python in an Android app. See [Using Python on Android](https://docs.python.org/3.14/using/android.html#using-python-on-android) for embedding details.
 
-Index URL: https://ririv.github.io/py-extra-wheels/
+Package index: [https://ririv.github.io/py-extra-wheels/](https://ririv.github.io/py-extra-wheels/)
+
+The previous index at [https://ririv.github.io/android-wheels/](https://ririv.github.io/android-wheels/) remains available. Updates are synchronized through events after publication, with no scheduled polling.
 
 ## Usage
 
-To install these wheels, run `pip` with `--extra-index-url` pointing to this repository's package index:
+Install a package with `pip`, using this repository as an additional package index. Replace `<package-name>` with the package you want to install:
 
 ```bash
 pip install --extra-index-url https://ririv.github.io/py-extra-wheels/ <package-name>
@@ -22,7 +24,7 @@ pip install --extra-index-url https://ririv.github.io/py-extra-wheels/ zstandard
 
 ### requirements.txt
 
-You can also add the index URL to your `requirements.txt` file:
+You can also add the index and package names to `requirements.txt`:
 
 ```txt
 --extra-index-url https://ririv.github.io/py-extra-wheels/
@@ -31,42 +33,61 @@ zstandard
 xxhash
 ```
 
-## Supported ABIs
+## Build targets
 
-* `arm64-v8a`
-* `x86_64`
+- Python: **3.10–3.15**. Python 3.10 is included as an additional compatibility target.
+- Android API level: **24** by default.
+- ABIs: **`arm64-v8a`** and **`x86_64`**.
 
-## How it works
+Recipes currently request all six Python versions by default. The separate workflow for building an unlisted source repository defaults to Python **3.13**. Each package and its build dependencies must support the requested version. Upstream-declared or verified incompatibilities are recorded and skipped; other build failures are reported. Builds use the version selected in the recipe without automatically choosing an older release.
 
-This repository uses GitHub Actions to automate building and publishing:
+The matrix validated on **2026-10-29** contains **624 wheels across 54 packages**, including **104 wheels across 52 packages for Python 3.15**. These results cover builds and static checks; device and emulator runtime tests have not been performed. See the [complete matrix and verification record](docs/python-matrix.md).
 
-1. **Recipe / Matrix**: `recipes/*.toml` → `build-wheels.yml` → `build-wheel-batch.yml` → `build-android-wheel-dispatch.yml`. [配置与并行构建说明](docs/recipes.md)。
-2. **统一发布**：全部目标成功后，校验源码、目标与哈希，以一个提交更新 `wheels` 分支。
-3. **索引部署**：按下游已发布状态显式触发 `pages.yml`，并以事件通知旧地址同步；通知失败可重跑。
+## Build and publish
 
-This keeps the package index in sync with the latest successfully built wheels.
+GitHub Actions runs the shared pipeline:
 
-## Naming conventions
+1. **Plan:** read `recipes/*.toml`, select affected packages, pin Git commits or official PyPI source distributions, and generate independent package × Python × ABI targets.
+2. **Build:** `build-wheels.yml` calls `build-wheel-batch.yml`, which dispatches targets through `build-android-wheel-dispatch.yml`. Targets run in parallel using maturin, cibuildwheel, or Chaquopy.
+3. **Publish:** verify the complete planned artifact set, source provenance, hashes, wheel tags, and ELF alignment, then update the `wheels` branch in one commit.
+4. **Deploy:** publish the HTML package index through `pages.yml` and notify the compatibility site to synchronize. Failed notifications can be retried independently.
 
-### Wheel file names
+## Add a package
 
-Wheel file names follow Python's [PEP 427](https://peps.python.org/pep-0427/#recommended-installer-features), usually in the form `{distribution}-{version}-{python tag}-{abi tag}-{platform tag}.whl`.
+For a package using a supported build backend, add `recipes/<package-name>.toml`. Declare its Git repository and ref or a fixed official PyPI sdist version, project directory, build backend, and Android targets. TOML also supports external environment settings, PEP 517 parameters, and native dependencies. New build backends require corresponding builder support first.
 
-### Package index names
+All recipes share the same workflows. Merging a recipe change into `main` builds the affected package; changes to shared build code rebuild all recipes.
 
-Package index names follow Python's [PEP 503](https://peps.python.org/pep-0503/) and the [wheel tag format for Android](https://peps.python.org/pep-0738/#packaging). Note the rules for [normalized names](https://peps.python.org/pep-0503/#normalized-names).
+For example, build two Python versions and retain the results as Actions artifacts:
 
-| API           | Purpose                                                     |
-| ------------- | ----------------------------------------------------------- |
-| PEP 503       | Index: serves HTML index files.                             |
-| PEP 691       | Index: serves JSON index files.                             |
-| PEP 658       | Index: serves metadata to speed up dependency resolution.   |
-| PEP 738       | Platform: Android support, including the packaging format.  |
+```sh
+gh workflow run build-wheels.yml \
+  -f recipes=pydantic-core \
+  -f python_versions=3.10,3.14 \
+  -f publication=build
+```
 
-## Recipe / TOML
+`publication=build` retains artifacts only. The default, `publication=publish`, also publishes verified wheels and updates the package indexes. Configuration and manual build options are described in the [recipe guide](docs/recipes.md).
 
-新增包请添加 `recipes/<包名>.toml`；统一入口为 `build-wheels.yml`。配置格式、手动构建及多 Python 版本并行见 [Recipe 与并行构建](docs/recipes.md)。
+## Packaging standards
 
-新增包的筛选口径、热门原生扩展前 100 审计及各批构建验证见 [包收录记录](docs/package-selection.md)。
+Wheel filenames follow [PEP 427](https://peps.python.org/pep-0427/#recommended-installer-features), usually as `{distribution}-{version}-{python tag}-{abi tag}-{platform tag}.whl`.
 
-Python 3.10–3.15 的逐版本构建范围、上游限制与完整验证见 [Python 完整构建矩阵](docs/python-matrix.md)。
+| Standard | Purpose |
+| --- | --- |
+| [PEP 427](https://peps.python.org/pep-0427/) | Wheel file format and filenames. |
+| [PEP 503](https://peps.python.org/pep-0503/) | HTML package index and normalized package names. |
+| [PEP 738](https://peps.python.org/pep-0738/#packaging) | Android platform support and wheel tags. |
+
+The current package index serves HTML pages.
+
+## Documentation
+
+The detailed guides below are maintained in Chinese:
+
+- [Recipes and parallel builds](docs/recipes.md)
+- [Pipeline architecture and development checks](docs/pipeline.md)
+- [Android Python runtimes and build routes](docs/python-builds.md)
+- [Complete Python matrix and verification](docs/python-matrix.md)
+- [Package selection and native-extension ranking audit](docs/package-selection.md)
+- [Index migration and compatibility address](docs/index-migration.md)
