@@ -123,6 +123,16 @@ class PipelineTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "来源"):
                 collect(root, Plan(Publication.PUBLISH, (changed,)))
 
+    def test_chaquopy_optional_build_tag_preserves_package_and_version(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp) / TARGET.artifact
+            wheel = make_wheel(directory)
+            wheel.rename(directory / wheel.name.replace("2.41.5-", "2.41.5-0-"))
+            record(directory, TARGET)
+            wheels = collect(Path(tmp), Plan(Publication.PUBLISH, (TARGET,)))
+            self.assertEqual(len(wheels), 1)
+            self.assertIn("2.41.5-0-cp313", next(iter(wheels)))
+
     def test_wheel_targets_allow_abi3_and_reject_wrong_architecture(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

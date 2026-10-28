@@ -21,7 +21,14 @@ def normalized(name: str) -> str:
 
 
 def verify_wheel(path: Path, target: Target) -> None:
-    name, version, python, abi, platform = path.stem.rsplit("-", 4)
+    match path.stem.split("-"):
+        case [name, version, python, abi, platform]:
+            pass
+        case [name, version, build, python, abi, platform]:
+            if not re.match(r"\d", build):
+                raise ValueError(f"wheel build tag 必须以数字开头：{path.name}")
+        case _:
+            raise ValueError(f"无效的 wheel 文件名：{path.name}")
     if normalized(name) != normalized(target.library):
         raise ValueError(f"wheel 包名不匹配：{path.name}")
     if platform == "any":
