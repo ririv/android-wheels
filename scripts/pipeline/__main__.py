@@ -33,6 +33,10 @@ def main() -> None:
         command.add_argument("--event-name", required=True)
         command.add_argument("--github-output", type=Path, required=True)
         command.add_argument("--output", type=Path, default=Path("build-plan.json"))
+    environment = commands.add_parser("build-environment")
+    environment.add_argument("--plan", type=Path, default=Path("build-plan.json"))
+    environment.add_argument("--artifact", required=True)
+    environment.add_argument("--output", type=Path, required=True)
     for name in ("prepare-source", "record", "publish"):
         command = commands.add_parser(name)
         command.add_argument("--plan", type=Path, default=Path("build-plan.json"))
@@ -77,7 +81,11 @@ def main() -> None:
         print(args.output.read_text(encoding="utf-8"))
         return
     plan = load_plan(args.plan)
-    if args.command == "prepare-source":
+    if args.command == "build-environment":
+        with args.output.open("a", encoding="utf-8") as stream:
+            for variable in plan.target(args.artifact).environment:
+                stream.write(f"{variable.name}={variable.value}\n")
+    elif args.command == "prepare-source":
         source = plan.target(args.artifact).source
         match source:
             case GitSource():

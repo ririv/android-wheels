@@ -60,7 +60,14 @@ def recipe_plan(event_name: str, event: dict, root: Path) -> Plan:
         if source.backend != recipe.backend:
             raise ValueError(f"{recipe.name} 后端与 recipe 不一致：{source.backend}")
         targets.extend(
-            Target(recipe.name, source, job.python, abi, recipe.android.api)
+            Target(
+                recipe.name,
+                source,
+                job.python,
+                abi,
+                recipe.android.api,
+                recipe.environment,
+            )
             for abi in recipe.android.abis.values
         )
     return Plan(publication, tuple(targets))

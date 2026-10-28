@@ -25,6 +25,7 @@ class Backend(StrEnum):
     PYYAML = "_pyyaml_pep517"
     AIO_LIBS = "pep517_backend.hooks"
     MESON = "mesonpy"
+    HATCHLING = "hatchling.build"
 
 
 class Publication(StrEnum):
@@ -56,12 +57,19 @@ L = TypeVar("L", GitLocation, PyPILocation)
 
 
 @dataclass(frozen=True)
+class EnvironmentVariable:
+    name: str
+    value: str
+
+
+@dataclass(frozen=True)
 class Recipe(Generic[L]):
     name: str
     source: L
     directory: str
     backend: Backend
     android: Android
+    environment: tuple[EnvironmentVariable, ...] = ()
 
 
 @dataclass(frozen=True)

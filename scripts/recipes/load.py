@@ -11,6 +11,7 @@ from scripts.recipes.model import (
     Android,
     Backend,
     Choices,
+    EnvironmentVariable,
     GitLocation,
     PyPILocation,
     Recipe,
@@ -48,6 +49,8 @@ def require_keys(data: dict, expected: set[str], label: str) -> None:
 def load_recipe(path: Path) -> Recipe:
     data = tomllib.loads(path.read_text(encoding="utf-8"))
     common = {"name", "directory", "backend", "android"}
+    if "environment" in data:
+        common.add("environment")
     if "pypi-version" in data:
         require_keys(data, common | {"pypi-version"}, str(path))
         if type(data["pypi-version"]) is not str or not data["pypi-version"]:
@@ -79,6 +82,7 @@ def load_recipe(path: Path) -> Recipe:
         source=source,
         directory=directory.as_posix(),
         backend=Backend(data["backend"]),
+        environment=environment(data.get("environment", {})),
         android=Android(
             python=choices(android["python"], PythonVersion, "android.python"),
             abis=choices(android["abis"], AndroidABI, "android.abis"),
@@ -92,3 +96,45 @@ def load_recipes(directory: Path) -> tuple[Recipe, ...]:
     if not recipes:
         raise ValueError(f"没有找到 recipe：{directory}")
     return recipes
+
+
+def environment(data: dict) -> tuple[EnvironmentVariable, ...]:
+    if not isinstance(data, dict):
+        raise ValueError("environment 必须是字符串变量表")
+    reserved = {
+        "PATH",
+        "CC",
+        "CXX",
+        "AR",
+        "CFLAGS",
+        "CXXFLAGS",
+        "LDFLAGS",
+        "LIBRARY_NAME",
+        "PROJECT_DIR",
+        "TARGET_PYTHON_VERSION",
+        "ANDROID_API",
+        "TARGET_ABI",
+        "ARTIFACT",
+        "WHEEL_DIRECTORY",
+        "HOST_PYTHON",
+        "RUNNER_TEMP",
+        "ANDROID_API_LEVEL",
+        "ANDROID_NDK",
+        "PYO3_CROSS",
+        "PYO3_CONFIG_FILE",
+        "PYO3_CROSS_LIB_DIR",
+        "PYO3_CROSS_PYTHON_VERSION",
+        "CARGO_BUILD_TARGET",
+    }
+    result = []
+    for name, value in sorted(data.items()):
+        if (
+            not re.fullmatch(r"[A-Z][A-Z0-9_]*", name)
+            or name in reserved
+            or name.startswith(("CIBW_", "CARGO_TARGET_", "GITHUB_"))
+        ):
+            raise ValueError(f"不允许覆盖构建器变量：{name}")
+        if type(value) is not str or any(char in value for char in "\n\r\0"):
+            raise ValueError(f"{name} 必须是单行字符串")
+        result.append(EnvironmentVariable(name, value))
+    return tuple(result)
