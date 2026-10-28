@@ -12,6 +12,5 @@ api = 24
 RAPIDFUZZ_BUILD_EXTENSION = "1"
 
 [config-settings]
-"cmake.define.CMAKE_ANDROID_NDK_VERSION" = "27.3.13750724"
 "cmake.define.CMAKE_C_STANDARD_LIBRARIES" = "-lpython3.13"
-"cmake.define.CMAKE_CXX_STANDARD_LIBRARIES" = "-lpython3.13"
+"cmake.define.CMAKE_CXX_STANDARD_LIBRARIES" = "-lpython3.13 -fuse-ld=lld"
