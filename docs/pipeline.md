@@ -11,6 +11,7 @@
 | `scripts/pipeline/sdists.py` | 校验源码包 SHA-256，安全解包并保留上游发行内容 |
 | `scripts/pipeline/cargo_env.py` | 组合 cibuildwheel 所需的 Cargo 环境配置，保留已有配置 |
 | `scripts/build` | Android 运行库、maturin/Chaquopy 构建与 wheel 修复 |
+| `scripts/build/wheel_abi.py` | 根据实际 ELF 的版本专用 libpython 依赖约束 wheel 兼容标签 |
 | `scripts/pipeline/artifacts.py` | 记录并核验完整产物集合、来源与文件哈希 |
 | `scripts/pipeline/wheel.py` | 核验 wheel 文件名、WHEEL 标签和全部 RECORD 条目 |
 | `scripts/pipeline/notifications.py` | 根据下游实际发布状态发出可重试的同步事件 |
@@ -26,7 +27,7 @@
 
 构建计划记录在 `build-plan` artifact 内的 `build-plan.json`，源码使用 `GitSource | SdistSource` 和类型建模。Git ref 在规划时解析为完整 SHA；PyPI 源明确固定版本、地址、文件名和 SHA-256。不同 Python 和 ABI 使用同一固定来源，构建器在编译前重新校验 checkout 或源码包哈希、后端、`PKG-INFO`。sdist 的产物版本还必须等于所选发行版本。临时仓库入口未填写 ref 时，显式读取上游默认分支后固定其提交。
 
-每个目标使用独立 runner 编译。后端与 Python 版本决定 maturin、cibuildwheel 或 Chaquopy 路由，不改变原有交叉编译能力。驱动 Python 与目标 Python 分开设置。cibuildwheel 使用仓库独立配置文件，避免上游针对其他平台的发布选项影响本流水线；不改写上游源码或构建元数据。
+每个目标使用独立 runner 编译。后端与 Python 版本决定 maturin、cibuildwheel 或 Chaquopy 路由，不改变原有交叉编译能力。驱动 Python 与目标 Python 分开设置。cibuildwheel 使用仓库独立配置文件，避免上游针对其他平台的发布选项影响本流水线；不改写上游源码或构建元数据。maturin 产物显式链接目标 Python，与 cibuildwheel 共用 auditwheel 修复步骤来打包外部运行库；实际依赖版本专用 `libpython3.x.so` 时，把过宽的 `abi3` 标签收窄为该解释器版本，同时更新 WHEEL 与 RECORD。
 
 所有目标成功后才进入汇总发布。发布会验证每个预期 artifact，缺少产物、源码错配、哈希不符、目标标签错误、同名内容冲突都会失败。校验通过后以一个提交更新 `wheels`，保留已有文件。不同工作流运行并发提交时，仅在远端确实前进后重新组合提交，最多三次；网络或权限失败直接报告。
 

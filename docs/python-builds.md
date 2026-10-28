@@ -35,7 +35,7 @@ Chaquopy 构建工具应用仓库内的 `chaquopy-libpython-link.patch`：忽略
 
 下载按完整补丁版本、构建号和 ABI 缓存，解包目录彼此隔离。下载文件在完成后才重命名；解包与运行库检查成功后才写入完成标记。下载、解包、版本选择或编译失败均直接中止，不更换 Python 版本或下载来源。
 
-maturin 写入明确的本次构建目录。收集阶段要求恰好一个 wheel，不在源码树中递归寻找历史产物。Android 平台标签通过 `wheel tags` 同时写入文件名、`WHEEL` 和 `RECORD`，保留上游生成的 Python/ABI 标签，包括 `abi3`。
+maturin 写入明确的本次构建目录。收集阶段要求恰好一个 wheel，不在源码树中递归寻找历史产物。Android 平台标签通过 `wheel tags` 同时写入文件名、`WHEEL` 和 `RECORD`，先保留上游生成的 Python/ABI 标签，再检查实际 ELF 动态依赖：链接 `libpython3.x.so` 的 wheel 只能声明对应的 `cp3x-cp3x`，不能以 `abi3` 承诺跨版本可用。Rust 的 `extension-module` / `abi3` 特性会关闭自动链接，因此由构建配置显式链接目标 Python；随后与 cibuildwheel 共用 auditwheel 修复步骤，将 NDK C++ 等非系统依赖打包进 wheel。
 
 ## 本地检查
 

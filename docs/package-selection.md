@@ -42,7 +42,7 @@
 | 41 | 164 | [tokenizers](https://pypi.org/project/tokenizers/) | 0.23.3 | 166,389,324 |
 | 47 | 179 | [kiwisolver](https://pypi.org/project/kiwisolver/) | 1.5.1 | 156,347,414 |
 
-默认 Python 3.13、Android API 24，同时构建 `arm64-v8a` 与 `x86_64`，保留原有独立并行矩阵。16 个 wheel 均通过发行版本、源码哈希、wheel 哈希、WHEEL、RECORD 和实际 ELF 架构静态核验；尚未进行设备运行测试。`tokenizers` 与 `wcwidth` 产物使用上游声明的 `cp310-abi3` 标签，其余为 `cp313-cp313`；不能据此推断本轮已完成所有 Python 版本的运行验证。
+默认 Python 3.13、Android API 24，同时构建 `arm64-v8a` 与 `x86_64`，保留原有独立并行矩阵。16 个 wheel 均通过发行版本、源码哈希、wheel 哈希、WHEEL、RECORD 和实际 ELF 架构静态核验；尚未进行设备运行测试。初步产物中 `tokenizers` 与 `wcwidth` 使用上游的 `cp310-abi3` 标签，最终静态复核发现 Android 的版本专用 Python 链接约束；流水线据此补齐链接、打包 C++ 依赖，并将实际链接 `libpython3.13.so` 的最终产物收窄为 `cp313-cp313`。本轮新增包只完成 Python 3.13 构建验证。
 
 `msgpack` 的 Git tag 缺少生成的 C 文件，但官方 sdist 已包含 `_cmsgpack.c`。`kiwisolver` 的官方 sdist 保留稳定版发行元数据，不依赖浅克隆中的 Git 标签。两者均通过双 ABI 构建，`kiwisolver` 的最终版本为 `1.5.1`。
 

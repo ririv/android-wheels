@@ -185,7 +185,7 @@ def build_wheel(
         "--target",
         target_triplet,
         "--auditwheel",
-        "skip",  # 运行库由 Android Python 发行版提供
+        "skip",  # 平台标签归一后，再使用统一的 Android auditwheel 修复步骤
         "--out",
         str(output_dir),
         "-i",
