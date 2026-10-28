@@ -70,4 +70,4 @@ jobs:
       - name: Check Actions workflows
         env:
           ACTIONLINT_VERSION: ${{ steps.tools.outputs.actionlint_version }}
-        run: go run "github.com/rhysd/actionlint/cmd/actionlint@$ACTIONLINT_VERSION"
+        run: go run "github.com/rhysd/actionlint/cmd/actionlint@v$ACTIONLINT_VERSION"
