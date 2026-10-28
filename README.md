@@ -77,6 +77,7 @@ wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#
     *   `library_name`: 设置为您要构建的包的名称（通常是 PyPI 上的名称）。
     *   `git_repository`: 设置为该包的源码 Git 仓库地址（例如 `author/repo`）。
     *   `version_tag`: (可选) 您可以指定一个固定的 Git 标签或分支。如果留空，将使用默认分支的最新代码。
+    *   `package_dir`: (可选) Python 项目（`pyproject.toml`/`setup.py`）在源码仓库中的子目录，例如 jiter 的 `crates/jiter-python`。如果留空，将自动查找。
 
 4.  **提交 Pull Request**
     提交您的更改，并向上游仓库（`ririv/android-wheels`）发起一个 Pull Request。

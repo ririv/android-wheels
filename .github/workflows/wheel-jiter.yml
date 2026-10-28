@@ -29,6 +29,7 @@ jobs:
     with:
       library_name: 'jiter'
       git_repository: 'pydantic/jiter'
+      package_dir: 'crates/jiter-python'
       version_tag: ${{ github.event.inputs.version_tag}}
       target_python_version: ${{ github.event.inputs.python_version || '3.13' }}
       android_api: ${{ github.event.inputs.android_api || '24' }}
