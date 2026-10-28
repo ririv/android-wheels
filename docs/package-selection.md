@@ -199,3 +199,13 @@ mypy 的运行依赖已由本批 librt、ast-serialize 提供，但其终端颜�
 全部 40 个预验证 wheel 均含 ELF，来源、版本、哈希、WHEEL/RECORD、架构、16 KB 加载段对齐、依赖闭合和相对加载路径通过核验。普通纯 Python 依赖仍由 PyPI 提供；PyMongo 的加密等可选扩展、Tree-sitter 的语言语法库不在本批收录范围。尚未进行设备或模拟器功能测试。完整来源、配置、成功产物和失败候选见 [第五批审计记录](data/native-fifth-batch-2026-10.json)。
 
 RapidFuzz 使用 scikit-build-core；cibuildwheel 的 Android CMake 工具链未完整提供 NDK 版本信息，使 CMake IPO 添加宿主 gold 参数。recipe 显式在最终 C++ 链接参数中选择 `-fuse-ld=lld`，并链接目标 Python；保持 LTO 与 C++ 扩展启用，不修改 CMake 源码。
+
+## 第五批回归与发布
+
+本轮新增 **20 个包**，仓库共 **54 个 recipe**；五批累计新增 44 个 Python 包，满足本轮至少新增 10 个的要求。外部 C 库不单独计数；没有将纯 Python wheel 计入本批新增。
+
+[全量构建与发布](https://github.com/ririv/py-extra-wheels/actions/runs/40693295994) 的 108 个目标全部成功，[CI](https://github.com/ririv/py-extra-wheels/actions/runs/40693295858) 在 Python 3.11、3.15 上通过 65 个组件测试，以及 Ruff、TOML 和工作流检查。完整下载最终产物后复核：106 个含 ELF，两个已有 PyYAML 产物沿用原有纯 Python 构建；本轮新增的四十个 wheel 全部含实际原生代码。
+
+固定来源、SHA-256、发行版本、WHEEL/RECORD、ELF 架构、16 KB 加载段对齐、Python 链接与标签、动态依赖闭合和相对加载路径检查全部通过。PyCryptodome、PyCryptodomex 的独立 C 库不依赖版本专用 Python 动态库，保留上游 abi3 标签；其他需要特定 libpython 的产物继续收窄为 `cp313-cp313`。
+
+[主索引](https://ririv.github.io/py-extra-wheels/) 与 [旧索引](https://ririv.github.io/android-wheels/) 已通过事件链路自动更新。两处根页和各二十个新增包页共四十二个 HTML 页面均返回 HTTP 200，版本与双 ABI 链接完整；公开状态标记分别匹配 wheels、gh-pages 源码树。四十个新增 wheel 的已发布 Git blob 与核验过的 Actions 产物逐字节一致。完整文件、哈希、加载段对齐和状态树见第五批审计记录的 `published_wheels` 与 `regression`。
