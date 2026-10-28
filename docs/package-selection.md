@@ -48,6 +48,8 @@
 
 `frozenlist` 的上游 cibuildwheel 发布配置含当前工具不再接受的 `cpython-freethreading` 选项。流水线通过 `--config-file` 读取仓库独立配置，PEP 517 后端继续使用原始项目文件。`wcwidth` 在 cibuildwheel 发布模式下要求 C 扩展成功，不允许缺少扩展仍产出 wheel；本次也实际核对了扩展 ELF。
 
+同样的链接核验也修正了已有 `watchfiles` 产物。`tokenizers`、`wcwidth`、`watchfiles` 之前的 6 个过宽 `abi3` 文件已撤下，替换为与实际 Python 动态库一致的产物；归档保留审计证据。
+
 sdist 的地址、SHA-256、排名及全部预验证 wheel 记录见 [第二批审计记录](data/native-second-batch-2026-10.json)。原先失败的 Git 构建记录保留在首批审计文件中，并标注已解决。
 
 ## 暂缓项目
@@ -75,3 +77,15 @@ sdist 的地址、SHA-256、排名及全部预验证 wheel 记录见 [第二批�
 - [第二批 sdist 预验证](https://github.com/ririv/py-extra-wheels/actions/runs/40656541328)：6 个收录包双 ABI 成功；同次运行包含失败或暂缓候选，整体状态为失败，未发布。
 - [frozenlist 与 wcwidth 双 ABI 预验证](https://github.com/ririv/py-extra-wheels/actions/runs/40659064598)：4 个目标全部成功，未发布。
 - [外部依赖与链接参数试构建](https://github.com/ririv/py-extra-wheels/actions/runs/40657971703)：NumPy、CFFI、uvloop 暂缓原因的日志；frozenlist 的配置冲突随后已解决。
+
+- [Android 链接与 ABI 修复预验证](https://github.com/ririv/py-extra-wheels/actions/runs/40660301805)：tokenizers、wcwidth、pydantic-core 共 6 个目标全部通过。
+
+## 最终回归与发布
+
+[全量构建与发布](https://github.com/ririv/py-extra-wheels/actions/runs/40660865533) 的 24 个 recipe、48 个目标全部成功；[CI](https://github.com/ririv/py-extra-wheels/actions/runs/40660865506) 在 Python 3.11 与 3.15 上通过组件测试、Ruff 与工作流检查。
+
+下载全部最终产物后，核验了来源清单、SHA-256、包与版本、WHEEL、RECORD、ELF 架构、Python 动态库与标签，以及运行库打包情况。其中 46 个 wheel 含 ELF；已有 PyYAML 的两个产物沿用上游允许的纯 Python 构建行为，不计入新增原生扩展。新增八包的十六个最终产物全部含 ELF。所有 ELF 的外部依赖均为 Android 系统库、对应 Python 或已打包到 wheel 的库。
+
+[Python 3.10 的 pydantic-core 2.41.5 双 ABI 回归](https://github.com/ririv/py-extra-wheels/actions/runs/40661343355) 也已成功，仅保留验证产物。此项验证维护共享构建器的既有 3.10 能力，不表示本轮八个新增包已验证 3.10。
+
+[主索引](https://ririv.github.io/py-extra-wheels/) 与 [旧地址](https://ririv.github.io/android-wheels/) 均已通过事件链路自动发布。两处根页和八个新增包页均返回 HTTP 200，双 ABI 链接齐全，旧 abi3 文件已移除；公开状态标记与对应源码树一致。最终 wheel 清单、哈希和状态树见第二批审计记录的 `published_wheels` 与 `regression`。
