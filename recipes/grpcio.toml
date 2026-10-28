@@ -2,7 +2,7 @@ name = "grpcio"
 pypi-version = "1.85.0"
 directory = "."
 backend = "setuptools.build_meta"
-native-dependencies = ["openssl"]
+native-dependencies = ["openssl", "cares"]
 
 [android]
 python = ["3.13"]
@@ -10,6 +10,7 @@ abis = ["arm64-v8a", "x86_64"]
 api = 24
 
 [environment]
+GRPC_PYTHON_BUILD_SYSTEM_CARES = "true"
 GRPC_PYTHON_BUILD_SYSTEM_OPENSSL = "true"
 GRPC_PYTHON_CFLAGS = "-std=c++17 -fvisibility=hidden -fno-wrapv -fno-exceptions"
 GRPC_PYTHON_LDFLAGS = "-latomic"

@@ -9,6 +9,7 @@ class NativeLibrary(StrEnum):
     LIBSODIUM = "libsodium"
     OPENSSL = "openssl"
     CRC32C = "crc32c"
+    CARES = "cares"
 
 
 class BuildSystem(StrEnum):
