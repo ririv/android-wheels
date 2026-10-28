@@ -1,4 +1,4 @@
-# 热门原生扩展库首批收录
+# 热门原生扩展库收录
 
 ## 筛选口径
 
@@ -6,7 +6,7 @@
 
 候选识别条件为 wheel ABI 不等于 `none`、平台不等于 `any`；真正收录还须核对上游源码和实际 ELF 扩展，排除仅包含 CLI 二进制的情况。下载量按包计算，不等于独立用户数。
 
-2026-10-28 通过 [PyPI JSON API](https://docs.pypi.org/api/json/) 核对所有历史发行文件：首批新增项目均没有官方 `android_*` wheel。已存在官方 Android wheel 的包不纳入新增范围。
+2026-10-28 通过 [PyPI JSON API](https://docs.pypi.org/api/json/) 核对所有历史发行文件：两批新增项目均没有官方 `android_*` wheel。已存在官方 Android wheel 的包不纳入新增范围。
 
 排名、下载量、官方文件列表、源码提交和预验证产物哈希保存在 [机器可读审计记录](data/native-top50-2026-10.json)。这是一份本次快照，不设置定时扫描。
 
@@ -27,16 +27,41 @@
 
 本次验证包含交叉编译、包元数据及 ELF 静态核验；尚未在 Android 设备或模拟器上运行完整功能测试。SQLAlchemy 的数据库驱动及 asyncio 可选依赖不属于本批收录；watchfiles 的 `anyio` 等普通依赖仍由 PyPI 提供。
 
+## 第二批收录
+
+继续使用同一份原生候选前 50 快照，新增 8 个包。全部使用固定版本的 PyPI 官方 sdist，保持上游源码和元数据原样；没有源码补丁，也不通过开发版本改标稳定版。
+
+| 原生候选名次 | PyPI 总榜 | 包 | 稳定版本 | 快照下载量 |
+| --- | --- | --- | --- | --- |
+| 12 | 50 | [yarl](https://pypi.org/project/yarl/) | 1.25.1 | 459,889,343 |
+| 14 | 55 | [propcache](https://pypi.org/project/propcache/) | 0.5.4 | 442,913,585 |
+| 16 | 61 | [frozenlist](https://pypi.org/project/frozenlist/) | 1.8.0 | 417,051,290 |
+| 19 | 77 | [greenlet](https://pypi.org/project/greenlet/) | 3.5.6 | 369,974,693 |
+| 31 | 118 | [wcwidth](https://pypi.org/project/wcwidth/) | 0.9.4 | 240,279,397 |
+| 35 | 145 | [msgpack](https://pypi.org/project/msgpack/) | 1.2.4 | 193,313,294 |
+| 41 | 164 | [tokenizers](https://pypi.org/project/tokenizers/) | 0.23.3 | 166,389,324 |
+| 47 | 179 | [kiwisolver](https://pypi.org/project/kiwisolver/) | 1.5.1 | 156,347,414 |
+
+默认 Python 3.13、Android API 24，同时构建 `arm64-v8a` 与 `x86_64`，保留原有独立并行矩阵。16 个 wheel 均通过发行版本、源码哈希、wheel 哈希、WHEEL、RECORD 和实际 ELF 架构静态核验；尚未进行设备运行测试。`tokenizers` 与 `wcwidth` 产物使用上游声明的 `cp310-abi3` 标签，其余为 `cp313-cp313`；不能据此推断本轮已完成所有 Python 版本的运行验证。
+
+`msgpack` 的 Git tag 缺少生成的 C 文件，但官方 sdist 已包含 `_cmsgpack.c`。`kiwisolver` 的官方 sdist 保留稳定版发行元数据，不依赖浅克隆中的 Git 标签。两者均通过双 ABI 构建，`kiwisolver` 的最终版本为 `1.5.1`。
+
+`frozenlist` 的上游 cibuildwheel 发布配置含当前工具不再接受的 `cpython-freethreading` 选项。流水线通过 `--config-file` 读取仓库独立配置，PEP 517 后端继续使用原始项目文件。`wcwidth` 在 cibuildwheel 发布模式下要求 C 扩展成功，不允许缺少扩展仍产出 wheel；本次也实际核对了扩展 ELF。
+
+sdist 的地址、SHA-256、排名及全部预验证 wheel 记录见 [第二批审计记录](data/native-second-batch-2026-10.json)。原先失败的 Git 构建记录保留在首批审计文件中，并标注已解决。
+
 ## 暂缓项目
 
 | 包或类别 | 本次处理 |
 | --- | --- |
 | charset-normalizer、MarkupSafe、multidict、aiohttp、coverage | 当前 PyPI 已有官方 Android wheel，排除新增 |
-| yarl、propcache、frozenlist | 使用 `pep517_backend.hooks` 自定义后端，留待单独接入与验证 |
-| msgpack 1.2.4 | Git tag 缺少生成的 `_cmsgpack.c`，双 ABI 试构建失败；不修改源码，暂不收录 |
-| kiwisolver 1.5.1 | 编译成功但版本元数据不正确；拒绝把开发版本标成稳定版本发布 |
-| cryptography、cffi、Pillow、lxml、PyNaCl、google-crc32c 等 | 外部原生依赖与构建步骤需单独核验 |
-| NumPy、pandas、SciPy、PyArrow、scikit-learn、matplotlib、contourpy 等 | 构建后端及数值/图形依赖需专项适配 |
+| CFFI | 缺少 Android libffi 与 ffi.h，需先提供真实的目标平台依赖 |
+| cryptography、Pillow、lxml、PyNaCl、google-crc32c 等 | 外部原生依赖与构建步骤需单独核验 |
+| NumPy | 已尝试 Meson 构建，但缺少 Android BLAS；不发布关闭 BLAS 的构建 |
+| contourpy | 双 ABI 编译通过，因依赖 NumPy 暂缓发布 |
+| psutil | 上游明确拒绝 Android 平台，不修改源码中的平台判断 |
+| uvloop | 外部配置已解决 libuv 交叉编译识别，但上游仍硬编码链接 Android 不提供的独立 pthread 库 |
+| pandas、SciPy、PyArrow、scikit-learn、matplotlib 等 | 数值/图形依赖需专项适配 |
 | 其余前 50 项目 | 保留在审计表中，本轮未作为易移植首批准入 |
 
 ## 预验证记录
@@ -47,3 +72,6 @@
 - [watchfiles 双 ABI 构建](https://github.com/ririv/py-extra-wheels/actions/runs/40653006143)
 - [websockets 双 ABI 构建](https://github.com/ririv/py-extra-wheels/actions/runs/40653007438)
 - [wrapt 双 ABI 构建](https://github.com/ririv/py-extra-wheels/actions/runs/40653007909)
+- [第二批 sdist 预验证](https://github.com/ririv/py-extra-wheels/actions/runs/40656541328)：6 个收录包双 ABI 成功；同次运行包含失败或暂缓候选，整体状态为失败，未发布。
+- [frozenlist 与 wcwidth 双 ABI 预验证](https://github.com/ririv/py-extra-wheels/actions/runs/40659064598)：4 个目标全部成功，未发布。
+- [外部依赖与链接参数试构建](https://github.com/ririv/py-extra-wheels/actions/runs/40657971703)：NumPy、CFFI、uvloop 暂缓原因的日志；frozenlist 的配置冲突随后已解决。

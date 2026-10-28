@@ -2,14 +2,14 @@
 
 ## 配置与调度分离
 
-每个包的源码、后端和默认构建目标存放在 `recipes/<包名>.toml`。统一入口 `.github/workflows/build-wheels.yml` 调用 `scripts.pipeline`，解析上游 Git ref 为完整提交 SHA，并生成包 × Python × ABI 的独立任务矩阵。
+每个包的源码、后端和默认构建目标存放在 `recipes/<包名>.toml`。统一入口 `.github/workflows/build-wheels.yml` 调用 `scripts.pipeline`，将 Git ref 固定为完整提交 SHA，或将 PyPI sdist 固定为发行版本、下载地址与 SHA-256，并生成包 × Python × ABI 的独立任务矩阵。
 
 TOML 描述包配置；Python 负责规划、源码校验、环境组合、产物校验与发布；YAML 负责事件、权限、runner、并行矩阵及 Actions 产物传输。现有 maturin、cibuildwheel 和旧版 Chaquopy 构建能力继续使用。
 
 ```text
 recipes/*.toml
        ↓
-解析固定源码 SHA，生成完整构建计划
+固定 Git 提交或官方 sdist 哈希，生成完整构建计划
        ↓
 包 × Python × ABI 独立并行编译
        ↓
@@ -37,22 +37,41 @@ abis = ["arm64-v8a", "x86_64"]
 api = 24
 ```
 
+Git 源必须同时声明 `repository` 与 `ref`。也可以明确选择 PyPI 官方源码发行包（sdist）：
+
+```toml
+name = "msgpack"
+pypi-version = "1.2.4"
+directory = "."
+backend = "setuptools.build_meta"
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24
+```
+
+`pypi-version` 与 `repository` / `ref` 互斥。规划器要求指定版本只有一个未撤回的官方 sdist，下载并核验 SHA-256、`PKG-INFO` 包名和版本、实际后端；构建器再次核验后直接解包构建。不会在 Git 构建失败时自动切换来源，也不生成或修改上游源码。
+
 所有字段都必须显式提供，未知字段、重复目标和非法值会使规划阶段失败。
 
 | 字段 | 含义 |
 | --- | --- |
 | `name` | 规范化包名，必须与 TOML 文件名一致 |
 | `repository` | GitHub `owner/repo`，不带 URL 前缀 |
-| `ref` | 明确的分支、tag 或提交 SHA |
+| `ref` | Git 源的明确分支、tag 或提交 SHA |
+| `pypi-version` | PyPI sdist 源的固定发行版本，与 Git 源字段互斥 |
 | `directory` | Python 项目在源码仓库内的相对目录；根目录填写 `.` |
 | `backend` | 项目实际的 PEP 517 后端，与源码检测结果不一致时直接失败 |
 | `android.python` | 默认构建集合，不是上游支持版本的声明；手动任务可覆盖 |
 | `android.abis` | ABI 构建集合，支持 `arm64-v8a`、`x86_64` |
 | `android.api` | Android API 整数，至少为 24 |
 
-目前显式建模的后端为 `maturin`、`setuptools.build_meta`、`_pyyaml_pep517`。新增已有后端的包只需添加 TOML；其他后端须先扩展枚举并验证构建路径。
+目前显式建模的后端为 `maturin`、`setuptools.build_meta`、`_pyyaml_pep517`、`pep517_backend.hooks`、`mesonpy`。新增已有后端的包只需添加 TOML；其他后端须先扩展枚举并验证构建路径。
 
 `jiter` 使用 `directory = "crates/jiter-python"`。迁移保留了原有默认分支的行为，包括 `regex` 的 `hg`、`orjson` 和 `xxhash` 的 `master`；`ormsgpack` 使用原仓库重定向后的规范地址 `ormsgpack/ormsgpack`。
+
+cibuildwheel 明确读取仓库的 `scripts/build/cibuildwheel.toml`，目标、环境和产物处理由流水线提供；不读取上游项目的 cibuildwheel 发布配置。PEP 517 构建后端仍读取原始 `pyproject.toml`，不提供 recipe 自定义命令、环境或补丁入口。
 
 配置只支持当前已实现的 Android 目标；未来添加其他平台时应新增对应的目标类型和构建器，不能依赖缺省字段把其他平台当作 Android 执行。
 
@@ -91,7 +110,7 @@ gh workflow run build-wheels.yml \
   -f publication=build
 ```
 
-`recipes` 可为逗号分隔的包名或 `all`；`python_versions=recipe` 使用各 TOML 的默认集合，也可填写无空格的版本列表。覆盖 `version_tag` 时必须只选择一个包，可以同时构建该包的多个 Python 版本。
+`recipes` 可为逗号分隔的包名或 `all`；`python_versions=recipe` 使用各 TOML 的默认集合，也可填写无空格的版本列表。覆盖 `version_tag` 时必须只选择一个使用 Git 源的包，可以同时构建该包的多个 Python 版本。PyPI 源通过修改 TOML 中的 `pypi-version` 升级，不接受 Git ref 覆盖。
 
 `publication=publish` 是默认值，会提交 wheel 并触发现有索引发布链路；`publication=build` 只上传 Actions artifacts，跳过 `wheels` 分支和索引发布。
 
@@ -108,7 +127,7 @@ pydantic-core-android-3.13-wheel-arm64-v8a
 pydantic-core-android-3.13-wheel-x86_64
 ```
 
-每个 artifact 包含一个 wheel 和 `manifest.json`，记录固定源码 SHA、目标信息与 wheel SHA-256。统一发布任务按 `build-plan.json` 核验完整产物集合、来源、哈希、文件名、平台、Python/ABI 标签、METADATA、WHEEL 内部标签和每个 RECORD 文件的哈希及大小，再用一个提交更新 `wheels` 分支。缺失、多余、错配或冲突的产物会使发布失败；多个目标生成同名且内容不同的 wheel 时也直接失败。
+每个 artifact 包含一个 wheel 和 `manifest.json`，记录明确的源码类型、固定 Git SHA 或 sdist 版本与 SHA-256、目标信息及 wheel SHA-256。统一发布任务按 `build-plan.json` 核验完整产物集合、来源、哈希、文件名、平台、Python/ABI 标签、METADATA、WHEEL 内部标签和每个 RECORD 文件的哈希及大小，再用一个提交更新 `wheels` 分支。缺失、多余、错配或冲突的产物会使发布失败；多个目标生成同名且内容不同的 wheel 时也直接失败。
 
 编译任务只有读权限，写入仓库和触发索引的权限仅授予汇总发布任务。发布后核对下游已发布的 wheels 树，仅在尚未同步时通知；`publication=build` 始终跳过发布。
 

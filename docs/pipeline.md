@@ -7,7 +7,8 @@
 | `scripts/recipes` | 严格解析 TOML、选择受影响包、解析手动选择 |
 | `scripts/pipeline/model.py` | 固定源码、构建目标、构建器枚举与计划 |
 | `scripts/pipeline/planning.py` | 把 Actions 事件转成完整目标矩阵 |
-| `scripts/pipeline/source.py` | 解析上游 SHA、读取明确目录的后端、校验实际 checkout |
+| `scripts/pipeline/source.py` | 解析 Git SHA 或官方 sdist，核验明确目录的后端及发行元数据 |
+| `scripts/pipeline/sdists.py` | 校验源码包 SHA-256，安全解包并保留上游发行内容 |
 | `scripts/pipeline/cargo_env.py` | 组合 cibuildwheel 所需的 Cargo 环境配置，保留已有配置 |
 | `scripts/build` | Android 运行库、maturin/Chaquopy 构建与 wheel 修复 |
 | `scripts/pipeline/artifacts.py` | 记录并核验完整产物集合、来源与文件哈希 |
@@ -23,9 +24,9 @@
 
 主仓库保留五个工作流：recipe 入口、单目标 Android 构建器、临时仓库入口、索引部署、统一 CI。两个构建入口共享源码准备与发布 composite action。
 
-构建计划记录在 `build-plan` artifact 内的 `build-plan.json`，源码 ref 在规划时解析为完整 SHA。不同 Python 和 ABI 使用同一个固定源码提交，构建器在编译前重新校验 checkout。临时仓库入口未填写 ref 时，显式读取上游默认分支后固定其提交。
+构建计划记录在 `build-plan` artifact 内的 `build-plan.json`，源码使用 `GitSource | SdistSource` 和类型建模。Git ref 在规划时解析为完整 SHA；PyPI 源明确固定版本、地址、文件名和 SHA-256。不同 Python 和 ABI 使用同一固定来源，构建器在编译前重新校验 checkout 或源码包哈希、后端、`PKG-INFO`。sdist 的产物版本还必须等于所选发行版本。临时仓库入口未填写 ref 时，显式读取上游默认分支后固定其提交。
 
-每个目标使用独立 runner 编译。后端与 Python 版本决定 maturin、cibuildwheel 或 Chaquopy 路由，不改变原有交叉编译能力。驱动 Python 与目标 Python 分开设置。
+每个目标使用独立 runner 编译。后端与 Python 版本决定 maturin、cibuildwheel 或 Chaquopy 路由，不改变原有交叉编译能力。驱动 Python 与目标 Python 分开设置。cibuildwheel 使用仓库独立配置文件，避免上游针对其他平台的发布选项影响本流水线；不改写上游源码或构建元数据。
 
 所有目标成功后才进入汇总发布。发布会验证每个预期 artifact，缺少产物、源码错配、哈希不符、目标标签错误、同名内容冲突都会失败。校验通过后以一个提交更新 `wheels`，保留已有文件。不同工作流运行并发提交时，仅在远端确实前进后重新组合提交，最多三次；网络或权限失败直接报告。
 
@@ -55,6 +56,6 @@ uv run python -B -m unittest discover -s scripts/index/tests -v
 go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
 ```
 
-测试覆盖目标路由、固定 SHA、产物缺失与篡改、稳定 ABI、Cargo 配置组合、汇总提交、并发更新重试、无变化不发布，以及不检出 wheel 时的索引生成。测试、字节码、发布与通知逻辑变化不触发 native 构建；这些变化由组件测试和工作流检查验证。编译、源码准备、目标规划和公共构建配置变化仍重建全部 recipe。
+测试覆盖目标路由、固定 SHA、sdist 哈希与发行元数据、两种来源的计划往返、产物缺失与篡改、稳定 ABI、Cargo 配置组合、汇总提交、并发更新重试、无变化不发布，以及不检出 wheel 时的索引生成。测试、字节码、发布与通知逻辑变化不触发 native 构建；这些变化由组件测试和工作流检查验证。编译、源码准备、目标规划和公共构建配置变化仍重建全部 recipe。
 
 历史排障笔记位于 `docs/archive/`，不作为当前构建配置或使用说明。

@@ -1,5 +1,5 @@
 name: Prepare pinned source
-description: Download the build plan and verify the exact upstream checkout
+description: Download the plan and prepare its pinned Git or official sdist source
 inputs:
   target:
     description: Resolved build target JSON

@@ -1,0 +1,502 @@
+{
+  "checked_on": "2026-10-28",
+  "ranking_snapshot": "native-top50-2026-10.json",
+  "selection": [
+    {
+      "native_rank": 12,
+      "pypi_rank": 50,
+      "package": "yarl",
+      "downloads": 459889343,
+      "pypi_version": "1.25.1",
+      "native_wheel_sample": "yarl-1.25.1-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 14,
+      "pypi_rank": 55,
+      "package": "propcache",
+      "downloads": 442913585,
+      "pypi_version": "0.5.4",
+      "native_wheel_sample": "propcache-0.5.4-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 16,
+      "pypi_rank": 61,
+      "package": "frozenlist",
+      "downloads": 417051290,
+      "pypi_version": "1.8.0",
+      "native_wheel_sample": "frozenlist-1.8.0-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 19,
+      "pypi_rank": 77,
+      "package": "greenlet",
+      "downloads": 369974693,
+      "pypi_version": "3.5.6",
+      "native_wheel_sample": "greenlet-3.5.6-cp310-cp310-macosx_11_0_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 31,
+      "pypi_rank": 118,
+      "package": "wcwidth",
+      "downloads": 240279397,
+      "pypi_version": "0.9.4",
+      "native_wheel_sample": "wcwidth-0.9.4-cp310-abi3-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 35,
+      "pypi_rank": 145,
+      "package": "msgpack",
+      "downloads": 193313294,
+      "pypi_version": "1.2.4",
+      "native_wheel_sample": "msgpack-1.2.4-cp310-cp310-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 41,
+      "pypi_rank": 164,
+      "package": "tokenizers",
+      "downloads": 166389324,
+      "pypi_version": "0.23.3",
+      "native_wheel_sample": "tokenizers-0.23.3-cp310-abi3-macosx_10_12_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 47,
+      "pypi_rank": 179,
+      "package": "kiwisolver",
+      "downloads": 156347414,
+      "pypi_version": "1.5.1",
+      "native_wheel_sample": "kiwisolver-1.5.1-cp310-cp310-macosx_10_9_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    }
+  ],
+  "sources": [
+    {
+      "package": "msgpack",
+      "version": "1.2.4",
+      "url": "https://files.pythonhosted.org/packages/cc/52/1ec7ead2c7528bf3d1db73e886fa4df10f9e6f0eb7854a448b7090cfcef7/msgpack-1.2.4.tar.gz",
+      "sha256": "475c44e12f2a5de766a8448783f149c9b33f3f49b88953c6cd739a77d93c732c",
+      "filename": "msgpack-1.2.4.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "kiwisolver",
+      "version": "1.5.1",
+      "url": "https://files.pythonhosted.org/packages/ba/07/bd78e6a8fae171ea041ef5bba3ed21a003522fa088834b069b1909981f30/kiwisolver-1.5.1.tar.gz",
+      "sha256": "f1303ef2eec81262a4b708c3e858afe58d7c75ad91c1c05266eda7673369859a",
+      "filename": "kiwisolver-1.5.1.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "yarl",
+      "version": "1.25.1",
+      "url": "https://files.pythonhosted.org/packages/75/16/e8be8e2fb175bbf41a0680381a319f1199fae256588241a2ac8677eafb49/yarl-1.25.1.tar.gz",
+      "sha256": "03dd38de09bc213e9a8b29761eec33ee1d5318dac0e49d8af36e4d27830e23a7",
+      "filename": "yarl-1.25.1.tar.gz",
+      "directory": ".",
+      "backend": "pep517_backend.hooks",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "propcache",
+      "version": "0.5.4",
+      "url": "https://files.pythonhosted.org/packages/b3/9a/9fbf4e4ec0c2d7f1c32519fff782ef467859b8faa9fbc5331a96f6395d43/propcache-0.5.4.tar.gz",
+      "sha256": "ff6b113f50bc066a698db5d944d2c6dc7507168dd3341e255a8892fd0715a558",
+      "filename": "propcache-0.5.4.tar.gz",
+      "directory": ".",
+      "backend": "pep517_backend.hooks",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "greenlet",
+      "version": "3.5.6",
+      "url": "https://files.pythonhosted.org/packages/3e/6e/0091f175ccd02b02bc8811bbcbcc6ac2e980be116e3b2f7a736ca322bf84/greenlet-3.5.6.tar.gz",
+      "sha256": "8e67c43bdfc88d5fee6db0d3e40175b362fc95fb85f0412d233b9b203c53a575",
+      "filename": "greenlet-3.5.6.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "tokenizers",
+      "version": "0.23.3",
+      "url": "https://files.pythonhosted.org/packages/e0/7c/2cabb2174e772636683008f2c5621949b645da7d303c596589e84516a184/tokenizers-0.23.3.tar.gz",
+      "sha256": "cded33237c77caeef62944d32aa9a7ef42bdce2b3497e18d137e072a8c4be438",
+      "filename": "tokenizers-0.23.3.tar.gz",
+      "directory": ".",
+      "backend": "maturin",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "frozenlist",
+      "version": "1.8.0",
+      "url": "https://files.pythonhosted.org/packages/2d/f5/c831fac6cc817d26fd54c7eaccd04ef7e0288806943f7cc5bbf69f3ac1f0/frozenlist-1.8.0.tar.gz",
+      "sha256": "3ede829ed8d842f6cd48fc7081d7a41001a56f1f38603f9d49bf3020d59a31ad",
+      "filename": "frozenlist-1.8.0.tar.gz",
+      "directory": ".",
+      "backend": "pep517_backend.hooks",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "wcwidth",
+      "version": "0.9.4",
+      "url": "https://files.pythonhosted.org/packages/ea/01/e5ac23733628a6bbb91913a765fcf55ee8070d8d991bc88fdaaf805052c7/wcwidth-0.9.4.tar.gz",
+      "sha256": "fd8d57d3cdfe570e3265c8fab1885c24e34ef40889c0759c0c304a19e9835954",
+      "filename": "wcwidth-0.9.4.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    }
+  ],
+  "preflight_wheels": [
+    {
+      "package": "msgpack",
+      "version": "1.2.4",
+      "abi": "arm64-v8a",
+      "filename": "msgpack-1.2.4-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "ddb35b23511c0a9dfd5fb8051e492432eb7b33bedf04cb6a6bc2ab5971336be2",
+      "source_sha256": "475c44e12f2a5de766a8448783f149c9b33f3f49b88953c6cd739a77d93c732c",
+      "native_modules": [
+        "msgpack/_cmsgpack.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40656541328
+    },
+    {
+      "package": "msgpack",
+      "version": "1.2.4",
+      "abi": "x86_64",
+      "filename": "msgpack-1.2.4-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "8fd6b2922f42cd5fb6f8fee947269be0d5eb293d1596b123d41e42483f23d208",
+      "source_sha256": "475c44e12f2a5de766a8448783f149c9b33f3f49b88953c6cd739a77d93c732c",
+      "native_modules": [
+        "msgpack/_cmsgpack.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40656541328
+    },
+    {
+      "package": "kiwisolver",
+      "version": "1.5.1",
+      "abi": "arm64-v8a",
+      "filename": "kiwisolver-1.5.1-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "ddd7256472f3c2b738eab2dd5635c7992cad7d4f52a3ad20b45ef948e4ff33af",
+      "source_sha256": "f1303ef2eec81262a4b708c3e858afe58d7c75ad91c1c05266eda7673369859a",
+      "native_modules": [
+        "kiwisolver/_cext.cpython-313-aarch64-linux-android.so",
+        "kiwisolver.libs/libc++_shared-d523468d.so"
+      ],
+      "needed": [
+        "libc++_shared-d523468d.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40656541328
+    },
+    {
+      "package": "kiwisolver",
+      "version": "1.5.1",
+      "abi": "x86_64",
+      "filename": "kiwisolver-1.5.1-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "c26b9ad67871ac73afa799bf1008a6fc84520ad87eecb0e987cfdcc5d773af7e",
+      "source_sha256": "f1303ef2eec81262a4b708c3e858afe58d7c75ad91c1c05266eda7673369859a",
+      "native_modules": [
+        "kiwisolver/_cext.cpython-313-x86_64-linux-android.so",
+        "kiwisolver.libs/libc++_shared-3d8817f3.so"
+      ],
+      "needed": [
+        "libc++_shared-3d8817f3.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40656541328
+    },
+    {
+      "package": "yarl",
+      "version": "1.25.1",
+      "abi": "arm64-v8a",
+      "filename": "yarl-1.25.1-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "46cb98779e964814eac75a82868821d61186a92c4791d9b9523f801947ffe0cb",
+      "source_sha256": "03dd38de09bc213e9a8b29761eec33ee1d5318dac0e49d8af36e4d27830e23a7",
+      "native_modules": [
+        "yarl/_quoting_c.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40656541328
+    },
+    {
+      "package": "yarl",
+      "version": "1.25.1",
+      "abi": "x86_64",
+      "filename": "yarl-1.25.1-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "57604ad0d9f7e0f95b969ecc985f314d8d70ea4891d1442f3f341384324a4b9b",
+      "source_sha256": "03dd38de09bc213e9a8b29761eec33ee1d5318dac0e49d8af36e4d27830e23a7",
+      "native_modules": [
+        "yarl/_quoting_c.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40656541328
+    },
+    {
+      "package": "propcache",
+      "version": "0.5.4",
+      "abi": "arm64-v8a",
+      "filename": "propcache-0.5.4-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "1f9e21be955c2dfab699fe93ca734158bb421ffbd9b933a2d38bfc84d1395ac9",
+      "source_sha256": "ff6b113f50bc066a698db5d944d2c6dc7507168dd3341e255a8892fd0715a558",
+      "native_modules": [
+        "propcache/_helpers_c.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40656541328
+    },
+    {
+      "package": "propcache",
+      "version": "0.5.4",
+      "abi": "x86_64",
+      "filename": "propcache-0.5.4-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "191a7159e80ed1256cbf153c7e9c4081ab863da4c43b2aac6ea6ea38bc9a6679",
+      "source_sha256": "ff6b113f50bc066a698db5d944d2c6dc7507168dd3341e255a8892fd0715a558",
+      "native_modules": [
+        "propcache/_helpers_c.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40656541328
+    },
+    {
+      "package": "greenlet",
+      "version": "3.5.6",
+      "abi": "arm64-v8a",
+      "filename": "greenlet-3.5.6-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "6211235f18b13c654a7bb451ee3c084b60d826f22ce010de9e4a588ed994018a",
+      "source_sha256": "8e67c43bdfc88d5fee6db0d3e40175b362fc95fb85f0412d233b9b203c53a575",
+      "native_modules": [
+        "greenlet/_greenlet.cpython-313-aarch64-linux-android.so",
+        "greenlet/tests/_test_extension.cpython-313-aarch64-linux-android.so",
+        "greenlet/tests/_test_extension_cpp.cpython-313-aarch64-linux-android.so",
+        "greenlet.libs/libc++_shared-d523468d.so"
+      ],
+      "needed": [
+        "libc++_shared-d523468d.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40656541328
+    },
+    {
+      "package": "greenlet",
+      "version": "3.5.6",
+      "abi": "x86_64",
+      "filename": "greenlet-3.5.6-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "d191509284edab6f2db6a3a9fbb2246930401ac9c70eb6cd24469bdfb749534f",
+      "source_sha256": "8e67c43bdfc88d5fee6db0d3e40175b362fc95fb85f0412d233b9b203c53a575",
+      "native_modules": [
+        "greenlet/_greenlet.cpython-313-x86_64-linux-android.so",
+        "greenlet/tests/_test_extension.cpython-313-x86_64-linux-android.so",
+        "greenlet/tests/_test_extension_cpp.cpython-313-x86_64-linux-android.so",
+        "greenlet.libs/libc++_shared-3d8817f3.so"
+      ],
+      "needed": [
+        "libc++_shared-3d8817f3.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40656541328
+    },
+    {
+      "package": "tokenizers",
+      "version": "0.23.3",
+      "abi": "arm64-v8a",
+      "filename": "tokenizers-0.23.3-cp310-abi3-android_24_arm64_v8a.whl",
+      "sha256": "6b55ef9e45bb1ff984c1e7e3e4d0798c4b8efb92d72b33dbc955bc7159457538",
+      "source_sha256": "cded33237c77caeef62944d32aa9a7ef42bdce2b3497e18d137e072a8c4be438",
+      "native_modules": [
+        "tokenizers/tokenizers.abi3.so"
+      ],
+      "needed": [
+        "libc++_shared.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "preflight_run": 40656541328
+    },
+    {
+      "package": "tokenizers",
+      "version": "0.23.3",
+      "abi": "x86_64",
+      "filename": "tokenizers-0.23.3-cp310-abi3-android_24_x86_64.whl",
+      "sha256": "be7ab241453e2085bb8a9dccf74e8a416caf831b72dcd5dd1545e80501845ff8",
+      "source_sha256": "cded33237c77caeef62944d32aa9a7ef42bdce2b3497e18d137e072a8c4be438",
+      "native_modules": [
+        "tokenizers/tokenizers.abi3.so"
+      ],
+      "needed": [
+        "libc++_shared.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so"
+      ],
+      "preflight_run": 40656541328
+    },
+    {
+      "package": "frozenlist",
+      "version": "1.8.0",
+      "abi": "arm64-v8a",
+      "filename": "frozenlist-1.8.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "16d3ce15ae2285613d234ed7801978edeb4e9813047fbdd285c792d52719ea6b",
+      "source_sha256": "3ede829ed8d842f6cd48fc7081d7a41001a56f1f38603f9d49bf3020d59a31ad",
+      "native_modules": [
+        "frozenlist/_frozenlist.cpython-313-aarch64-linux-android.so",
+        "frozenlist.libs/libc++_shared-d523468d.so"
+      ],
+      "needed": [
+        "libc++_shared-d523468d.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40659064598
+    },
+    {
+      "package": "frozenlist",
+      "version": "1.8.0",
+      "abi": "x86_64",
+      "filename": "frozenlist-1.8.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "87bf2e1e7d8de54efe5dafec5c9a59bdb5cdaec47cd9b8ddbf3fa2e799507159",
+      "source_sha256": "3ede829ed8d842f6cd48fc7081d7a41001a56f1f38603f9d49bf3020d59a31ad",
+      "native_modules": [
+        "frozenlist/_frozenlist.cpython-313-x86_64-linux-android.so",
+        "frozenlist.libs/libc++_shared-3d8817f3.so"
+      ],
+      "needed": [
+        "libc++_shared-3d8817f3.so",
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40659064598
+    },
+    {
+      "package": "wcwidth",
+      "version": "0.9.4",
+      "abi": "arm64-v8a",
+      "filename": "wcwidth-0.9.4-cp310-abi3-android_24_arm64_v8a.whl",
+      "sha256": "7889f5e7d6ce216012ad11cec3a505cfd60c76e0389a217c1379828799e20cb0",
+      "source_sha256": "fd8d57d3cdfe570e3265c8fab1885c24e34ef40889c0759c0c304a19e9835954",
+      "native_modules": [
+        "wcwidth/_wcwidth_c.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40659064598
+    },
+    {
+      "package": "wcwidth",
+      "version": "0.9.4",
+      "abi": "x86_64",
+      "filename": "wcwidth-0.9.4-cp310-abi3-android_24_x86_64.whl",
+      "sha256": "07e88cf664065fcbaad0b9bfbec28aee323b9bc783939542d69068139fcb8559",
+      "source_sha256": "fd8d57d3cdfe570e3265c8fab1885c24e34ef40889c0759c0c304a19e9835954",
+      "native_modules": [
+        "wcwidth/_wcwidth_c.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "preflight_run": 40659064598
+    }
+  ],
+  "validation": "Python 3.13 / Android API 24 / arm64-v8a 与 x86_64；发行版本、源码与 wheel SHA-256、WHEEL、RECORD、实际 ELF 架构及动态依赖静态核验；未进行设备运行测试。",
+  "deferred": [
+    {
+      "package": "psutil",
+      "reason": "上游构建脚本明确拒绝 Android；不修改平台判断。",
+      "run_id": 40656541328
+    },
+    {
+      "package": "uvloop",
+      "reason": "设置上游 LIBUV_CONFIGURE_HOST 后仍硬编码链接 -lpthread；Android 无独立 libpthread，不创建伪造兼容库。",
+      "run_id": 40657971703
+    },
+    {
+      "package": "cffi",
+      "reason": "缺少目标平台 libffi 和 ffi.h，需先实现真实外部依赖构建。",
+      "run_id": 40657971703
+    },
+    {
+      "package": "numpy",
+      "reason": "缺少目标平台 BLAS；不发布关闭 BLAS 的数值构建。",
+      "run_id": 40657971703
+    },
+    {
+      "package": "contourpy",
+      "reason": "双 ABI 编译及 ELF 静态核验成功，但运行依赖 NumPy，等待其可用后再收录。",
+      "run_id": 40656541328
+    }
+  ]
+}

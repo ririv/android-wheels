@@ -167,7 +167,7 @@
       "pypi_version": "1.25.1",
       "native_wheel_sample": "yarl-1.25.1-cp310-cp310-macosx_10_9_universal2.whl",
       "official_android_wheels": [],
-      "decision": "backend_not_enabled"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 13,
@@ -216,7 +216,7 @@
       "pypi_version": "0.5.4",
       "native_wheel_sample": "propcache-0.5.4-cp310-cp310-macosx_10_9_universal2.whl",
       "official_android_wheels": [],
-      "decision": "backend_not_enabled"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 15,
@@ -236,7 +236,7 @@
       "pypi_version": "1.8.0",
       "native_wheel_sample": "frozenlist-1.8.0-cp310-cp310-macosx_10_9_universal2.whl",
       "official_android_wheels": [],
-      "decision": "backend_not_enabled"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 17,
@@ -266,7 +266,7 @@
       "pypi_version": "3.5.6",
       "native_wheel_sample": "greenlet-3.5.6-cp310-cp310-macosx_11_0_universal2.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 20,
@@ -393,7 +393,7 @@
       "pypi_version": "0.9.4",
       "native_wheel_sample": "wcwidth-0.9.4-cp310-abi3-macosx_10_9_x86_64.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 32,
@@ -433,7 +433,7 @@
       "pypi_version": "1.2.4",
       "native_wheel_sample": "msgpack-1.2.4-cp310-cp310-macosx_10_9_x86_64.whl",
       "official_android_wheels": [],
-      "decision": "preflight_failed"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 36,
@@ -493,7 +493,7 @@
       "pypi_version": "0.23.3",
       "native_wheel_sample": "tokenizers-0.23.3-cp310-abi3-macosx_10_12_x86_64.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 42,
@@ -553,7 +553,7 @@
       "pypi_version": "1.5.1",
       "native_wheel_sample": "kiwisolver-1.5.1-cp310-cp310-macosx_10_9_universal2.whl",
       "official_android_wheels": [],
-      "decision": "version_metadata_mismatch"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 48,
@@ -803,13 +803,17 @@
       "package": "msgpack",
       "version": "1.2.4",
       "run_id": 40653013076,
-      "reason": "Git tag 缺少 msgpack/_cmsgpack.c，默认源码构建失败。"
+      "reason": "Git tag 缺少 msgpack/_cmsgpack.c，默认源码构建失败。",
+      "resolution": "改用相同版本的 PyPI 官方 sdist，双 ABI 原生 wheel 已通过验证。",
+      "resolution_run_id": 40656541328
     },
     {
       "package": "kiwisolver",
       "version": "1.5.1",
       "run_id": 40653014288,
-      "reason": "浅克隆未保留版本标签，setuptools-scm 生成 0.1.dev1+g166899b65，拒绝按 1.5.1 发布。"
+      "reason": "浅克隆未保留版本标签，setuptools-scm 生成 0.1.dev1+g166899b65，拒绝按 1.5.1 发布。",
+      "resolution": "改用相同版本的 PyPI 官方 sdist，双 ABI 原生 wheel 已通过验证。",
+      "resolution_run_id": 40656541328
     }
   ]
 }
