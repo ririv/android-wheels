@@ -40,7 +40,7 @@ xxhash
 
 This repository uses GitHub Actions to automate building and publishing:
 
-1. **Build workflows**: Each package has its own workflow file (e.g. `wheel-zstandard.yml`). It fetches the library's source code and uses a reusable workflow (`build-android-wheel-dispatch.yml`) to cross-compile it for each Android ABI with the Android NDK.
+1. **Recipe / Matrix**: `recipes/*.toml` → `build-wheels.yml` → `build-android-wheel-dispatch.yml`. [配置与并行构建说明](docs/recipes.md)。
 2. **Commit to the `wheels` branch**: Successfully built `.whl` files are committed to the `wheels` branch.
 3. **Deploy the index**: Pushing to the `wheels` branch triggers the `pages.yml` workflow, which generates a PEP 503 compliant "simple" package index and deploys it to GitHub Pages.
 
@@ -63,24 +63,6 @@ Package index names follow Python's [PEP 503](https://peps.python.org/pep-0503/)
 | PEP 658       | Index: serves metadata to speed up dependency resolution.   |
 | PEP 738       | Platform: Android support, including the packaging format.  |
 
-## How to add a new package
+## Recipe / TOML
 
-Community contributions of new packages are welcome. To add a new package to this repository's build system, follow these steps:
-
-1.  **Fork this repository**
-    Click the "Fork" button at the top right of the page to fork this repository to your own GitHub account.
-
-2.  **Create a new workflow file**
-    In your fork, go to the `.github/workflows/` directory. Copy an existing workflow file (e.g. `wheel-zstandard.yml`) and rename it after the package you want to add, e.g. `wheel-<new-package>.yml`.
-
-3.  **Edit the workflow file**
-    Open the new file and edit the parameters in the `with:` section:
-    *   `library_name`: The name of the package to build (usually its name on PyPI).
-    *   `git_repository`: The package's source Git repository (e.g. `author/repo`).
-    *   `version_tag`: (Optional) A fixed Git tag or branch to build. If empty, the latest code on the default branch is used.
-    *   `package_dir`: (Optional) The subdirectory of the source repository that contains the Python project (`pyproject.toml`/`setup.py`), e.g. `crates/jiter-python` for jiter. If empty, it is detected automatically.
-
-4.  **Open a pull request**
-    Commit your changes and open a pull request against the upstream repository (`ririv/py-extra-wheels`).
-
-After your pull request is merged, a maintainer will manually trigger the workflow to build your package. Once the build succeeds, the new wheels are automatically published to the package index.
+新增包请添加 `recipes/<包名>.toml`；统一入口为 `build-wheels.yml`。配置格式、手动构建及多 Python 版本并行见 [Recipe 与并行构建](docs/recipes.md)。

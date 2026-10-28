@@ -1,0 +1,89 @@
+name: Build wheels from recipes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'recipes/**'
+      - 'scripts/recipes/**'
+      - 'scripts/__init__.py'
+      - 'scripts/build/**'
+      - '.github/workflows/build-wheels.yml'
+      - '.github/workflows/build-android-wheel-dispatch.yml'
+  workflow_dispatch:
+    inputs:
+      recipes:
+        description: 'Recipe names separated by commas, or all'
+        required: true
+        type: string
+        default: 'pydantic-core'
+      python_versions:
+        description: 'recipe uses TOML defaults; otherwise comma-separated versions such as 3.10,3.13'
+        required: true
+        type: string
+        default: 'recipe'
+      version_tag:
+        description: 'Override Git ref for a single selected recipe'
+        required: false
+        type: string
+      publication:
+        description: 'publish updates the wheel index; build keeps artifacts in Actions only'
+        required: true
+        type: choice
+        options: [publish, build]
+        default: publish
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      has_jobs: ${{ steps.plan.outputs.has_jobs }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Build independent job matrix
+        id: plan
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          RECIPES: ${{ inputs.recipes }}
+          PYTHON_VERSIONS: ${{ inputs.python_versions }}
+          VERSION_TAG: ${{ inputs.version_tag }}
+          PUBLICATION: ${{ inputs.publication }}
+        run: |
+          if [ "$EVENT_NAME" = 'push' ]; then
+            if [ "$BEFORE_SHA" != '0000000000000000000000000000000000000000' ]; then
+              git fetch --no-tags --depth=1 origin "$BEFORE_SHA"
+            fi
+            python -m scripts.recipes plan-changes --before "$BEFORE_SHA" --after "$GITHUB_SHA" --github-output "$GITHUB_OUTPUT"
+          else
+            python -m scripts.recipes plan --recipes "$RECIPES" --python-versions "$PYTHON_VERSIONS" --version-tag "$VERSION_TAG" --publication "$PUBLICATION" --github-output "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    name: ${{ matrix.name }} / ${{ matrix.platform }} / Python ${{ matrix.python }}
+    needs: plan
+    if: needs.plan.outputs.has_jobs == 'true'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    uses: ./.github/workflows/build-android-wheel-dispatch.yml
+    permissions:
+      contents: write
+      actions: write
+    with:
+      library_name: ${{ matrix.name }}
+      git_repository: ${{ matrix.repository }}
+      version_tag: ${{ matrix.ref }}
+      package_dir: ${{ matrix.directory }}
+      expected_backend: ${{ matrix.backend }}
+      target_python_version: ${{ matrix.python }}
+      android_abis: ${{ matrix.abis }}
+      android_api: ${{ matrix.android_api }}
+      publication: ${{ matrix.publication }}

@@ -46,7 +46,7 @@ xxhash
 
 本仓库使用 GitHub Actions 实现自动化构建和发布流程：
 
-1. **构建工作流**: 每个包都有一个对应的工作流文件（例如 `wheel-zstandard.yml`），它会获取库的源码，并使用一个可复用的工作流（`build-android-wheel-dispatch.yml`）通过 Android NDK为不同的 Android ABI 进行交叉编译。
+1. **Recipe 与构建矩阵**：每个包的配置位于 `recipes/<包名>.toml`。统一入口 `build-wheels.yml` 选择变更的包并生成并行矩阵，再调用现有 Android 构建器。包、Python 版本和 ABI 均可并行。
 2. **提交到 `wheels` 分支**: 成功构建的 `.whl` 文件会被提交到 `wheels` 分支。
 3. **部署索引**: 推送到 `wheels` 分支会触发 `pages.yml` 工作流，该工作流会生成一个符合 PEP 503 规范的“简单”包索引，并将其部署到 GitHub Pages。
 
@@ -72,22 +72,10 @@ wheel 文件命名遵循 Python 的 [PEP 427](https://peps.python.org/pep-0427/#
 
 ## 如何添加新的包
 
-我们欢迎社区贡献新的包。如果您想添加一个新的包到本仓库的构建系统中，请遵循以下步骤：
+在 `recipes/` 新增 `<包名>.toml`，显式填写源码仓库、Git ref、Python 项目目录、构建后端及 Android 默认目标。不要为每个包新增工作流。
 
-1.  **Fork 本仓库**
-    点击页面右上角的 "Fork" 按钮，将此仓库复刻到您自己的 GitHub 账户下。
+配置合并到 `main` 后，只构建变更对应的包。手动构建、多 Python 版本、仅生成 Actions 产物和配置校验见 [Recipe 与并行构建](docs/recipes.md)。
 
-2.  **创建新的工作流文件**
-    在您的 Fork 中，进入 `.github/workflows/` 目录。复制一个现有的工作流文件（例如 `wheel-zstandard.yml`）并将其重命名为您想添加的包名，例如 `wheel-<new-package>.yml`。
-
-3.  **修改工作流文件**
-    打开您新创建的文件，并修改 `with:` 部分的参数：
-    *   `library_name`: 设置为您要构建的包的名称（通常是 PyPI 上的名称）。
-    *   `git_repository`: 设置为该包的源码 Git 仓库地址（例如 `author/repo`）。
-    *   `version_tag`: (可选) 您可以指定一个固定的 Git 标签或分支。如果留空，将使用默认分支的最新代码。
-    *   `package_dir`: (可选) Python 项目（`pyproject.toml`/`setup.py`）在源码仓库中的子目录，例如 jiter 的 `crates/jiter-python`。如果留空，将自动查找。
-
-4.  **提交 Pull Request**
-    提交您的更改，并向上游仓库（`ririv/py-extra-wheels`）发起一个 Pull Request。
-
-在您的 Pull Request 被合并后，仓库维护者会手动触发一次新的工作流来构建您的包。构建成功后，新的 wheel 文件会自动发布到包索引中。
+```sh
+gh workflow run build-wheels.yml -f recipes=pydantic-core -f python_versions=3.10 -f version_tag=v2.41.5
+```

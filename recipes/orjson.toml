@@ -1,0 +1,10 @@
+name = "orjson"
+repository = "ririv/orjson"
+ref = "master"
+directory = "."
+backend = "maturin"
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24

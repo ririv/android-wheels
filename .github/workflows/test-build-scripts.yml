@@ -4,10 +4,20 @@ on:
   push:
     paths:
       - 'scripts/build/**'
+      - 'scripts/recipes/**'
+      - 'scripts/__init__.py'
+      - 'recipes/**'
+      - '.github/workflows/build-wheels.yml'
+      - '.github/workflows/build-android-wheel-dispatch.yml'
       - '.github/workflows/test-build-scripts.yml'
   pull_request:
     paths:
       - 'scripts/build/**'
+      - 'scripts/recipes/**'
+      - 'scripts/__init__.py'
+      - 'recipes/**'
+      - '.github/workflows/build-wheels.yml'
+      - '.github/workflows/build-android-wheel-dispatch.yml'
       - '.github/workflows/test-build-scripts.yml'
 
 permissions:
@@ -28,6 +38,10 @@ jobs:
         run: |
           python -m pip install tomli-w 'wheel==0.45.1'
           python -B -m unittest discover -s scripts/build/tests -v
+      - name: Validate recipes and test matrix planning
+        run: |
+          python -B -m scripts.recipes validate
+          python -B -m unittest discover -s scripts/recipes/tests -v
       - name: Checkout pinned Chaquopy build tools
         uses: actions/checkout@v4
         with:

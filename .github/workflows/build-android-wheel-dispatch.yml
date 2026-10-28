@@ -20,6 +20,21 @@ on:
         required: false
         type: string
         default: ''
+      expected_backend:
+        description: 'Expected PEP 517 backend; detect keeps ad-hoc source discovery'
+        required: false
+        type: string
+        default: 'detect'
+      android_abis:
+        description: 'JSON array of Android ABIs'
+        required: false
+        type: string
+        default: '["arm64-v8a", "x86_64"]'
+      publication:
+        description: 'publish commits wheels and updates indexes; build uploads artifacts only'
+        required: false
+        type: string
+        default: 'publish'
       target_python_version:
         description: 'Python version: 3.10, 3.11, 3.12, 3.13, 3.14 or 3.15'
         required: false
@@ -36,6 +51,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       build_backend: ${{ steps.check_backend.outputs.build_backend }}
+      android_matrix: ${{ steps.android_targets.outputs.matrix }}
+      artifact_prefix: ${{ steps.android_targets.outputs.artifact_prefix }}
     steps:
       - name: Checkout self
         uses: actions/checkout@v4
@@ -45,6 +62,16 @@ jobs:
           TARGET_PYTHON_VERSION: ${{ inputs.target_python_version }}
         run: |
           python -c 'import os, sys; sys.path.insert(0, "scripts/build"); from android_python import PythonVersion; PythonVersion(os.environ["TARGET_PYTHON_VERSION"])'
+
+      - name: Plan Android targets
+        id: android_targets
+        env:
+          ANDROID_ABIS: ${{ inputs.android_abis }}
+          LIBRARY_NAME: ${{ inputs.library_name }}
+          PYTHON_VERSION: ${{ inputs.target_python_version }}
+          PUBLICATION: ${{ inputs.publication }}
+        run: |
+          python -m scripts.recipes targets --abis "$ANDROID_ABIS" --library "$LIBRARY_NAME" --python-version "$PYTHON_VERSION" --publication "$PUBLICATION" --github-output "$GITHUB_OUTPUT"
 
       - name: Normalize Git Repository Input
         id: normalize_repo
@@ -65,6 +92,7 @@ jobs:
         id: check_backend
         env:
           PACKAGE_DIR: ${{ inputs.package_dir }}
+          EXPECTED_BACKEND: ${{ inputs.expected_backend }}
         run: |
           if [ -n "$PACKAGE_DIR" ] && [ ! -f "library-source/$PACKAGE_DIR/pyproject.toml" ] && [ ! -f "library-source/$PACKAGE_DIR/setup.py" ]; then
             echo "::error::package_dir '$PACKAGE_DIR' does not contain pyproject.toml or setup.py"
@@ -72,6 +100,7 @@ jobs:
           fi
           chmod +x scripts/build/check_backend.py
           BACKEND=$(python scripts/build/check_backend.py "library-source/$PACKAGE_DIR")
+          python -m scripts.recipes check-backend --actual "$BACKEND" --expected "$EXPECTED_BACKEND"
           echo "build_backend=$BACKEND" >> $GITHUB_OUTPUT
 
   build_with_maturin:
@@ -81,8 +110,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        abi: [arm64-v8a, x86_64]
+      matrix: ${{ fromJSON(needs.dispatch.outputs.android_matrix) }}
 
     steps:
       - name: Checkout self
@@ -145,7 +173,7 @@ jobs:
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.library_name }}-android-wheel-${{ matrix.abi }}
+          name: ${{ matrix.artifact_name }}
           path: output/*.whl
           if-no-files-found: error
 
@@ -156,12 +184,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - abi: "arm64_v8a"
-            target: "aarch64-linux-android"
-          - abi: "x86_64"
-            target: "x86_64-linux-android"
+      matrix: ${{ fromJSON(needs.dispatch.outputs.android_matrix) }}
 
     steps:
       - name: Checkout self
@@ -210,7 +233,7 @@ jobs:
           package-dir: library-source/${{ steps.find_proj.outputs.project_dir }}
         env:
           CIBW_PLATFORM: android
-          CIBW_ARCHS: ${{ matrix.abi }}
+          CIBW_ARCHS: ${{ matrix.cibw_arch }}
           CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ inputs.android_api }} CARGO_BUILD_TARGET=${{ matrix.target }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ inputs.android_api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ inputs.android_api }}-clang PYO3_CROSS=1'
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
@@ -239,7 +262,7 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.library_name }}-android-wheel-${{ matrix.abi }}
+          name: ${{ matrix.artifact_name }}
           path: ./wheelhouse/*.whl
 
   build_with_chaquopy:
@@ -249,8 +272,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        abi: [arm64-v8a, x86_64]
+      matrix: ${{ fromJSON(needs.dispatch.outputs.android_matrix) }}
     steps:
       - name: Checkout self
         uses: actions/checkout@v4
@@ -304,14 +326,14 @@ jobs:
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.library_name }}-android-wheel-${{ matrix.abi }}
+          name: ${{ matrix.artifact_name }}
           path: output/*.whl
           if-no-files-found: error
 
   upload-wheels:
     name: Upload Wheels
-    needs: [build_with_maturin, build_with_cibw, build_with_chaquopy]
-    if: always() && (needs.build_with_maturin.result == 'success' || needs.build_with_cibw.result == 'success' || needs.build_with_chaquopy.result == 'success')
+    needs: [dispatch, build_with_maturin, build_with_cibw, build_with_chaquopy]
+    if: always() && inputs.publication == 'publish' && (needs.build_with_maturin.result == 'success' || needs.build_with_cibw.result == 'success' || needs.build_with_chaquopy.result == 'success')
     runs-on: ubuntu-latest
     # No shared concurrency group: GitHub keeps only one pending job per group and cancels the
     # rest, which dropped uploads when several libraries finished together. Concurrent pushes
@@ -326,7 +348,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: wheels
-          pattern: ${{ inputs.library_name }}-android-wheel-*
+          pattern: ${{ needs.dispatch.outputs.artifact_prefix }}-*
           merge-multiple: true
       - name: Commit wheels to 'wheels' branch
         run: |

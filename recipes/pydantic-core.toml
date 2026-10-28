@@ -1,0 +1,10 @@
+name = "pydantic-core"
+repository = "pydantic/pydantic-core"
+ref = "main"
+directory = "."
+backend = "maturin"
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24

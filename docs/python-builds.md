@@ -19,7 +19,7 @@
 
 ## 构建路由
 
-`build-android-wheel-dispatch.yml` 先校验 Python 版本，再检测项目的构建后端。
+`build-wheels.yml` 从 `recipes/*.toml` 生成包与 Python 版本的并行矩阵，再调用 `build-android-wheel-dispatch.yml`。后者校验目标并检测源码的实际后端，recipe 声明与源码不一致时直接失败。配置格式、变更范围选择及 artifact 隔离方式见 [Recipe 与并行构建](recipes.md)。
 
 - maturin 项目由 `build_android_wheel.py` 构建，支持上述全部版本。3.10–3.12 的 Chaquopy target 没有 sysconfigdata，因此使用包含 Python 版本、64 位指针宽度、共享库路径及扩展后缀的 `PYO3_CONFIG_FILE`。3.13–3.15 使用归档内的目标 sysconfigdata。
 - 其他后端在 3.10–3.12 上使用固定提交的 [Chaquopy build-wheel](https://github.com/chaquo/chaquopy/blob/6e365e30f7199468d9fffe628fe9f0a7658fdbb3/server/pypi/README-old.md)。包版本由项目后端生成的元数据提供，Git 标签仅用于选择源码。

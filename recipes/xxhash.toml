@@ -1,0 +1,10 @@
+name = "xxhash"
+repository = "ifduyue/python-xxhash"
+ref = "master"
+directory = "."
+backend = "setuptools.build_meta"
+
+[android]
+python = ["3.13"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24
