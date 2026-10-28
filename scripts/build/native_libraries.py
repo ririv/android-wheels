@@ -1,6 +1,5 @@
 """Build pinned native libraries without modifying their source trees."""
 
-import argparse
 import json
 import os
 import re
@@ -166,20 +165,3 @@ def build_libraries(
     (prefix / "native-libraries.json").write_text(
         json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
     )
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--libraries", required=True)
-    parser.add_argument("--prefix", type=Path, required=True)
-    parser.add_argument("--ndk", type=Path, required=True)
-    parser.add_argument("--toolchain", type=Path, required=True)
-    parser.add_argument("--abi", type=AndroidABI, required=True)
-    parser.add_argument("--api", type=int, required=True)
-    args = parser.parse_args()
-    names = tuple(NativeLibrary(name) for name in args.libraries.split(",") if name)
-    build_libraries(names, args.prefix, args.ndk, args.toolchain, args.abi, args.api)
-
-
-if __name__ == "__main__":
-    main()

@@ -1,4 +1,4 @@
-"""Download pinned official sdists and extract their unchanged release sources."""
+"""Download pinned source archives and extract their unchanged release sources."""
 
 import hashlib
 import shutil
@@ -32,14 +32,14 @@ def extract(archive: Path, destination: Path) -> Path:
             for member in source.infolist():
                 path = PurePosixPath(member.filename)
                 if path.is_absolute() or ".." in path.parts or "\\" in member.filename:
-                    raise ValueError("sdist ZIP 包含非法路径")
+                    raise ValueError("源码 ZIP 包含非法路径")
             source.extractall(destination)
     elif archive.name.endswith((".tar.gz", ".tar.bz2", ".tar.xz", ".tgz")):
         with tarfile.open(archive) as source:
             source.extractall(destination, filter="data")
     else:
-        raise ValueError(f"不支持的 sdist 格式：{archive.name}")
+        raise ValueError(f"不支持的源码压缩格式：{archive.name}")
     roots = list(destination.iterdir())
     if len(roots) != 1 or not roots[0].is_dir():
-        raise ValueError("sdist 必须包含唯一源码根目录")
+        raise ValueError("源码压缩包必须包含唯一源码根目录")
     return roots[0]

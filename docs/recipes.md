@@ -101,7 +101,7 @@ abis = ["arm64-v8a", "x86_64"]
 api = 24
 ```
 
-依赖名由 `NativeLibrary` 枚举限制，固定源码 URL、版本、SHA-256、构建系统、配置参数和许可证文件在 `scripts/build/native-libraries.toml`。目前提供 libffi、libsodium、OpenSSL、CRC32C、c-ares；它们是构建依赖，不计作新增 Python 包。
+依赖名由 `NativeLibrary` 枚举限制，固定源码 URL、版本、SHA-256、构建系统、配置参数和许可证文件在 `scripts/build/native-libraries.toml`。目前提供 libffi、libsodium、OpenSSL、CRC32C；它们是构建依赖，不计作新增 Python 包。
 
 每个矩阵任务使用自己的 NDK 工具链和目标 ABI/API；cibuildwheel 将依赖安装到本任务的目标 Python 开发前缀，maturin 使用本任务独立的安装前缀，下载并验证依赖源码后直接编译，不改源码。Autotools、OpenSSL Configure 和 CMake 使用互斥枚举分派；命令以参数数组调用。依赖编译失败立即终止，不切换系统库或纯 Python 实现。静态库供 Python 扩展链接，非系统共享运行库仍由 auditwheel 打包。
 

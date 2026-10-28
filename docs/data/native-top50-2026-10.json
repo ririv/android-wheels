@@ -38,7 +38,7 @@
       "pypi_version": "50.0.2",
       "native_wheel_sample": "cryptography-50.0.2-cp311-abi3-macosx_11_0_arm64.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 3,
@@ -48,7 +48,7 @@
       "pypi_version": "2.1.1",
       "native_wheel_sample": "cffi-2.1.1-cp310-cp310-macosx_10_15_x86_64.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 4,
@@ -453,7 +453,7 @@
       "pypi_version": "1.7.0",
       "native_wheel_sample": "hf_xet-1.7.0-cp314-cp314t-macosx_10_12_x86_64.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 38,
@@ -503,7 +503,7 @@
       "pypi_version": "1.6.2",
       "native_wheel_sample": "pynacl-1.6.2-cp314-cp314t-macosx_10_10_universal2.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 43,
@@ -513,7 +513,7 @@
       "pypi_version": "7.7.0",
       "native_wheel_sample": "chardet-7.7.0-cp310-cp310-macosx_10_9_x86_64.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 44,
@@ -573,7 +573,7 @@
       "pypi_version": "1.9.0",
       "native_wheel_sample": "google_crc32c-1.9.0-cp310-cp310-macosx_12_0_arm64.whl",
       "official_android_wheels": [],
-      "decision": "deferred"
+      "decision": "admitted_sdist"
     },
     {
       "native_rank": 50,

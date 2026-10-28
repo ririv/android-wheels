@@ -6,7 +6,7 @@
 
 候选识别条件为 wheel ABI 不等于 `none`、平台不等于 `any`；真正收录还须核对上游源码和实际 ELF 扩展，排除仅包含 CLI 二进制的情况。下载量按包计算，不等于独立用户数。
 
-2026-10-28 通过 [PyPI JSON API](https://docs.pypi.org/api/json/) 核对所有历史发行文件：两批新增项目均没有官方 `android_*` wheel。已存在官方 Android wheel 的包不纳入新增范围。
+2026-10-28 通过 [PyPI JSON API](https://docs.pypi.org/api/json/) 核对所有历史发行文件：各批新增项目均没有官方 `android_*` wheel。已存在官方 Android wheel 的包不纳入新增范围。
 
 排名、下载量、官方文件列表、源码提交和预验证产物哈希保存在 [机器可读审计记录](data/native-top50-2026-10.json)。这是一份本次快照，不设置定时扫描。
 
@@ -52,19 +52,39 @@
 
 sdist 的地址、SHA-256、排名及全部预验证 wheel 记录见 [第二批审计记录](data/native-second-batch-2026-10.json)。原先失败的 Git 构建记录保留在首批审计文件中，并标注已解决。
 
+## 第三批收录
+
+继续沿用原生候选下载量前 50 的同一快照，本轮预验证通过的包如下。全部使用官方 PyPI sdist；编译期间只配置环境、工具链和外部原生依赖，不对上游源码打补丁。
+
+| 原生候选名次 | 包 | 版本 | 快照下载量 | 原生依赖或配置 |
+| --- | --- | --- | --- | --- |
+| 2 | [cryptography](https://pypi.org/project/cryptography/) | 50.0.2 | 1,070,154,291 | OpenSSL 3.5.9；运行依赖本批 CFFI |
+| 3 | [cffi](https://pypi.org/project/cffi/) | 2.1.1 | 949,615,436 | libffi 3.8.0 |
+| 37 | [hf-xet](https://pypi.org/project/hf-xet/) | 1.7.0 | 188,604,448 | 沿用 maturin，补齐 Python 链接与运行库打包 |
+| 42 | [pynacl](https://pypi.org/project/pynacl/) | 1.6.2 | 166,088,922 | libsodium 1.0.22；运行依赖本批 CFFI |
+| 43 | [chardet](https://pypi.org/project/chardet/) | 7.7.0 | 165,621,246 | 同时开启 mypyc 与 Cython；宿主 mypy 显式从源码安装 |
+| 49 | [google-crc32c](https://pypi.org/project/google-crc32c/) | 1.9.0 | 140,796,400 | CRC32C 1.1.2；共享库及 C++ 运行库随 wheel 打包 |
+
+宿主 mypy 的已编译 wheel 在目标平台模拟环境中导入失败，因此 chardet 使用 `PIP_NO_BINARY=mypy` 明确安装宿主工具源码，并启用 `HATCH_BUILD_HOOK_ENABLE_MYPYC=true` 与 `HATCH_BUILD_HOOK_ENABLE_CUSTOM=true`。最终 chardet wheel 同时包含 pipeline 和检测内核的原生扩展，没有用纯 Python 产品产物替代。
+
+原生依赖版本、下载地址、SHA-256、构建参数和许可证统一保存在 `scripts/build/native-libraries.toml`。cibuildwheel 使用目标 Python 开发前缀，maturin 使用任务独立前缀，避免混入宿主 Linux 头文件或库。依赖来源和许可证随 wheel 保存，发布阶段核对固定配置。新增原生依赖本身不作为 Python 包计数。
+
+所有新增 wheel 均验证了实际 ELF、正确的 Android 架构、版本专用 Python 动态库与标签，以及依赖库打包和相对加载路径。本轮默认 Python 3.13 / API 24 / 双 ABI，不表示新增包的其他 Python 版本已通过测试；未在设备或模拟器中运行功能测试。完整来源和哈希见 [本批审计记录](data/native-third-batch-2026-10.json)。
+
 ## 暂缓项目
 
 | 包或类别 | 本次处理 |
 | --- | --- |
 | charset-normalizer、MarkupSafe、multidict、aiohttp、coverage | 当前 PyPI 已有官方 Android wheel，排除新增 |
-| CFFI | 缺少 Android libffi 与 ffi.h，需先提供真实的目标平台依赖 |
-| cryptography、Pillow、lxml、PyNaCl、google-crc32c 等 | 外部原生依赖与构建步骤需单独核验 |
+| grpcio 1.85.0 | 外部 OpenSSL 和 c-ares 均已编译，但上游硬编码宿主 `/usr/include`；调整搜索顺序后仍未通过，暂缓 |
+| Pillow、lxml 等 | 外部原生依赖与构建步骤需单独核验 |
+| mypy 2.4.0 | 运行依赖 librt 与 ast-serialize 尚无官方 Android wheel，本轮不单独发布主包 |
 | NumPy | 已尝试 Meson 构建，但缺少 Android BLAS；不发布关闭 BLAS 的构建 |
 | contourpy | 双 ABI 编译通过，因依赖 NumPy 暂缓发布 |
 | psutil | 上游明确拒绝 Android 平台，不修改源码中的平台判断 |
 | uvloop | 外部配置已解决 libuv 交叉编译识别，但上游仍硬编码链接 Android 不提供的独立 pthread 库 |
 | pandas、SciPy、PyArrow、scikit-learn、matplotlib 等 | 数值/图形依赖需专项适配 |
-| 其余前 50 项目 | 保留在审计表中，本轮未作为易移植首批准入 |
+| 其余前 50 项目 | 保留在审计表中，本轮尚未收录 |
 
 ## 预验证记录
 
@@ -80,7 +100,7 @@ sdist 的地址、SHA-256、排名及全部预验证 wheel 记录见 [第二批�
 
 - [Android 链接与 ABI 修复预验证](https://github.com/ririv/py-extra-wheels/actions/runs/40660301805)：tokenizers、wcwidth、pydantic-core 共 6 个目标全部通过。
 
-## 最终回归与发布
+## 第二批回归与发布
 
 [全量构建与发布](https://github.com/ririv/py-extra-wheels/actions/runs/40660865533) 的 24 个 recipe、48 个目标全部成功；[CI](https://github.com/ririv/py-extra-wheels/actions/runs/40660865506) 在 Python 3.11 与 3.15 上通过组件测试、Ruff 与工作流检查。
 
@@ -89,3 +109,12 @@ sdist 的地址、SHA-256、排名及全部预验证 wheel 记录见 [第二批�
 [Python 3.10 的 pydantic-core 2.41.5 双 ABI 回归](https://github.com/ririv/py-extra-wheels/actions/runs/40661343355) 也已成功，仅保留验证产物。此项验证维护共享构建器的既有 3.10 能力，不表示本轮八个新增包已验证 3.10。
 
 [主索引](https://ririv.github.io/py-extra-wheels/) 与 [旧地址](https://ririv.github.io/android-wheels/) 均已通过事件链路自动发布。两处根页和八个新增包页均返回 HTTP 200，双 ABI 链接齐全，旧 abi3 文件已移除；公开状态标记与对应源码树一致。最终 wheel 清单、哈希和状态树见第二批审计记录的 `published_wheels` 与 `regression`。
+
+## 本轮预验证记录
+
+- [hf-xet 双 ABI](https://github.com/ririv/py-extra-wheels/actions/runs/40662930657)：全部成功。
+- [chardet 双 ABI](https://github.com/ririv/py-extra-wheels/actions/runs/40666525022)：全部成功；该次还包含其他失败或后续修复的候选，整体运行未发布。
+- [CFFI、PyNaCl、cryptography 双 ABI](https://github.com/ririv/py-extra-wheels/actions/runs/40668003736)：六个收录目标全部成功；同次 CRC32C 随后单独修复，整体运行未发布。
+- [google-crc32c 双 ABI](https://github.com/ririv/py-extra-wheels/actions/runs/40672514748)：全部成功，包含共享 CRC32C 和 C++ 运行库。
+- [Python 3.10 pydantic-core 回归](https://github.com/ririv/py-extra-wheels/actions/runs/40666954200)：两种 ABI 均成功，保留原有构建能力。
+- [gRPC 最后一次配置验证](https://github.com/ririv/py-extra-wheels/actions/runs/40673736717)：未通过，不收录失败 recipe。

@@ -1,0 +1,644 @@
+{
+  "checked_on": "2026-10-28",
+  "ranking_snapshot": "native-top50-2026-10.json",
+  "criteria": "沿用原生扩展候选下载量前 50 快照；PyPI 所有历史发行文件无官方 Android wheel；不修改上游源码。",
+  "selection": [
+    {
+      "native_rank": 2,
+      "pypi_rank": 9,
+      "package": "cryptography",
+      "downloads": 1070154291,
+      "pypi_version": "50.0.2",
+      "native_wheel_sample": "cryptography-50.0.2-cp311-abi3-macosx_11_0_arm64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 3,
+      "pypi_rank": 11,
+      "package": "cffi",
+      "downloads": 949615436,
+      "pypi_version": "2.1.1",
+      "native_wheel_sample": "cffi-2.1.1-cp310-cp310-macosx_10_15_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 37,
+      "pypi_rank": 148,
+      "package": "hf-xet",
+      "downloads": 188604448,
+      "pypi_version": "1.7.0",
+      "native_wheel_sample": "hf_xet-1.7.0-cp314-cp314t-macosx_10_12_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 42,
+      "pypi_rank": 165,
+      "package": "pynacl",
+      "downloads": 166088922,
+      "pypi_version": "1.6.2",
+      "native_wheel_sample": "pynacl-1.6.2-cp314-cp314t-macosx_10_10_universal2.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 43,
+      "pypi_rank": 166,
+      "package": "chardet",
+      "downloads": 165621246,
+      "pypi_version": "7.7.0",
+      "native_wheel_sample": "chardet-7.7.0-cp310-cp310-macosx_10_9_x86_64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    },
+    {
+      "native_rank": 49,
+      "pypi_rank": 207,
+      "package": "google-crc32c",
+      "downloads": 140796400,
+      "pypi_version": "1.9.0",
+      "native_wheel_sample": "google_crc32c-1.9.0-cp310-cp310-macosx_12_0_arm64.whl",
+      "official_android_wheels": [],
+      "decision": "admitted_sdist"
+    }
+  ],
+  "sources": [
+    {
+      "package": "hf-xet",
+      "version": "1.7.0",
+      "url": "https://files.pythonhosted.org/packages/9e/27/06d899ea7bd721d272f84aac98bdb238de98af4cc767a69056d967d68c71/hf_xet-1.7.0.tar.gz",
+      "sha256": "d406ec79053c0871817f700c2ac8c36ba0d87f9c34b7458b0f0063bb218b0466",
+      "filename": "hf_xet-1.7.0.tar.gz",
+      "directory": ".",
+      "backend": "maturin",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "chardet",
+      "version": "7.7.0",
+      "url": "https://files.pythonhosted.org/packages/47/92/3d893ac5d338b9a9af34c5b517d77492dcea8a10254254eead4215a96f3f/chardet-7.7.0.tar.gz",
+      "sha256": "0ba38a05201b0abf7570c12d8af45c30b2af835bd5cc52bfc7105082eda82c1e",
+      "filename": "chardet-7.7.0.tar.gz",
+      "directory": ".",
+      "backend": "hatchling.build",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "cffi",
+      "version": "2.1.1",
+      "url": "https://files.pythonhosted.org/packages/9e/ef/008a1939e372c06329a3fce4279c02f328488f3526744906eeec3da7ad5f/cffi-2.1.1.tar.gz",
+      "sha256": "dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be",
+      "filename": "cffi-2.1.1.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "pynacl",
+      "version": "1.6.2",
+      "url": "https://files.pythonhosted.org/packages/d9/9a/4019b524b03a13438637b11538c82781a5eda427394380381af8f04f467a/pynacl-1.6.2.tar.gz",
+      "sha256": "018494d6d696ae03c7e656e5e74cdfd8ea1326962cc401bcf018f1ed8436811c",
+      "filename": "pynacl-1.6.2.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "cryptography",
+      "version": "50.0.2",
+      "url": "https://files.pythonhosted.org/packages/9d/af/182eb91b0df3fe75c4d9f26fe70684569566745f6ba7e5c9c73a862c5252/cryptography-50.0.2.tar.gz",
+      "sha256": "7b46165bb56eb4704e2eaaf86f3c940d19154535d9b0ca7d6d590b04060e00d5",
+      "filename": "cryptography-50.0.2.tar.gz",
+      "directory": ".",
+      "backend": "maturin",
+      "kind": "pypi-sdist"
+    },
+    {
+      "package": "google-crc32c",
+      "version": "1.9.0",
+      "url": "https://files.pythonhosted.org/packages/fa/25/9cb0c1c31c45b893eb8f11ae70b3f4309432d59b5acaebca5dbe791729a4/google_crc32c-1.9.0.tar.gz",
+      "sha256": "7b8c84c3d159ab6817fe3f74e6e6cef099c3f95dcec3abc0d8afb1404642efbe",
+      "filename": "google_crc32c-1.9.0.tar.gz",
+      "directory": ".",
+      "backend": "setuptools.build_meta",
+      "kind": "pypi-sdist"
+    }
+  ],
+  "native_libraries": [
+    {
+      "name": "crc32c",
+      "version": "1.1.2",
+      "filename": "crc32c-02e65f4fd3065d27b2e29324800ca6d04df16126.tar.gz",
+      "url": "https://codeload.github.com/google/crc32c/tar.gz/02e65f4fd3065d27b2e29324800ca6d04df16126",
+      "sha256": "50ac512ad20ebca0be21bcf7c3c6d15aa3fcc27550b09825fab061bffe512bdf",
+      "system": "cmake",
+      "args": [
+        "-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
+        "-DBUILD_SHARED_LIBS=ON",
+        "-DCRC32C_BUILD_TESTS=OFF",
+        "-DCRC32C_BUILD_BENCHMARKS=OFF",
+        "-DCRC32C_USE_GLOG=OFF"
+      ],
+      "licenses": [
+        "LICENSE"
+      ]
+    },
+    {
+      "name": "libffi",
+      "version": "3.8.0",
+      "filename": "libffi-3.8.0.tar.gz",
+      "url": "https://github.com/libffi/libffi/releases/download/v3.8.0/libffi-3.8.0.tar.gz",
+      "sha256": "7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4",
+      "system": "autotools",
+      "args": [
+        "--disable-shared",
+        "--enable-static",
+        "--with-pic",
+        "--disable-docs"
+      ],
+      "licenses": [
+        "LICENSE"
+      ]
+    },
+    {
+      "name": "libsodium",
+      "version": "1.0.22",
+      "filename": "libsodium-1.0.22.tar.gz",
+      "url": "https://github.com/jedisct1/libsodium/releases/download/1.0.22-RELEASE/libsodium-1.0.22.tar.gz",
+      "sha256": "adbdd8f16149e81ac6078a03aca6fc03b592b89ef7b5ed83841c086191be3349",
+      "system": "autotools",
+      "args": [
+        "--disable-shared",
+        "--enable-static",
+        "--with-pic"
+      ],
+      "licenses": [
+        "LICENSE"
+      ]
+    },
+    {
+      "name": "openssl",
+      "version": "3.5.9",
+      "filename": "openssl-3.5.9.tar.gz",
+      "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+      "sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+      "system": "openssl",
+      "args": [
+        "no-shared",
+        "no-tests"
+      ],
+      "licenses": [
+        "LICENSE.txt"
+      ]
+    }
+  ],
+  "verified_preflight_wheels": [
+    {
+      "package": "hf-xet",
+      "version": "1.7.0",
+      "abi": "arm64-v8a",
+      "filename": "hf_xet-1.7.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "d16b7b229bb0b6d40dab1d4ddd420110f3f6c62819879a69dce339396c4f508b",
+      "source": {
+        "package": "hf-xet",
+        "version": "1.7.0",
+        "url": "https://files.pythonhosted.org/packages/9e/27/06d899ea7bd721d272f84aac98bdb238de98af4cc767a69056d967d68c71/hf_xet-1.7.0.tar.gz",
+        "sha256": "d406ec79053c0871817f700c2ac8c36ba0d87f9c34b7458b0f0063bb218b0466",
+        "filename": "hf_xet-1.7.0.tar.gz",
+        "directory": ".",
+        "backend": "maturin",
+        "kind": "pypi-sdist"
+      },
+      "native_modules": [
+        "hf_xet/hf_xet.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "native_dependencies": [],
+      "run_id": 40662930657
+    },
+    {
+      "package": "hf-xet",
+      "version": "1.7.0",
+      "abi": "x86_64",
+      "filename": "hf_xet-1.7.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "5e54d3cce6f83109ba31a2c629cfbc91d31426f6a7baf937c840573d9be196fc",
+      "source": {
+        "package": "hf-xet",
+        "version": "1.7.0",
+        "url": "https://files.pythonhosted.org/packages/9e/27/06d899ea7bd721d272f84aac98bdb238de98af4cc767a69056d967d68c71/hf_xet-1.7.0.tar.gz",
+        "sha256": "d406ec79053c0871817f700c2ac8c36ba0d87f9c34b7458b0f0063bb218b0466",
+        "filename": "hf_xet-1.7.0.tar.gz",
+        "directory": ".",
+        "backend": "maturin",
+        "kind": "pypi-sdist"
+      },
+      "native_modules": [
+        "hf_xet/hf_xet.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "native_dependencies": [],
+      "run_id": 40662930657
+    },
+    {
+      "package": "chardet",
+      "version": "7.7.0",
+      "abi": "arm64-v8a",
+      "filename": "chardet-7.7.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "cf2e81adf47bc747f1ab13692bc2c582fb58f76414e7566b899c1c961e6ba1f5",
+      "source": {
+        "package": "chardet",
+        "version": "7.7.0",
+        "url": "https://files.pythonhosted.org/packages/47/92/3d893ac5d338b9a9af34c5b517d77492dcea8a10254254eead4215a96f3f/chardet-7.7.0.tar.gz",
+        "sha256": "0ba38a05201b0abf7570c12d8af45c30b2af835bd5cc52bfc7105082eda82c1e",
+        "filename": "chardet-7.7.0.tar.gz",
+        "directory": ".",
+        "backend": "hatchling.build",
+        "kind": "pypi-sdist"
+      },
+      "native_modules": [
+        "650fdafa2468af73c11f__mypyc.cpython-313-aarch64-linux-android.so",
+        "chardet/_kernel.cpython-313-aarch64-linux-android.so",
+        "chardet/models/__init__.cpython-313-aarch64-linux-android.so",
+        "chardet/models/_format.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/ascii.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/confusion.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/escape.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/language.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/magic.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/markup.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/orchestrator.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/postprocess.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/statistical.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/structural.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/utf1632.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/utf8.cpython-313-aarch64-linux-android.so",
+        "chardet/pipeline/validity.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "native_dependencies": [],
+      "run_id": 40666525022
+    },
+    {
+      "package": "chardet",
+      "version": "7.7.0",
+      "abi": "x86_64",
+      "filename": "chardet-7.7.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "e8958ebfc5193eca7bf1705d497e8442c9c78073de7fb9a8731911e9d7458798",
+      "source": {
+        "package": "chardet",
+        "version": "7.7.0",
+        "url": "https://files.pythonhosted.org/packages/47/92/3d893ac5d338b9a9af34c5b517d77492dcea8a10254254eead4215a96f3f/chardet-7.7.0.tar.gz",
+        "sha256": "0ba38a05201b0abf7570c12d8af45c30b2af835bd5cc52bfc7105082eda82c1e",
+        "filename": "chardet-7.7.0.tar.gz",
+        "directory": ".",
+        "backend": "hatchling.build",
+        "kind": "pypi-sdist"
+      },
+      "native_modules": [
+        "650fdafa2468af73c11f__mypyc.cpython-313-x86_64-linux-android.so",
+        "chardet/_kernel.cpython-313-x86_64-linux-android.so",
+        "chardet/models/__init__.cpython-313-x86_64-linux-android.so",
+        "chardet/models/_format.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/ascii.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/confusion.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/escape.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/language.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/magic.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/markup.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/orchestrator.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/postprocess.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/statistical.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/structural.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/utf1632.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/utf8.cpython-313-x86_64-linux-android.so",
+        "chardet/pipeline/validity.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "native_dependencies": [],
+      "run_id": 40666525022
+    },
+    {
+      "package": "cffi",
+      "version": "2.1.1",
+      "abi": "arm64-v8a",
+      "filename": "cffi-2.1.1-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "cb8aeb50b114275fa1afdafc880d012f40ff058bc1ba61c578786e7e4332e2ea",
+      "source": {
+        "package": "cffi",
+        "version": "2.1.1",
+        "url": "https://files.pythonhosted.org/packages/9e/ef/008a1939e372c06329a3fce4279c02f328488f3526744906eeec3da7ad5f/cffi-2.1.1.tar.gz",
+        "sha256": "dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be",
+        "filename": "cffi-2.1.1.tar.gz",
+        "directory": ".",
+        "backend": "setuptools.build_meta",
+        "kind": "pypi-sdist"
+      },
+      "native_modules": [
+        "_cffi_backend.cpython-313-aarch64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "native_dependencies": [
+        "libffi"
+      ],
+      "run_id": 40668003736
+    },
+    {
+      "package": "cffi",
+      "version": "2.1.1",
+      "abi": "x86_64",
+      "filename": "cffi-2.1.1-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "85e0f9b308003e7ddcf23d9cb1523c507961eb381ec9886544974a079ede7c3f",
+      "source": {
+        "package": "cffi",
+        "version": "2.1.1",
+        "url": "https://files.pythonhosted.org/packages/9e/ef/008a1939e372c06329a3fce4279c02f328488f3526744906eeec3da7ad5f/cffi-2.1.1.tar.gz",
+        "sha256": "dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be",
+        "filename": "cffi-2.1.1.tar.gz",
+        "directory": ".",
+        "backend": "setuptools.build_meta",
+        "kind": "pypi-sdist"
+      },
+      "native_modules": [
+        "_cffi_backend.cpython-313-x86_64-linux-android.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "native_dependencies": [
+        "libffi"
+      ],
+      "run_id": 40668003736
+    },
+    {
+      "package": "pynacl",
+      "version": "1.6.2",
+      "abi": "arm64-v8a",
+      "filename": "pynacl-1.6.2-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "26906c925c78b0fa16db2a88f916faf41226b8a03e1c966ddc069d466852d748",
+      "source": {
+        "package": "pynacl",
+        "version": "1.6.2",
+        "url": "https://files.pythonhosted.org/packages/d9/9a/4019b524b03a13438637b11538c82781a5eda427394380381af8f04f467a/pynacl-1.6.2.tar.gz",
+        "sha256": "018494d6d696ae03c7e656e5e74cdfd8ea1326962cc401bcf018f1ed8436811c",
+        "filename": "pynacl-1.6.2.tar.gz",
+        "directory": ".",
+        "backend": "setuptools.build_meta",
+        "kind": "pypi-sdist"
+      },
+      "native_modules": [
+        "nacl/_sodium.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "native_dependencies": [
+        "libsodium"
+      ],
+      "run_id": 40668003736
+    },
+    {
+      "package": "pynacl",
+      "version": "1.6.2",
+      "abi": "x86_64",
+      "filename": "pynacl-1.6.2-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "6caf5cb82f24a5381ffd419e88141924432d3a82f99b3f6615e5aa75f4412dc1",
+      "source": {
+        "package": "pynacl",
+        "version": "1.6.2",
+        "url": "https://files.pythonhosted.org/packages/d9/9a/4019b524b03a13438637b11538c82781a5eda427394380381af8f04f467a/pynacl-1.6.2.tar.gz",
+        "sha256": "018494d6d696ae03c7e656e5e74cdfd8ea1326962cc401bcf018f1ed8436811c",
+        "filename": "pynacl-1.6.2.tar.gz",
+        "directory": ".",
+        "backend": "setuptools.build_meta",
+        "kind": "pypi-sdist"
+      },
+      "native_modules": [
+        "nacl/_sodium.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "native_dependencies": [
+        "libsodium"
+      ],
+      "run_id": 40668003736
+    },
+    {
+      "package": "cryptography",
+      "version": "50.0.2",
+      "abi": "arm64-v8a",
+      "filename": "cryptography-50.0.2-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "0ea2e36ba31279f73f67e21eaecc1fd098e56a0ca80f9cd8c818d0bd6506cc3b",
+      "source": {
+        "package": "cryptography",
+        "version": "50.0.2",
+        "url": "https://files.pythonhosted.org/packages/9d/af/182eb91b0df3fe75c4d9f26fe70684569566745f6ba7e5c9c73a862c5252/cryptography-50.0.2.tar.gz",
+        "sha256": "7b46165bb56eb4704e2eaaf86f3c940d19154535d9b0ca7d6d590b04060e00d5",
+        "filename": "cryptography-50.0.2.tar.gz",
+        "directory": ".",
+        "backend": "maturin",
+        "kind": "pypi-sdist"
+      },
+      "native_modules": [
+        "cryptography/hazmat/bindings/_rust.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "native_dependencies": [
+        "openssl"
+      ],
+      "run_id": 40668003736
+    },
+    {
+      "package": "cryptography",
+      "version": "50.0.2",
+      "abi": "x86_64",
+      "filename": "cryptography-50.0.2-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "c7024a44e18a82ea7be7fcd3a72658d16b86fe30f8a39a6af1b6d75061917d8d",
+      "source": {
+        "package": "cryptography",
+        "version": "50.0.2",
+        "url": "https://files.pythonhosted.org/packages/9d/af/182eb91b0df3fe75c4d9f26fe70684569566745f6ba7e5c9c73a862c5252/cryptography-50.0.2.tar.gz",
+        "sha256": "7b46165bb56eb4704e2eaaf86f3c940d19154535d9b0ca7d6d590b04060e00d5",
+        "filename": "cryptography-50.0.2.tar.gz",
+        "directory": ".",
+        "backend": "maturin",
+        "kind": "pypi-sdist"
+      },
+      "native_modules": [
+        "cryptography/hazmat/bindings/_rust.abi3.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libdl.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [],
+      "native_dependencies": [
+        "openssl"
+      ],
+      "run_id": 40668003736
+    },
+    {
+      "package": "google-crc32c",
+      "version": "1.9.0",
+      "abi": "arm64-v8a",
+      "filename": "google_crc32c-1.9.0-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "95b08435bf315ecf2e6653c2c7dfd77672a2cf98765718335458a5f1e999df80",
+      "source": {
+        "package": "google-crc32c",
+        "version": "1.9.0",
+        "url": "https://files.pythonhosted.org/packages/fa/25/9cb0c1c31c45b893eb8f11ae70b3f4309432d59b5acaebca5dbe791729a4/google_crc32c-1.9.0.tar.gz",
+        "sha256": "7b8c84c3d159ab6817fe3f74e6e6cef099c3f95dcec3abc0d8afb1404642efbe",
+        "filename": "google_crc32c-1.9.0.tar.gz",
+        "directory": ".",
+        "backend": "setuptools.build_meta",
+        "kind": "pypi-sdist"
+      },
+      "native_modules": [
+        "google_crc32c/_crc32c.cpython-313-aarch64-linux-android.so",
+        "google_crc32c.libs/libcrc32c-c87ed095.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libcrc32c-c87ed095.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [
+        "$ORIGIN/../google_crc32c.libs"
+      ],
+      "native_dependencies": [
+        "crc32c"
+      ],
+      "run_id": 40672514748
+    },
+    {
+      "package": "google-crc32c",
+      "version": "1.9.0",
+      "abi": "x86_64",
+      "filename": "google_crc32c-1.9.0-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "691797b4233c95e3b3695267903c836209a475b5b66b7ae75d7d5aa4286f9821",
+      "source": {
+        "package": "google-crc32c",
+        "version": "1.9.0",
+        "url": "https://files.pythonhosted.org/packages/fa/25/9cb0c1c31c45b893eb8f11ae70b3f4309432d59b5acaebca5dbe791729a4/google_crc32c-1.9.0.tar.gz",
+        "sha256": "7b8c84c3d159ab6817fe3f74e6e6cef099c3f95dcec3abc0d8afb1404642efbe",
+        "filename": "google_crc32c-1.9.0.tar.gz",
+        "directory": ".",
+        "backend": "setuptools.build_meta",
+        "kind": "pypi-sdist"
+      },
+      "native_modules": [
+        "google_crc32c/_crc32c.cpython-313-x86_64-linux-android.so",
+        "google_crc32c.libs/libcrc32c-6e02e035.so"
+      ],
+      "needed": [
+        "libc.so",
+        "libcrc32c-6e02e035.so",
+        "libdl.so",
+        "libm.so",
+        "libpython3.13.so"
+      ],
+      "rpaths": [
+        "$ORIGIN/../google_crc32c.libs"
+      ],
+      "native_dependencies": [
+        "crc32c"
+      ],
+      "run_id": 40672514748
+    }
+  ],
+  "python310_regression": {
+    "run_id": 40666954200,
+    "package": "pydantic-core",
+    "version": "2.41.5",
+    "abis": [
+      "arm64-v8a",
+      "x86_64"
+    ],
+    "result": "success",
+    "publication": "build"
+  },
+  "validation": "默认 Python 3.13、Android API 24，双 ABI；完整来源、版本、SHA-256、WHEEL/RECORD、ELF 架构、动态依赖闭合、相对加载路径、原生依赖来源和许可证核验。未做设备运行测试。",
+  "deferred": [
+    {
+      "package": "mypy",
+      "version": "2.4.0",
+      "reason": "运行依赖 librt 与 ast-serialize 尚无官方 Android wheel，本轮不单独发布无法直接使用的主包。"
+    },
+    {
+      "package": "grpcio",
+      "version": "1.85.0",
+      "run_id": 40673736717,
+      "reason": "Android 平台缺少上游预生成 c-ares 配置；改用外部 OpenSSL 与 c-ares 后，上游硬编码 /usr/include 导致宿主 glibc 头文件污染，标准搜索顺序参数试验仍未通过，本轮暂缓。",
+      "native_cares_source": {
+        "name": "cares",
+        "version": "1.34.9",
+        "filename": "c-ares-1.34.9.tar.gz",
+        "url": "https://github.com/c-ares/c-ares/releases/download/v1.34.9/c-ares-1.34.9.tar.gz",
+        "sha256": "9364b70a12eb59a06830fb488d9357f90100dff0d98b23ea3593a183d43e6f2f",
+        "system": "cmake",
+        "args": [
+          "-DCARES_STATIC=ON",
+          "-DCARES_SHARED=OFF",
+          "-DCARES_BUILD_TESTS=OFF",
+          "-DCARES_BUILD_TOOLS=OFF",
+          "-DCARES_INSTALL=ON"
+        ],
+        "licenses": [
+          "LICENSE.md"
+        ]
+      }
+    }
+  ]
+}
