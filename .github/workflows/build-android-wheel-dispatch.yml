@@ -15,6 +15,11 @@ on:
         description: 'Git ref (tag/branch) of the library version'
         required: false
         type: string
+      package_dir:
+        description: 'Directory of the Python project inside the library source (e.g. crates/jiter-python). Auto-detected if empty.'
+        required: false
+        type: string
+        default: ''
       target_python_version:
         description: 'Python version (e.g., 3.13)'
         required: false
@@ -52,9 +57,15 @@ jobs:
 
       - name: Check build backend
         id: check_backend
+        env:
+          PACKAGE_DIR: ${{ inputs.package_dir }}
         run: |
+          if [ -n "$PACKAGE_DIR" ] && [ ! -f "library-source/$PACKAGE_DIR/pyproject.toml" ] && [ ! -f "library-source/$PACKAGE_DIR/setup.py" ]; then
+            echo "::error::package_dir '$PACKAGE_DIR' does not contain pyproject.toml or setup.py"
+            exit 1
+          fi
           chmod +x scripts/build/check_backend.py
-          BACKEND=$(python scripts/build/check_backend.py library-source)
+          BACKEND=$(python scripts/build/check_backend.py "library-source/$PACKAGE_DIR")
           echo "build_backend=$BACKEND" >> $GITHUB_OUTPUT
 
   build_with_maturin:
@@ -92,10 +103,16 @@ jobs:
 
       - name: Find project directory
         id: find_proj
+        env:
+          PACKAGE_DIR: ${{ inputs.package_dir }}
         run: |
           cd library-source
-          PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
-          PROJECT_DIR=$(dirname "$PROJECT_FILE")
+          if [ -n "$PACKAGE_DIR" ]; then
+            PROJECT_DIR="$PACKAGE_DIR"
+          else
+            PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
+            PROJECT_DIR=$(dirname "$PROJECT_FILE")
+          fi
           echo "project_dir=$PROJECT_DIR" >> $GITHUB_OUTPUT
 
       # maturin needs a host python{X.Y} to parse the target's sysconfigdata in PYO3_CROSS_LIB_DIR.
@@ -172,14 +189,20 @@ jobs:
 
       - name: Find project directory
         id: find_proj
+        env:
+          PACKAGE_DIR: ${{ inputs.package_dir }}
         run: |
           cd library-source
-          PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
-          PROJECT_DIR=$(dirname "$PROJECT_FILE")
+          if [ -n "$PACKAGE_DIR" ]; then
+            PROJECT_DIR="$PACKAGE_DIR"
+          else
+            PROJECT_FILE=$(find . -name "pyproject.toml" -o -name "setup.py" | head -n 1)
+            PROJECT_DIR=$(dirname "$PROJECT_FILE")
+          fi
           echo "project_dir=$PROJECT_DIR" >> $GITHUB_OUTPUT
 
       - name: Build wheels with cibuildwheel
-        uses: pypa/cibuildwheel@v3.2.1
+        uses: pypa/cibuildwheel@v4.3.4
         with:
           package-dir: library-source/${{ steps.find_proj.outputs.project_dir }}
         env:

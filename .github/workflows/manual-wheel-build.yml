@@ -15,6 +15,10 @@ on:
         description: 'Git ref (tag/branch) (optional)'
         required: false
         type: string
+      package_dir:
+        description: 'Python project directory inside the repo, e.g. crates/jiter-python (optional, auto-detected if empty)'
+        required: false
+        type: string
       target_python_version:
         description: 'Python version'
         required: false
@@ -36,5 +40,6 @@ jobs:
       library_name: ${{ inputs.library_name }}
       git_repository: ${{ inputs.git_repository }}
       version_tag: ${{ inputs.version_tag }}
+      package_dir: ${{ inputs.package_dir }}
       target_python_version: ${{ inputs.target_python_version }}
       android_api: ${{ inputs.android_api }}
