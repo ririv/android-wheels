@@ -12,8 +12,11 @@ from scripts.recipes.model import (
     Backend,
     Choices,
     GitLocation,
+    LiteralEnvironment,
     PyPILocation,
     Recipe,
+    TargetEnvironment,
+    TargetField,
 )
 
 T = TypeVar("T")
@@ -48,6 +51,8 @@ def require_keys(data: dict, expected: set[str], label: str) -> None:
 def load_recipe(path: Path) -> Recipe:
     data = tomllib.loads(path.read_text(encoding="utf-8"))
     common = {"name", "directory", "backend", "android"}
+    if "environment" in data:
+        common.add("environment")
     if "pypi-version" in data:
         require_keys(data, common | {"pypi-version"}, str(path))
         if type(data["pypi-version"]) is not str or not data["pypi-version"]:
@@ -84,7 +89,44 @@ def load_recipe(path: Path) -> Recipe:
             abis=choices(android["abis"], AndroidABI, "android.abis"),
             api=android["api"],
         ),
+        environment=environment(data.get("environment", {})),
     )
+
+
+def environment(data: dict) -> tuple:
+    if not isinstance(data, dict):
+        raise ValueError("environment 必须是变量表")
+    result = []
+    reserved = {
+        "PATH",
+        "CC",
+        "CXX",
+        "AR",
+        "CFLAGS",
+        "CXXFLAGS",
+        "LDFLAGS",
+        "ANDROID_API_LEVEL",
+        "PYO3_CROSS",
+        "PYO3_CONFIG_FILE",
+        "PYO3_CROSS_LIB_DIR",
+        "PYO3_CROSS_PYTHON_VERSION",
+        "CARGO_BUILD_TARGET",
+    }
+    for name, value in sorted(data.items()):
+        if (
+            not re.fullmatch(r"[A-Z][A-Z0-9_]*", name)
+            or name in reserved
+            or name.startswith(("CIBW_", "CARGO_TARGET_", "GITHUB_"))
+        ):
+            raise ValueError(f"不允许覆盖构建器变量：{name}")
+        match value:
+            case str(text) if not any(char in text for char in "\n\r\0"):
+                result.append(LiteralEnvironment(name, text))
+            case {"target": str(field)} if set(value) == {"target"}:
+                result.append(TargetEnvironment(name, TargetField(field)))
+            case _:
+                raise ValueError(f"{name} 必须是单行字符串或明确的目标字段引用")
+    return tuple(result)
 
 
 def load_recipes(directory: Path) -> tuple[Recipe, ...]:

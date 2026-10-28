@@ -30,6 +30,8 @@ jobs:
       - uses: ./.github/actions/prepare-source
         with:
           target: ${{ inputs.target }}
+      - name: Apply explicit recipe environment
+        run: python -B -m scripts.pipeline build-environment --artifact "$ARTIFACT" --output "$GITHUB_ENV"
       - name: Set up host Python matching target
         if: fromJSON(inputs.target).builder != 'cibuildwheel'
         id: host_python
@@ -65,7 +67,8 @@ jobs:
         env:
           CIBW_PLATFORM: android
           CIBW_ARCHS: ${{ fromJSON(inputs.target).cibw_arch }}
-          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ fromJSON(inputs.target).api }} CARGO_BUILD_TARGET=${{ fromJSON(inputs.target).triplet }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ fromJSON(inputs.target).api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ fromJSON(inputs.target).api }}-clang PYO3_CROSS=1'
+          CIBW_ENVIRONMENT: 'ANDROID_API_LEVEL=${{ fromJSON(inputs.target).api }} CARGO_BUILD_TARGET=${{ fromJSON(inputs.target).triplet }} CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ fromJSON(inputs.target).api }}-clang CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${{ fromJSON(inputs.target).api }}-clang PYO3_CROSS=1 ${{ fromJSON(inputs.target).cibw_environment }}'
+          CIBW_ENABLE: ''
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD_FRONTEND: build
           CIBW_TEST_SKIP: '*'

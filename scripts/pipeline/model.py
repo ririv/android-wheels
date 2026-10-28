@@ -2,13 +2,14 @@
 
 import json
 import re
+import shlex
 from dataclasses import asdict, dataclass, field
 from enum import StrEnum
 from pathlib import Path
 from typing import Literal
 
 from scripts.build.android_python import AndroidABI, PythonVersion
-from scripts.recipes.model import Backend, Publication
+from scripts.recipes.model import Backend, LiteralEnvironment, Publication
 from scripts.recipes.plan import artifact_prefix
 
 
@@ -50,6 +51,7 @@ class Target:
     python: PythonVersion
     abi: AndroidABI
     api: int
+    environment: tuple[LiteralEnvironment, ...] = ()
 
     @property
     def builder(self) -> Builder:
@@ -74,6 +76,10 @@ class Target:
             "artifact": self.artifact,
             "triplet": self.abi.triplet,
             "cibw_arch": self.abi.value.replace("-", "_"),
+            "cibw_environment": " ".join(
+                f"{variable.name}={shlex.quote(variable.value)}"
+                for variable in self.environment
+            ),
         }
 
 
@@ -124,6 +130,9 @@ def load_plan(path: Path) -> Plan:
                 PythonVersion(row["python"]),
                 AndroidABI(row["abi"]),
                 row["api"],
+                tuple(
+                    LiteralEnvironment(**variable) for variable in row["environment"]
+                ),
             )
         )
     plan = Plan(Publication(data["publication"]), tuple(targets))

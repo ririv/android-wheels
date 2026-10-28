@@ -39,6 +39,28 @@ class Android:
     api: int
 
 
+class TargetField(StrEnum):
+    TRIPLET = "triplet"
+    ABI = "abi"
+    PYTHON = "python"
+    API = "api"
+
+
+@dataclass(frozen=True)
+class LiteralEnvironment:
+    name: str
+    value: str
+
+
+@dataclass(frozen=True)
+class TargetEnvironment:
+    name: str
+    target: TargetField
+
+
+EnvironmentSetting = LiteralEnvironment | TargetEnvironment
+
+
 @dataclass(frozen=True)
 class GitLocation:
     repository: str
@@ -62,6 +84,7 @@ class Recipe(Generic[L]):
     directory: str
     backend: Backend
     android: Android
+    environment: tuple[EnvironmentSetting, ...] = ()
 
 
 @dataclass(frozen=True)
