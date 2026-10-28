@@ -6,7 +6,6 @@ import os
 import re
 import shutil
 import subprocess
-import sys
 import tempfile
 import tomllib
 from pathlib import Path
@@ -47,15 +46,10 @@ def library_specs(path: Path) -> dict[NativeLibrary, Library]:
     return result
 
 
-def toolchain(ndk: Path) -> Path:
-    host = {"linux": "linux-x86_64", "darwin": "darwin-x86_64"}[sys.platform]
-    return ndk / "toolchains" / "llvm" / "prebuilt" / host
-
-
 def compiler_environment(
-    ndk: Path, abi: AndroidABI, api: int, prefix: Path
+    ndk: Path, toolchain: Path, abi: AndroidABI, api: int, prefix: Path
 ) -> dict[str, str]:
-    binary = toolchain(ndk) / "bin"
+    binary = toolchain / "bin"
     return {
         **os.environ,
         "PATH": os.pathsep.join((str(binary), os.environ["PATH"])),
@@ -138,7 +132,12 @@ def commands(
 
 
 def build_libraries(
-    names: tuple[NativeLibrary, ...], prefix: Path, ndk: Path, abi: AndroidABI, api: int
+    names: tuple[NativeLibrary, ...],
+    prefix: Path,
+    ndk: Path,
+    toolchain: Path,
+    abi: AndroidABI,
+    api: int,
 ) -> None:
     if not names:
         return
@@ -146,7 +145,7 @@ def build_libraries(
         raise FileExistsError(f"原生依赖目录必须不存在：{prefix}")
     prefix.mkdir(parents=True)
     specs = library_specs(Path(__file__).with_name("native-libraries.toml"))
-    env = compiler_environment(ndk, abi, api, prefix)
+    env = compiler_environment(ndk, toolchain, abi, api, prefix)
     metadata = []
     with tempfile.TemporaryDirectory(prefix="android-native-") as temporary:
         root = Path(temporary)
@@ -174,11 +173,12 @@ def main() -> None:
     parser.add_argument("--libraries", required=True)
     parser.add_argument("--prefix", type=Path, required=True)
     parser.add_argument("--ndk", type=Path, required=True)
+    parser.add_argument("--toolchain", type=Path, required=True)
     parser.add_argument("--abi", type=AndroidABI, required=True)
     parser.add_argument("--api", type=int, required=True)
     args = parser.parse_args()
     names = tuple(NativeLibrary(name) for name in args.libraries.split(",") if name)
-    build_libraries(names, args.prefix, args.ndk, args.abi, args.api)
+    build_libraries(names, args.prefix, args.ndk, args.toolchain, args.abi, args.api)
 
 
 if __name__ == "__main__":

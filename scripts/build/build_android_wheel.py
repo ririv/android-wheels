@@ -116,6 +116,10 @@ def prepare_build_environment(
             env.pop("PYO3_CROSS_LIB_DIR", None)
             env["PYO3_CONFIG_FILE"] = str(config_file)
         case SysconfigRuntime(lib_dir=lib_dir):
+            # Rust 构建脚本调用的 C 编译器也需要真实目标头文件路径。
+            include = lib_dir.parent / "include" / f"python{python_version}"
+            env["CFLAGS"] += f" -I{include}"
+            env["CXXFLAGS"] = env["CFLAGS"]
             env.pop("PYO3_CONFIG_FILE", None)
             env["PYO3_CROSS_LIB_DIR"] = str(lib_dir)
 
@@ -297,7 +301,14 @@ def main():
         if name
     )
     prefix = Path(os.environ["NATIVE_PREFIX"])
-    build_libraries(dependencies, prefix, ndk_path, abi, int(android_api))
+    build_libraries(
+        dependencies,
+        prefix,
+        ndk_path,
+        Path(build_env["CC"]).parent.parent,
+        abi,
+        int(android_api),
+    )
     if dependencies:
         build_env["CPPFLAGS"] = f"-I{prefix / 'include'}"
         build_env["LDFLAGS"] += f" -L{prefix / 'lib'}"

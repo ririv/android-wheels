@@ -71,6 +71,10 @@ class Target:
             PythonVersion.PY311,
             PythonVersion.PY312,
         }:
+            if self.native_dependencies:
+                raise ValueError(
+                    "Chaquopy 尚未接入 native-dependencies；请明确选择 Python 3.13 或更新版本"
+                )
             return Builder.CHAQUOPY
         return Builder.CIBUILDWHEEL
 
@@ -90,7 +94,7 @@ class Target:
                 for variable in self.environment
             )
             + (
-                ' CPPFLAGS="$CPPFLAGS -I$NATIVE_PREFIX/include" LDFLAGS="$LDFLAGS -L$NATIVE_PREFIX/lib" PKG_CONFIG_LIBDIR="$NATIVE_PREFIX/lib/pkgconfig" PKG_CONFIG_PATH="" PKG_CONFIG_ALLOW_CROSS=1'
+                ' CFLAGS="-I$NATIVE_PREFIX/include $CFLAGS" CXXFLAGS="-I$NATIVE_PREFIX/include $CXXFLAGS" CPPFLAGS="$CPPFLAGS -I$NATIVE_PREFIX/include" LDFLAGS="$LDFLAGS -L$NATIVE_PREFIX/lib" PKG_CONFIG_LIBDIR="$NATIVE_PREFIX/lib/pkgconfig" PKG_CONFIG_PATH="" PKG_CONFIG_ALLOW_CROSS=1'
                 if self.native_dependencies
                 else ""
             ),

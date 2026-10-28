@@ -79,9 +79,10 @@ jobs:
           CIBW_TEST_SKIP: '*'
           CIBW_REPAIR_WHEEL_COMMAND_ANDROID: 'PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.repair_android_wheel {wheel} {dest_dir} {ldpaths}'
           CIBW_BEFORE_BUILD: |
+            set -eu
             python "$GITHUB_WORKSPACE/scripts/tooling.py" requirements shared --output "$RUNNER_TEMP/cibw-requirements.txt"
             python -m pip install -r "$RUNNER_TEMP/cibw-requirements.txt"
-            PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.native_libraries --libraries "$NATIVE_DEPENDENCIES" --prefix "$NATIVE_PREFIX" --ndk "$ANDROID_NDK" --abi "$TARGET_ABI" --api "$ANDROID_API"
+            PYTHONPATH="$GITHUB_WORKSPACE" python -m scripts.build.native_libraries --libraries "$NATIVE_DEPENDENCIES" --prefix "$NATIVE_PREFIX" --ndk "$ANDROID_NDK" --toolchain "$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64" --abi "$TARGET_ABI" --api "$ANDROID_API"
             python "$GITHUB_WORKSPACE/scripts/pipeline/cargo_env.py" "{package}" "$VIRTUAL_ENV"
 
       - name: Checkout Chaquopy build tools
