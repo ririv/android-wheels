@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from scripts.build.android_python import AndroidABI, PythonVersion
+from scripts.pipeline.artifacts import collect, record
 from scripts.pipeline.model import GitSource, Plan, Target, UnsupportedPython, load_plan
 from scripts.pipeline.planning import (
     BATCH_SIZE,
@@ -16,6 +17,7 @@ from scripts.pipeline.planning import (
     write_batch,
 )
 from scripts.recipes.model import Backend, Publication
+from scripts.testing.wheels import write_wheel
 
 ROOT = Path(__file__).resolve().parents[3]
 SOURCE = GitSource(
@@ -94,6 +96,30 @@ class MatrixTests(unittest.TestCase):
             self.assertEqual(
                 [row["artifact"] for row in rows], [t.artifact for t in targets]
             )
+
+    def test_shared_wheel_names_publish_separately_for_all_build_origins(self):
+        targets = tuple(
+            Target("example", SOURCE, python, abi, 24)
+            for python in (PythonVersion.PY310, PythonVersion.PY315)
+            for abi in AndroidABI
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for target in targets:
+                folder = root / target.artifact
+                folder.mkdir()
+                write_wheel(
+                    folder / "example-1.0-py3-none-any.whl",
+                    {
+                        "example.py": target.artifact.encode(),
+                        "example-1.0.dist-info/METADATA": b"Name: example\nVersion: 1.0\n",
+                        "example-1.0.dist-info/WHEEL": b"Wheel-Version: 1.0\nTag: py3-none-any\n",
+                    },
+                )
+                record(folder, target)
+            wheels = collect(root, Plan(Publication.PUBLISH, targets))
+            self.assertEqual(len(wheels), 4)
+            self.assertEqual(len({p.name for p in wheels.values()}), 4)
 
     def test_link_parameters_resolve_for_each_python_version(self):
         source = replace(SOURCE, backend=Backend.SCIKIT_BUILD, requires_python=">=3.10")
