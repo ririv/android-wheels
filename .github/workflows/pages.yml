@@ -25,6 +25,16 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Check compatibility notification credentials
+        env:
+          GH_TOKEN: ${{ secrets.LEGACY_INDEX_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::请配置 LEGACY_INDEX_DISPATCH_TOKEN，仅授权 ririv.github.io 的 Actions: write"
+            exit 1
+          fi
+          gh api repos/ririv/ririv.github.io/actions/workflows/sync-wheel-index.yml --silent
+
       - name: Checkout wheels branch
         uses: actions/checkout@v4
         with:
@@ -39,9 +49,32 @@ jobs:
       - name: Generate index
         run: python scripts/generate_index.py
 
+      - name: Record published index tree
+        id: previous_index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          INDEX_TREE=$(gh api "repos/$GITHUB_REPOSITORY/commits/gh-pages" --jq '.commit.tree.sha')
+          echo "tree=$INDEX_TREE" >> "$GITHUB_OUTPUT"
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: public
           force_orphan: true
+
+      - name: Read published index tree
+        id: published_index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          INDEX_TREE=$(gh api "repos/$GITHUB_REPOSITORY/commits/gh-pages" --jq '.commit.tree.sha')
+          echo "tree=$INDEX_TREE" >> "$GITHUB_OUTPUT"
+
+      - name: Notify compatibility index of changed content
+        if: steps.previous_index.outputs.tree != steps.published_index.outputs.tree
+        env:
+          GH_TOKEN: ${{ secrets.LEGACY_INDEX_DISPATCH_TOKEN }}
+        run: |
+          gh workflow run sync-wheel-index.yml --repo ririv/ririv.github.io --ref main

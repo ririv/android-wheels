@@ -6,7 +6,7 @@
 
 索引地址：https://ririv.github.io/py-extra-wheels/
 
-旧地址 https://ririv.github.io/android-wheels/ 继续可用，由兼容站点约每 15 分钟同步一次；定时任务可能延迟。详见 [包索引地址迁移](docs/index-migration.md)。
+旧地址 https://ririv.github.io/android-wheels/ 继续可用。兼容站点不做定时扫描，新索引内容发布后通过事件通知同步。详见 [包索引地址迁移](docs/index-migration.md)。
 
 ## 如何使用
 
