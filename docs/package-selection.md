@@ -148,3 +148,15 @@ lxml 需要在后端查询构建依赖之前找到目标原生库。流水线先
 [全量构建与发布](https://github.com/ririv/py-extra-wheels/actions/runs/40675141301) 的 60 个目标全部成功，[CI](https://github.com/ririv/py-extra-wheels/actions/runs/40675141332) 也已通过。下载全部最终产物后复核：58 个含 ELF，两个已有 PyYAML 产物沿用纯 Python 构建；本轮新增的十二个 wheel 全部含原生扩展。来源、版本、SHA-256、WHEEL/RECORD、架构、Python 动态库与标签、依赖闭合和相对加载路径均通过检查。新增文件的已发布 Git blob 与 Actions 核验产物逐字节一致。
 
 [主索引](https://ririv.github.io/py-extra-wheels/) 和 [旧索引](https://ririv.github.io/android-wheels/) 已由事件链路自动更新。两处根页和六个新增包页均返回 HTTP 200，版本及双 ABI 链接齐全；公开状态标记与对应源码树一致。发布文件、哈希和状态树详见本批审计记录的 `published_wheels` 与 `regression`。
+
+## 第四批回归与发布
+
+本轮新增 **4 个包**，仓库共 **34 个 recipe**；四批累计新增 24 个 Python 包。
+
+[全量构建与发布](https://github.com/ririv/py-extra-wheels/actions/runs/40683994208) 的 68 个目标全部成功，[CI](https://github.com/ririv/py-extra-wheels/actions/runs/40683994049) 在 Python 3.11 与 3.15 上通过 65 个组件测试、Ruff、TOML 与工作流检查。下载全部最终产物后复核：66 个含 ELF，两个已有 PyYAML 产物沿用纯 Python 构建；本轮新增八个 wheel 全部含原生扩展。固定来源、SHA-256、版本、WHEEL/RECORD、架构、Python 链接、依赖闭合与相对加载路径检查全部通过。
+
+初次全量运行在发布前复核时发现外部共享库、部分已有 Rust 扩展及 patchelf 新增段存在 4 KB 对齐，因此[取消该次发布](https://github.com/ririv/py-extra-wheels/actions/runs/40682586892)。随后按 [Android 官方说明](https://developer.android.com/guide/practices/page-sizes) 补齐 C/C++、Rust 和 patchelf 参数，并增加发布阶段的 ELF 加载段检查。最终 66 个原生 wheel 中的所有 ELF 加载段均满足至少 16 KB 对齐，文件偏移与虚拟地址关系也通过核验。这不代替设备功能测试，也不表示其他历史 Python 版本产物已全量重建。
+
+[Python 3.10 pydantic-core 2.41.5 双 ABI 回归](https://github.com/ririv/py-extra-wheels/actions/runs/40684018312) 同样通过来源、哈希、标签、ELF、16 KB 对齐和依赖闭合检查，仅保留验证产物。
+
+[主索引](https://ririv.github.io/py-extra-wheels/) 和 [旧索引](https://ririv.github.io/android-wheels/) 已由事件链路自动更新。两处根页及四个新增包页均返回 HTTP 200，版本与双 ABI 链接齐全；两个公开状态标记分别匹配 wheels 和 gh-pages 源码树。八个新增 wheel 的已发布 Git blob 与 Actions 核验产物逐字节一致。最终文件、哈希、加载段对齐和状态树见第四批审计记录的 `published_wheels`、`python310_regression` 与 `regression`。
