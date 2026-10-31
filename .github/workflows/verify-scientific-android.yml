@@ -1,0 +1,42 @@
+name: Verify scientific stack on Android
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_runs:
+        description: 'Comma-separated build runs containing ContourPy, pandas and Matplotlib Python 3.13 wheels'
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-tools
+      - name: Enable KVM for the Android emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Verify the complete scientific stack on Android API 34
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_RUNS: ${{ inputs.build_runs }}
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: python -B -m scripts.testing.scientific_runtime --runs "$BUILD_RUNS" --abi x86_64 --output verification/inputs --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --toolchain "$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64" --report verification/scientific-x86_64.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: scientific-runtime-x86_64
+          path: verification/scientific-x86_64.json
+          if-no-files-found: error

@@ -5,8 +5,8 @@ import json
 import shlex
 import shutil
 import subprocess
+import sys
 import tempfile
-import zipfile
 from pathlib import Path
 
 from scripts.build.android_python import (
@@ -20,6 +20,11 @@ from scripts.build.link_flags import PAGE_LINK_FLAGS
 from scripts.pipeline.artifacts import digest
 from scripts.pipeline.model import load_plan
 from scripts.pipeline.wheel import verify_wheel
+from scripts.testing.runtime_dependencies import (
+    native_dependency,
+    pure_dependency,
+    verify_closure,
+)
 
 
 def main() -> None:
@@ -31,6 +36,20 @@ def main() -> None:
     parser.add_argument("--toolchain", type=Path, required=True)
     parser.add_argument("--script", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument(
+        "--dependency",
+        nargs=2,
+        action="append",
+        default=[],
+        metavar=("PLAN", "ARTIFACT"),
+    )
+    parser.add_argument(
+        "--pure-dependency",
+        nargs=2,
+        action="append",
+        default=[],
+        metavar=("WHEEL", "SHA256"),
+    )
     args = parser.parse_args()
     plan = load_plan(args.plan)
     target = plan.target(args.artifact.name)
@@ -50,6 +69,18 @@ def main() -> None:
     if digest(wheel) != manifest["sha256"]:
         raise ValueError("运行产物哈希不一致")
     verify_wheel(wheel, target)
+    wheels = (
+        wheel,
+        *(
+            native_dependency(Path(plan), Path(artifact), target)
+            for plan, artifact in args.dependency
+        ),
+        *(
+            pure_dependency(Path(path), sha256, target)
+            for path, sha256 in args.pure_dependency
+        ),
+    )
+    inventory = verify_closure(wheels, target)
     adb = [str(args.adb), "-s", args.serial]
 
     def shell(*command: str) -> str:
@@ -90,8 +121,30 @@ def main() -> None:
         )
         site = prefix / "lib" / f"python{target.python}" / "site-packages"
         site.mkdir(exist_ok=True)
-        with zipfile.ZipFile(wheel) as archive:
-            archive.extractall(site)
+        subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "pip",
+                "install",
+                "--no-index",
+                "--no-deps",
+                "--no-compile",
+                "--only-binary=:all:",
+                "--platform",
+                f"android_{target.api}_{target.abi.value.replace('-', '_')}",
+                "--python-version",
+                target.python.value,
+                "--implementation",
+                "cp",
+                "--abi",
+                f"cp{target.python.value.replace('.', '')}",
+                "--target",
+                str(site),
+                *(str(path) for path in wheels),
+            ],
+            check=True,
+        )
         shutil.copy2(args.script, prefix / "runtime-test.py")
         remote = "/data/local/tmp/" + root.name
         shell("mkdir", remote)
@@ -118,6 +171,7 @@ def main() -> None:
                 },
                 "wheel": filename,
                 "sha256": manifest["sha256"],
+                "installed_wheels": inventory,
                 "script_sha256": digest(args.script),
                 "runtime_archive": {
                     "url": PYTHON_ARCHIVES[target.python].url(target.abi),

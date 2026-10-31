@@ -39,12 +39,12 @@ class RecipeTests(unittest.TestCase):
         self.assertEqual(by_name["orjson"].source.repository, "ririv/orjson")
         self.assertEqual(by_name["ormsgpack"].source.repository, "ormsgpack/ormsgpack")
         self.assertEqual(by_name["pyyaml"].backend.value, "_pyyaml_pep517")
-        self.assertTrue(
-            all(
-                recipe.android.python.values == tuple(PythonVersion)
-                for recipe in self.recipes
+        self.assertEqual(by_name["numpy"].android.python.values, tuple(PythonVersion))
+        for name in ("contourpy", "pandas", "matplotlib"):
+            self.assertEqual(
+                by_name[name].android.python.values,
+                tuple(version for version in PythonVersion if version.value >= "3.12"),
             )
-        )
 
     def test_named_selection_and_default_parallel_plan(self):
         selected = select_recipes(
@@ -57,7 +57,7 @@ class RecipeTests(unittest.TestCase):
         self.assertEqual({job.python for job in jobs}, set(PythonVersion))
         self.assertEqual(
             len(build_jobs(RecipeBuilds(select_recipes(self.recipes, AllRecipes())))),
-            len(self.recipes) * len(PythonVersion),
+            sum(len(recipe.android.python.values) for recipe in self.recipes),
         )
 
     def test_multiple_python_versions_expand_independent_jobs(self):
