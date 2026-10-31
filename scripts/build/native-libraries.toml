@@ -61,6 +61,19 @@ system = "cmake"
 args = ["-DBUILD_SHARED_LIBS=ON", "-DLIBXML2_WITH_PYTHON=OFF", "-DLIBXML2_WITH_TESTS=OFF", "-DLIBXML2_WITH_PROGRAMS=OFF", "-DLIBXML2_WITH_LEGACY=ON", "-DLIBXML2_WITH_ICONV=ON", "-DIconv_INCLUDE_DIR={prefix}/include", "-DIconv_LIBRARY={prefix}/lib/libiconv.so", "-DCMAKE_PREFIX_PATH={prefix}", "-DCMAKE_FIND_ROOT_PATH={prefix}"]
 licenses = ["Copyright"]
 
+[openblas]
+version = "0.3.34"
+filename = "OpenBLAS-0.3.34.tar.gz"
+url = "https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.34/OpenBLAS-0.3.34.tar.gz"
+sha256 = "cd7e129868320cc2d033afa920e31202dfe0b8066a5b66661900ccc0f197dfed"
+system = "cmake"
+args = ["-DBUILD_SHARED_LIBS=ON", "-DBUILD_STATIC_LIBS=OFF", "-DNOFORTRAN=ON", "-DC_LAPACK=ON", "-DBUILD_WITHOUT_LAPACK=OFF", "-DBUILD_WITHOUT_LAPACKE=OFF", "-DINTERFACE64=OFF", "-DDYNAMIC_ARCH=OFF", "-DUSE_THREAD=ON", "-DUSE_OPENMP=OFF", "-DNUM_THREADS=8", "-DBUILD_TESTING=OFF", "-DBUILD_BENCHMARKS=OFF"]
+licenses = ["LICENSE", "lapack-netlib/LICENSE"]
+
+[openblas.abi-args]
+arm64-v8a = ["-DTARGET=ARMV8"]
+x86_64 = ["-DTARGET=NEHALEM"]
+
 [xslt]
 version = "1.1.45"
 filename = "libxslt-1.1.45.tar.xz"

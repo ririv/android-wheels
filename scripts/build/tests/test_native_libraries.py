@@ -9,7 +9,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from scripts.build.android_python import AndroidABI, PythonVersion
-from scripts.build.native_libraries import library_specs
+from scripts.build.native_libraries import commands, library_specs
 from scripts.build.native_model import NativeLibrary
 from scripts.build.tests.test_wheel_abi import elf_with_dependency
 from scripts.build.wheel_native import attach_native_metadata
@@ -20,6 +20,37 @@ from scripts.testing.wheels import write_wheel
 
 
 class NativeLibraryTests(unittest.TestCase):
+    def test_openblas_cross_targets_keep_lp64_and_c_lapack(self):
+        root = Path(__file__).resolve().parents[3]
+        specs = library_specs(root / "scripts/build/native-libraries.toml")
+        library = specs[NativeLibrary.OPENBLAS]
+        for abi, cpu in ((AndroidABI.ARM64, "ARMV8"), (AndroidABI.X86_64, "NEHALEM")):
+            with self.subTest(abi=abi):
+                configure, build, install = commands(
+                    library,
+                    Path("/source"),
+                    Path("/build"),
+                    Path("/prefix"),
+                    Path("/ndk"),
+                    abi,
+                    24,
+                )
+                self.assertIn(f"-DANDROID_ABI={abi}", configure)
+                self.assertIn(f"-DTARGET={cpu}", configure)
+                self.assertIn("-DNOFORTRAN=ON", configure)
+                self.assertIn("-DC_LAPACK=ON", configure)
+                self.assertIn("-DBUILD_WITHOUT_LAPACK=OFF", configure)
+                self.assertIn("-DINTERFACE64=OFF", configure)
+                self.assertEqual(
+                    build, ["cmake", "--build", "/build", "--parallel", "2"]
+                )
+                self.assertEqual(install, ["cmake", "--install", "/build"])
+        self.assertEqual(
+            library.to_dict()["abi-args"],
+            {"arm64-v8a": ["-DTARGET=ARMV8"], "x86_64": ["-DTARGET=NEHALEM"]},
+        )
+        self.assertNotIn("abi-args", specs[NativeLibrary.LIBFFI].to_dict())
+
     def test_pinned_native_source_and_license_survive_the_artifact_roundtrip(self):
         root = Path(__file__).resolve().parents[3]
         spec = library_specs(root / "scripts/build/native-libraries.toml")[

@@ -11,7 +11,7 @@ from pathlib import Path
 
 from scripts.build.android_python import AndroidABI
 from scripts.build.link_flags import PAGE_LINK_FLAGS
-from scripts.build.native_model import BuildSystem, Library, NativeLibrary
+from scripts.build.native_model import ABIArguments, BuildSystem, Library, NativeLibrary
 from scripts.pipeline.sdists import download, extract
 
 
@@ -19,7 +19,7 @@ def library_specs(path: Path) -> dict[NativeLibrary, Library]:
     data = tomllib.loads(path.read_text(encoding="utf-8"))
     result = {}
     for name, row in data.items():
-        if set(row) != {
+        fields = {
             "version",
             "filename",
             "url",
@@ -27,12 +27,27 @@ def library_specs(path: Path) -> dict[NativeLibrary, Library]:
             "system",
             "args",
             "licenses",
-        }:
+        }
+        if "abi-args" in row:
+            fields.add("abi-args")
+        if set(row) != fields:
             raise ValueError(f"原生依赖字段不完整：{name}")
         if Path(row["filename"]).name != row["filename"] or not re.fullmatch(
             r"[a-f0-9]{64}", row["sha256"]
         ):
             raise ValueError(f"无效的原生依赖来源：{name}")
+        abi_args = ABIArguments()
+        if "abi-args" in row:
+            values = row["abi-args"]
+            if set(values) != {abi.value for abi in AndroidABI} or any(
+                not isinstance(args, list)
+                or not all(isinstance(arg, str) and "\n" not in arg for arg in args)
+                for args in values.values()
+            ):
+                raise ValueError(f"原生依赖必须显式配置全部 ABI 参数：{name}")
+            abi_args = ABIArguments(
+                tuple(values[AndroidABI.ARM64]), tuple(values[AndroidABI.X86_64])
+            )
         result[NativeLibrary(name)] = Library(
             NativeLibrary(name),
             row["version"],
@@ -42,6 +57,7 @@ def library_specs(path: Path) -> dict[NativeLibrary, Library]:
             BuildSystem(row["system"]),
             tuple(row["args"]),
             tuple(row["licenses"]),
+            abi_args,
         )
     return result
 
@@ -77,7 +93,10 @@ def commands(
     abi: AndroidABI,
     api: int,
 ) -> tuple[list[str], ...]:
-    args = [argument.format(prefix=prefix) for argument in library.args]
+    args = [
+        argument.format(prefix=prefix)
+        for argument in (*library.args, *library.abi_args.for_abi(abi))
+    ]
     match library.system:
         case BuildSystem.AUTOTOOLS:
             return (

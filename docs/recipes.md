@@ -127,7 +127,9 @@ abis = ["arm64-v8a", "x86_64"]
 api = 24
 ```
 
-依赖名由 `NativeLibrary` 枚举限制，固定源码 URL、版本、SHA-256、构建系统、配置参数和许可证文件在 `scripts/build/native-libraries.toml`。目前提供 libffi、libsodium、OpenSSL、CRC32C、libjpeg-turbo、libiconv、libxml2、libxslt；它们是构建依赖，不计作新增 Python 包。
+依赖名由 `NativeLibrary` 枚举限制，固定源码 URL、版本、SHA-256、构建系统、配置参数和许可证文件在 `scripts/build/native-libraries.toml`。目前提供 libffi、libsodium、OpenSSL、CRC32C、libjpeg-turbo、libiconv、libxml2、libxslt、OpenBLAS；它们是构建依赖，不计作新增 Python 包。
+
+原生依赖的公共参数放在 `args`；需要区分架构时，使用该依赖的 `abi-args` 表，显式给出 `arm64-v8a` 和 `x86_64` 两组参数，构建时只追加当前 ABI 的一组。原有未声明该表的依赖继续只使用公共参数，来源清单保持原格式。OpenBLAS 显式选择 LP64、上游自带的 C 版 LAPACK，以及 ARMV8/NEHALEM CPU 目标，不需要 Fortran 编译器或源码补丁。
 
 每个矩阵任务使用自己的 NDK 工具链和目标 ABI/API；cibuildwheel 先在独立前缀编译依赖，使其在 PEP 517 依赖探测之前即可由 pkg-config 查询；目标 Python 开发环境建立后，核对固定来源清单并把依赖安装到该开发前缀。maturin 直接使用任务独立前缀。两者均下载并验证依赖源码后直接编译，不改源码。Autotools、OpenSSL Configure 和 CMake 使用互斥枚举分派；命令以参数数组调用；原生配置参数只支持显式 `{prefix}` 安装路径占位。依赖编译失败立即终止，不切换系统库或纯 Python 实现。静态库供 Python 扩展链接，非系统共享运行库仍由 auditwheel 打包。
 
