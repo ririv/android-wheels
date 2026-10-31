@@ -36,6 +36,10 @@ def main() -> None:
     np.testing.assert_allclose(spsolve(sparse.csr_matrix(matrix), rhs), expected)
     values = np.array([1.0, 2.0, 3.0, 4.0])
     np.testing.assert_allclose(fft.ifft(fft.fft(values)).real, values)
+    batch = np.arange(4 * 4096, dtype=float).reshape(4, 4096)
+    np.testing.assert_allclose(
+        fft.fft(batch, workers=2), fft.fft(batch, workers=1), rtol=1e-12, atol=1e-8
+    )
     area, _ = integrate.quad(np.sin, 0, np.pi)
     np.testing.assert_allclose(area, 2.0)
     root = optimize.root(lambda x: matrix @ x - rhs, [0.0, 0.0])
@@ -81,6 +85,7 @@ def main() -> None:
                     "inverse",
                     "sparse_solve",
                     "fft",
+                    "fft_parallel",
                     "quadrature",
                     "root",
                     "special_complex",
