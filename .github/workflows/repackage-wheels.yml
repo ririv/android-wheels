@@ -1,0 +1,44 @@
+name: Repackage verified wheel artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_runs:
+        description: 'Comma-separated build run IDs whose plans form one complete cohort'
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  repackage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-tools
+      - name: Install pinned packaging tools
+        run: |
+          python -B -m scripts.tooling requirements build --output "$RUNNER_TEMP/packaging-requirements.txt"
+          python -m pip install -r "$RUNNER_TEMP/packaging-requirements.txt"
+      - name: Verify sources and repackage the complete artifact set
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUNS: ${{ inputs.build_runs }}
+        run: python -B -m scripts.pipeline.repackage --runs "$SOURCE_RUNS" --repository "$GITHUB_REPOSITORY" --output "$RUNNER_TEMP/repackaged"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-plan
+          path: ${{ runner.temp }}/repackaged/build-plan.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: repackaged-wheels
+          path: ${{ runner.temp }}/repackaged/artifacts
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packaging-provenance
+          path: ${{ runner.temp }}/repackaged/packaging-report.json
+          if-no-files-found: error

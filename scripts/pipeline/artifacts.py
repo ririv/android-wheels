@@ -52,20 +52,26 @@ def collect(directory: Path, plan: Plan) -> dict[str, Path]:
     result = {}
     for target in plan.targets:
         artifact = directory / target.artifact
-        manifest = json.loads((artifact / "manifest.json").read_text(encoding="utf-8"))
-        if manifest["target"] != target.to_dict():
-            raise ValueError(f"产物来源与构建计划不匹配：{target.artifact}")
-        name = manifest["wheel"]
-        if Path(name).name != name or not name.endswith(".whl"):
-            raise ValueError("无效的 wheel 文件名")
-        if {p.name for p in artifact.iterdir()} != {"manifest.json", name}:
-            raise ValueError(f"产物目录存在未声明文件：{artifact}")
-        wheel = artifact / name
-        if digest(wheel) != manifest["sha256"]:
-            raise ValueError(f"wheel 哈希校验失败：{wheel}")
+        wheel = artifact_wheel(artifact, target)
         verify_wheel(wheel, target)
-        key = f"{normalized(target.library)}/{name}"
+        key = f"{normalized(target.library)}/{wheel.name}"
         if key in result and digest(result[key]) != digest(wheel):
             raise ValueError(f"同名 wheel 内容冲突：{key}")
         result[key] = wheel
     return result
+
+
+def artifact_wheel(artifact: Path, target: Target) -> Path:
+    """Verify the immutable source manifest before inspecting or repackaging bytes."""
+    manifest = json.loads((artifact / "manifest.json").read_text(encoding="utf-8"))
+    if manifest["target"] != target.to_dict():
+        raise ValueError(f"产物来源与构建计划不匹配：{target.artifact}")
+    name = manifest["wheel"]
+    if Path(name).name != name or not name.endswith(".whl"):
+        raise ValueError("无效的 wheel 文件名")
+    if {p.name for p in artifact.iterdir()} != {"manifest.json", name}:
+        raise ValueError(f"产物目录存在未声明文件：{artifact}")
+    wheel = artifact / name
+    if digest(wheel) != manifest["sha256"]:
+        raise ValueError(f"wheel 哈希校验失败：{wheel}")
+    return wheel

@@ -16,6 +16,7 @@ from packaging.specifiers import SpecifierSet
 
 from scripts.build.native_libraries import library_specs
 from scripts.build.wheel_alignment import verify_alignment
+from scripts.build.wheel_rpath import verify_rpaths
 from scripts.pipeline.model import SdistSource, Target
 
 
@@ -147,3 +148,4 @@ def verify_wheel(path: Path, target: Target) -> None:
                     if elf.header["e_machine"] != expected_machine:
                         raise ValueError(f"ELF 架构与目标不一致：{entry.filename}")
                     verify_alignment(io.BytesIO(data), entry.filename)
+                    verify_rpaths(data, entry.filename)

@@ -13,9 +13,14 @@ from scripts.recipes.model import Backend
 from scripts.testing.wheels import write_wheel
 
 
-def elf_with_dependency(name: str) -> bytes:
+def elf_with_dependency(name: str, rpath: str | None = None) -> bytes:
     names = b"\0.shstrtab\0.dynstr\0.dynamic\0"
     strings = b"\0" + name.encode() + b"\0"
+    entries = [(1, 1)]
+    if rpath is not None:
+        entries.append((29, len(strings)))
+        strings += rpath.encode() + b"\0"
+    entries.append((0, 0))
     offset = 64 + 4 * 64
     dynamic_offset = offset + len(names) + len(strings)
     header = struct.pack(
@@ -39,10 +44,16 @@ def elf_with_dependency(name: str) -> bytes:
     for fields in (
         (1, 3, 0, 0, offset, len(names), 0, 0, 1, 0),
         (11, 3, 0, 0, offset + len(names), len(strings), 0, 0, 1, 0),
-        (19, 6, 0, 0, dynamic_offset, 32, 2, 0, 8, 16),
+        (19, 6, 0, 0, dynamic_offset, len(entries) * 16, 2, 0, 8, 16),
     ):
         sections += struct.pack("<IIQQQQIIQQ", *fields)
-    return header + sections + names + strings + struct.pack("<QQQQ", 1, 1, 0, 0)
+    return (
+        header
+        + sections
+        + names
+        + strings
+        + b"".join(struct.pack("<QQ", *entry) for entry in entries)
+    )
 
 
 class WheelABITests(unittest.TestCase):

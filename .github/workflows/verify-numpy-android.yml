@@ -7,6 +7,12 @@ on:
         description: 'Completed NumPy Python 3.13 build run ID'
         type: string
         required: true
+      artifact_layout:
+        description: 'Artifact layout produced by the selected run'
+        type: choice
+        options: [build, repackaged]
+        default: build
+        required: true
 
 permissions:
   contents: read
@@ -26,8 +32,16 @@ jobs:
           github-token: ${{ github.token }}
           path: verification/plan
       - uses: actions/download-artifact@v5
+        if: inputs.artifact_layout == 'build'
         with:
           pattern: numpy-android-3.13-wheel-*
+          run-id: ${{ inputs.build_run }}
+          github-token: ${{ github.token }}
+          path: verification/artifacts
+      - uses: actions/download-artifact@v5
+        if: inputs.artifact_layout == 'repackaged'
+        with:
+          name: repackaged-wheels
           run-id: ${{ inputs.build_run }}
           github-token: ${{ github.token }}
           path: verification/artifacts

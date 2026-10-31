@@ -21,6 +21,7 @@ from pathlib import Path
 from scripts.build.link_flags import PAGE_SIZE
 from scripts.build.wheel_abi import constrain_abi
 from scripts.build.wheel_native import attach_native_metadata
+from scripts.build.wheel_rpath import normalize_rpaths
 
 
 def contains_elf(wheel: str) -> bool:
@@ -70,6 +71,7 @@ def repair(wheel: str, dest_dir: str, ldpaths: str) -> None:
         repaired = list(Path(dest_dir).glob("*.whl"))
         if len(repaired) != 1:
             raise ValueError("Android repair 必须生成恰好一个 wheel")
+        normalize_rpaths(repaired[0])
         attach_native_metadata(repaired[0])
         constrain_abi(repaired[0])
         return
