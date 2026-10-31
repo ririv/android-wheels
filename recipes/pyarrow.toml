@@ -16,7 +16,7 @@ SETUPTOOLS_SCM_PRETEND_VERSION_FOR_PYARROW = "26.0.0"
 
 [config-settings]
 "cmake.define.PYARROW_BUNDLE_ARROW_CPP" = "ON"
-"cmake.define.CMAKE_PREFIX_PATH" = "{workspace}/.native-prefix"
+"cmake.define.CMAKE_PROJECT_INCLUDE_BEFORE" = "{workspace}/scripts/build/cmake/android-native-prefix.cmake"
 "cmake.define.CMAKE_C_STANDARD_LIBRARIES" = "-lpython{python}"
 "cmake.define.CMAKE_CXX_STANDARD_LIBRARIES" = "-lpython{python} -fuse-ld=lld"
 "cmake.define.CMAKE_PROJECT_INCLUDE" = "{workspace}/scripts/build/cmake/android-rpath.cmake"
