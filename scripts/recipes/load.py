@@ -168,14 +168,18 @@ def environment(data: dict) -> tuple[EnvironmentVariable, ...]:
 
 def config_settings(data: dict) -> tuple[ConfigSetting, ...]:
     if not isinstance(data, dict):
-        raise ValueError("config-settings 必须是字符串参数表")
+        raise ValueError("config-settings 必须是参数表")
     result = []
     for name, value in sorted(data.items()):
+        values = value if isinstance(value, list) else [value]
         if (
             not re.fullmatch(r"[A-Za-z0-9_.-]+", name)
-            or type(value) is not str
-            or any(char in value for char in "\n\r\0")
+            or not values
+            or any(
+                type(item) is not str or any(char in item for char in "\n\r\0")
+                for item in values
+            )
         ):
-            raise ValueError("config-settings 的键必须是参数名，值必须是单行字符串")
-        result.append(ConfigSetting(name, value))
+            raise ValueError("config-settings 的值必须是单行字符串或非空字符串数组")
+        result.extend(ConfigSetting(name, item) for item in values)
     return tuple(result)

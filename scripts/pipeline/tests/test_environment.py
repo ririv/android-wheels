@@ -96,7 +96,10 @@ class EnvironmentTests(unittest.TestCase):
 
     def test_pep517_settings_keep_argument_boundaries_and_reject_non_strings(self):
         settings = config_settings(
-            {"platform-guessing": "disable", "setup-args": "-Dvalue=a b"}
+            {
+                "platform-guessing": "disable",
+                "setup-args": ["-Dvalue=a b", "-Dblas=openblas"],
+            }
         )
         target = Target(
             "example",
@@ -108,8 +111,12 @@ class EnvironmentTests(unittest.TestCase):
         )
         self.assertEqual(
             shlex.split(target.row()["cibw_config_settings"]),
-            ["platform-guessing=disable", "setup-args=-Dvalue=a b"],
+            [
+                "platform-guessing=disable",
+                "setup-args=-Dvalue=a b",
+                "setup-args=-Dblas=openblas",
+            ],
         )
-        for value in (True, 1, "first\nsecond"):
+        for value in (True, 1, "first\nsecond", [], [1], ["first\nsecond"]):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 config_settings({"platform-guessing": value})

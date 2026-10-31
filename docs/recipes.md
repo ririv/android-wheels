@@ -94,7 +94,7 @@ SODIUM_INSTALL = "system"
 
 `PATH`、`CC`、`CFLAGS`、`LDFLAGS`、目标 Python/ABI、`CIBW_*`、`GITHUB_*` 等流水线变量不能被 recipe 覆盖。环境值会进入构建计划和产物来源清单；maturin 与 cibuildwheel 使用同一份声明。不能在变量里换行添加其他设置。
 
-PEP 517 后端的命令参数放入 `[config-settings]`，每个值必须是单行字符串。例如 Pillow 明确关闭宿主路径猜测，并要求 JPEG、PNG 所需扩展成功构建：
+PEP 517 后端的命令参数放入 `[config-settings]`，值可以是单行字符串或非空字符串数组。数组逐项传入同一个参数名，适用于 Meson 的多个 `setup-args`；包含空格的单个字符串仍保持一个参数，不会隐式拆分。例如 Pillow 明确关闭宿主路径猜测，并要求 JPEG、PNG 所需扩展成功构建：
 
 ```toml
 [config-settings]

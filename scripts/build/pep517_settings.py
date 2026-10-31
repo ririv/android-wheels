@@ -3,6 +3,24 @@
 from dataclasses import dataclass
 from typing import Protocol
 
+from scripts.recipes.model import ConfigSetting
+
+
+def backend_settings(settings: tuple[ConfigSetting, ...]) -> dict[str, str | list[str]]:
+    """Preserve repeated PEP 517 keys as ordered arrays."""
+    result: dict[str, str | list[str]] = {}
+    for setting in settings:
+        if setting.name not in result:
+            result[setting.name] = setting.value
+        else:
+            existing = result[setting.name]
+            result[setting.name] = (
+                [existing, setting.value]
+                if isinstance(existing, str)
+                else [*existing, setting.value]
+            )
+    return result
+
 
 class ProjectBuilder(Protocol):
     @property
@@ -18,7 +36,7 @@ class ProjectBuilder(Protocol):
 @dataclass(frozen=True)
 class ConfiguredBuilder:
     builder: ProjectBuilder
-    settings: dict[str, str]
+    settings: dict[str, str | list[str]]
 
     @property
     def build_system_requires(self) -> set[str]:
