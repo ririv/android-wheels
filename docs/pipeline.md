@@ -29,11 +29,11 @@
 | `scripts/pipeline/publish.py` | 将完整构建汇总为一个 Git 提交 |
 | `scripts/index` | 批量读取 Git 元数据，生成确定的 HTML 索引 |
 
-模块通过明确的数据和文件交互，支持声明式单行环境、PEP 517 字符串参数和固定原生依赖，不提供任意 Shell hook 或源码补丁入口。
+模块通过明确的数据和文件交互，支持声明式单行环境、PEP 517 字符串或字符串数组参数和固定原生依赖，不提供任意 Shell hook 或源码补丁入口。
 
 ## Actions 职责
 
-主仓库保留六个工作流：recipe 入口、有界矩阵批次、单目标 Android 构建器、临时仓库入口、索引部署、统一 CI。两个构建入口共享源码准备与发布 composite action。
+主仓库保留九个工作流：recipe 入口、有界矩阵批次、单目标 Android 构建器、临时仓库入口、索引部署、统一 CI，以及按需运行的 NumPy 验证、科学计算依赖栈验证和产物重打包。两个构建入口共享源码准备与发布 composite action；运行验证和重打包不会重复编译原生扩展。
 
 构建计划记录在 `build-plan` artifact 内的 `build-plan.json`，源码使用 `GitSource | SdistSource` 和类型建模。Git ref 在规划时解析为完整 SHA；PyPI 源明确固定版本、地址、文件名和 SHA-256。不同 Python 和 ABI 使用同一固定来源，构建器在编译前重新校验 checkout 或源码包哈希、后端、`PKG-INFO`。sdist 的产物版本还必须等于所选发行版本。临时仓库入口未填写 ref 时，显式读取上游默认分支后固定其提交。
 

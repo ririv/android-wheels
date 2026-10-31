@@ -39,11 +39,13 @@ xxhash
 - Android API：默认 **24**。
 - ABI：**`arm64-v8a`** 和 **`x86_64`**。
 
-当前 recipe 默认请求全部六个 Python 版本；用于构建未收录源码仓库的独立工作流默认使用 Python **3.13**。每个包及其构建依赖都必须支持所选版本。上游声明或已经验证的不兼容组合会记录原因并跳过；其他构建失败会直接报告。构建使用 recipe 中选定的包版本，不会自动选择较早发行版。
+多数 recipe 默认请求全部六个 Python 版本；当前科学计算依赖栈因依赖要求显式选择 Python 3.12–3.15。用于构建未收录源码仓库的独立工作流默认使用 Python **3.13**。每个包及其构建依赖都必须支持所选版本。上游声明或已经验证的不兼容组合会记录原因并跳过；其他构建失败会直接报告。构建使用 recipe 中选定的包版本，不会自动选择较早发行版。
 
 **2026-10-29** 验证的矩阵包含 **54 个包、624 个 wheel**，其中 Python 3.15 覆盖 **52 个包、104 个 wheel**。这些结果涵盖构建和静态检查，尚未进行设备或模拟器运行测试。详见 [完整矩阵与验证记录](docs/python-matrix.md)。
 
 **2026-10-31**，NumPy 2.5.4 新增 **Python 3.12–3.15 的 8 个 Android wheel**。其 Python 3.13 产物已在 Android API 34 模拟器上通过双 ABI 数值冒烟测试。详见 [NumPy 与 OpenBLAS 验证记录](docs/numpy.md)。
+
+ContourPy 1.4.0、pandas 3.1.0、Matplotlib 3.11.2 新增 **Python 3.12–3.15 的 24 个 wheel**，recipe 总数达到 **58 个包**。最终 Python 3.13 依赖栈在 Android API 34 双 ABI 上通过运行检查，包括 DataFrame 操作和无界面的 PNG/SVG/PDF 导出。详见 [科学计算依赖栈验证](docs/scientific.md)。
 
 ## 构建与发布
 
@@ -91,5 +93,6 @@ wheel 文件名遵循 [PEP 427](https://peps.python.org/pep-0427/#recommended-in
 - [流水线架构与开发检查](docs/pipeline.md)
 - [Android Python 运行库与构建路由](docs/python-builds.md)
 - [Python 完整矩阵与验证](docs/python-matrix.md)
+- [科学计算依赖栈与无界面绘图](docs/scientific.md)
 - [包收录口径与原生扩展排名审计](docs/package-selection.md)
 - [索引迁移与兼容地址](docs/index-migration.md)

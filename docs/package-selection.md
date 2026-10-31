@@ -102,6 +102,18 @@ NumPy 2.5.4 使用未修改的官方 sdist，通过外部 OpenBLAS 0.3.34、LP64
 
 此前缺少 BLAS 的阻碍已经解决，没有关闭 BLAS/LAPACK 或修改上游源码。完整配置、构建与运行检查范围见 [NumPy 与 OpenBLAS 验证记录](numpy.md)。
 
+## 科学计算与绘图依赖栈
+
+在现有 NumPy 基础上新增 ContourPy 1.4.0、pandas 3.1.0、Matplotlib 3.11.2，仍按原生扩展下载量前 100 筛选，不修改上游源码。
+
+| 原生候选名次 | 包 | 默认覆盖 | 主要验证 |
+| --- | --- | --- | --- |
+| 9 | pandas | Python 3.12–3.15 / 双 ABI | CSV、分组、合并、滚动计算与日期解析 |
+| 44 | Matplotlib | Python 3.12–3.15 / 双 ABI | Agg、文字、三角剖分与 PNG/SVG/PDF 导出 |
+| 50 | ContourPy | Python 3.12–3.15 / 双 ABI | 单线程、多线程等值线 |
+
+当前 NumPy 与 ContourPy 的最低 Python 要求为 3.12，因此完整依赖栈不提供 3.10/3.11 组合。构建参数、捆绑库来源、许可证补充和运行验证边界见 [科学计算依赖栈](scientific.md)。
+
 ## 暂缓项目
 
 | 包或类别 | 本次处理 |
@@ -109,10 +121,9 @@ NumPy 2.5.4 使用未修改的官方 sdist，通过外部 OpenBLAS 0.3.34、LP64
 | charset-normalizer、MarkupSafe、multidict、aiohttp、coverage | 当前 PyPI 已有官方 Android wheel，排除新增 |
 | grpcio 1.85.0 | 外部 OpenSSL 和 c-ares 均已编译，但上游硬编码宿主 `/usr/include`；调整搜索顺序后仍未通过，暂缓 |
 | mypy 2.4.0 | librt、ast-serialize 已在第五批收录；Android 下的 mypyc 自举类型检查仍失败，暂缓主包 |
-| contourpy | 先前双 ABI 编译通过；尚未结合新接入的 NumPy 重新验证和发布 |
 | psutil | 上游明确拒绝 Android 平台，不修改源码中的平台判断 |
 | uvloop | 外部配置已解决 libuv 交叉编译识别，但上游仍硬编码链接 Android 不提供的独立 pthread 库 |
-| pandas、SciPy、PyArrow、scikit-learn、matplotlib 等 | 数值/图形依赖需专项适配 |
+| SciPy、PyArrow、scikit-learn 等 | 数值/图形依赖需专项适配 |
 | 其余前 50 项目 | 保留在审计表中，本轮尚未收录 |
 
 ## 预验证记录

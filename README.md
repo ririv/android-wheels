@@ -39,11 +39,13 @@ xxhash
 - Android API level: **24** by default.
 - ABIs: **`arm64-v8a`** and **`x86_64`**.
 
-Recipes currently request all six Python versions by default. The separate workflow for building an unlisted source repository defaults to Python **3.13**. Each package and its build dependencies must support the requested version. Upstream-declared or verified incompatibilities are recorded and skipped; other build failures are reported. Builds use the version selected in the recipe without automatically choosing an older release.
+Most recipes request all six Python versions by default; the current scientific stack explicitly selects Python 3.12–3.15 because of its dependencies. The separate workflow for building an unlisted source repository defaults to Python **3.13**. Each package and its build dependencies must support the requested version. Upstream-declared or verified incompatibilities are recorded and skipped; other build failures are reported. Builds use the version selected in the recipe without automatically choosing an older release.
 
 The matrix validated on **2026-10-29** contains **624 wheels across 54 packages**, including **104 wheels across 52 packages for Python 3.15**. These results cover builds and static checks; device and emulator runtime tests have not been performed. See the [complete matrix and verification record](docs/python-matrix.md).
 
 On **2026-10-31**, NumPy 2.5.4 adds **eight Android wheels for Python 3.12–3.15**. Its Python 3.13 wheels passed numerical smoke tests on both ABIs using Android API 34 emulators. See [NumPy and OpenBLAS validation](docs/numpy.md).
+
+ContourPy 1.4.0, pandas 3.1.0, and Matplotlib 3.11.2 add **24 wheels for Python 3.12–3.15**, bringing the recipe set to **58 packages**. The final Python 3.13 stack passed Android API 34 smoke tests on both ABIs, including DataFrame operations and headless PNG/SVG/PDF output. See [scientific stack validation](docs/scientific.md).
 
 ## Build and publish
 
@@ -91,5 +93,6 @@ The detailed guides below are maintained in Chinese:
 - [Pipeline architecture and development checks](docs/pipeline.md)
 - [Android Python runtimes and build routes](docs/python-builds.md)
 - [Complete Python matrix and verification](docs/python-matrix.md)
+- [Scientific stack and headless plotting](docs/scientific.md)
 - [Package selection and native-extension ranking audit](docs/package-selection.md)
 - [Index migration and compatibility address](docs/index-migration.md)
