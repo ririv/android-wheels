@@ -1,6 +1,7 @@
 """Build pre-3.13 Android wheels using Chaquopy's prepared PEP 517 environment."""
 
 import os
+import subprocess
 import sys
 import tempfile
 import tomllib
@@ -91,16 +92,29 @@ def main() -> None:
             )
             normalize_extensions(wheel)
             ndk = Path(os.environ["ANDROID_NDK"])
-            libraries = (
+            compiler = (
                 ndk
-                / "toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib"
-                / abi.triplet
+                / "toolchains/llvm/prebuilt/linux-x86_64/bin"
+                / f"{abi.triplet}{target.api}-clang"
             )
+            search = subprocess.check_output(
+                [str(compiler), "--print-search-dirs"], text=True
+            )
+            library_rows = [
+                line.removeprefix("libraries: =")
+                for line in search.splitlines()
+                if line.startswith("libraries: =")
+            ]
+            if len(library_rows) != 1:
+                raise ValueError("NDK 编译器未报告唯一的目标库搜索路径")
+            libraries = library_rows[0].split(os.pathsep)
+            if any(not Path(directory).is_absolute() for directory in libraries):
+                raise ValueError("NDK 目标库搜索路径必须是绝对路径")
             repair(
                 str(wheel),
                 str(workspace / "output"),
                 os.pathsep.join(
-                    [str(Path(builder.host_env) / "chaquopy/lib"), str(libraries)]
+                    [str(Path(builder.host_env) / "chaquopy/lib"), *libraries]
                 ),
             )
 
