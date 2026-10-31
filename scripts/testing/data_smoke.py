@@ -29,7 +29,10 @@ def check_geometry() -> None:
     points = shapely.points([0.5, 2.5, 9], [0.5, 2.5, 9])
     np.testing.assert_array_equal(shapely.contains(left, points), [True, False, False])
     tree = STRtree([left, right])
-    assert tree.query(Point(1.5, 1.5), predicate="intersects").tolist() == [0, 1]
+    assert sorted(tree.query(Point(1.5, 1.5), predicate="intersects").tolist()) == [
+        0,
+        1,
+    ]
     assert tree.nearest(Point(2.75, 2.75)) == 1
     assert shapely.from_wkb(shapely.to_wkb(left)).equals(left)
     assert shapely.from_wkt(shapely.to_wkt(left)).equals(left)
@@ -38,8 +41,15 @@ def check_geometry() -> None:
 def check_database(root: Path) -> None:
     path = root / "database.duckdb"
     with duckdb.connect(
-        str(path), config={"temp_directory": str(root / "duckdb-tmp")}
+        str(path),
+        config={
+            "temp_directory": str(root / "duckdb-tmp"),
+            "autoinstall_known_extensions": False,
+            "autoload_known_extensions": False,
+        },
     ) as connection:
+        for extension in ("json", "parquet", "icu"):
+            connection.execute("LOAD " + extension).fetchall()
         assert connection.execute(
             "select i % 3 as k, sum(i) from range(10) t(i) group by k order by k"
         ).fetchall() == [(0, 18), (1, 12), (2, 15)]
@@ -50,13 +60,13 @@ def check_database(root: Path) -> None:
         connection.execute(f"copy sample to '{parquet}' (format parquet)")
         assert connection.execute(
             "select sum(value) from read_parquet(?)", [str(parquet)]
-        ).fetchone() == (90,)
+        ).fetchall() == [(90,)]
         assert connection.execute(
             """select json_extract('{"a": 3}', '$.a')::integer"""
-        ).fetchone() == (3,)
+        ).fetchall() == [(3,)]
         assert connection.execute(
             "select year(timestamptz '2026-10-31 00:00:00 UTC')"
-        ).fetchone() == (2026,)
+        ).fetchall() == [(2026,)]
         connection.register(
             "frame", pd.DataFrame({"key": ["a", "a", "b"], "value": [1, 2, 4]})
         )
@@ -65,7 +75,7 @@ def check_database(root: Path) -> None:
         ).df()
         assert result.to_dict("list") == {"key": ["a", "b"], "total": [3, 4]}
     with duckdb.connect(str(path), read_only=True) as connection:
-        assert connection.execute("select count(*) from sample").fetchone() == (10,)
+        assert connection.execute("select count(*) from sample").fetchall() == [(10,)]
 
 
 def check_dataframe(root: Path) -> None:
