@@ -2,6 +2,7 @@
 
 import importlib.util
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -63,7 +64,11 @@ def prepare_builder(pypi: Path, target: Target, workspace: Path):
             canonicalize_name(Requirement(requirement).name) == "numpy"
             for requirement in builder.builder.build_system_requires
         ):
-            env["NUMPY_CONFIG"] = str(Path(builder.build_env) / "bin/numpy-config")
+            numpy_config = Path(builder.build_env) / "bin/numpy-config"
+            numpy_pkgconfig = subprocess.check_output(
+                [str(numpy_config), "--pkgconfigdir"], text=True
+            ).strip()
+            env["PKG_CONFIG_PATH"] += os.pathsep + numpy_pkgconfig
         env["PKG_CONFIG_ALLOW_CROSS"] = "1"
         env["NATIVE_PREFIX"] = str(prefix)
         # 使用当前编译器的 NDK，而不是宿主系统路径，供后端显式探测系统库。
