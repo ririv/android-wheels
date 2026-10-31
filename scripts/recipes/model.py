@@ -30,6 +30,7 @@ class Backend(StrEnum):
     SETUPTOOLS_LEGACY = "setuptools.build_meta:__legacy__"
     PILLOW = "backend"
     SCIKIT_BUILD = "scikit_build_core.build"
+    DUCKDB = "duckdb_packaging.build_backend"
 
 
 class Publication(StrEnum):

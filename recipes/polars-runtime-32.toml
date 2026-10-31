@@ -1,0 +1,15 @@
+name = "polars-runtime-32"
+pypi-version = "2.1.0"
+directory = "."
+backend = "maturin"
+
+[android]
+python = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+abis = ["arm64-v8a", "x86_64"]
+api = 24
+
+[environment]
+CARGO_BUILD_JOBS = "2"
+CARGO_PROFILE_RELEASE_DEBUG = "0"
+CARGO_PROFILE_RELEASE_LTO = "off"
+JEMALLOC_SYS_WITH_LG_PAGE = "14"

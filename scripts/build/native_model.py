@@ -16,6 +16,7 @@ class NativeLibrary(StrEnum):
     XML2 = "xml2"
     XSLT = "xslt"
     OPENBLAS = "openblas"
+    GEOS = "geos"
 
 
 class BuildSystem(StrEnum):
