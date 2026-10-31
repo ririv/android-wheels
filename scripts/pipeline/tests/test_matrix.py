@@ -136,3 +136,27 @@ class MatrixTests(unittest.TestCase):
         for target in plan.targets:
             self.assertIn(f"-lpython{target.python}", target.config_settings[0].value)
             self.assertNotIn("{python}", target.config_settings[0].value)
+
+    def test_numpy_cross_files_follow_each_target_and_checkout(self):
+        source = replace(SOURCE, backend=Backend.MESON, requires_python=">=3.12")
+        event = {
+            "inputs": {
+                "recipes": "numpy",
+                "python_versions": "3.13",
+                "version_tag": "",
+                "publication": "build",
+            }
+        }
+        with patch("scripts.pipeline.planning.resolve_source", return_value=source):
+            plan = recipe_plan("workflow_dispatch", event, ROOT)
+        self.assertEqual(len(plan.targets), 2)
+        for target in plan.targets:
+            value = target.config_settings[0].value
+            self.assertEqual(
+                value,
+                f"--cross-file={{workspace}}/scripts/build/meson/{target.abi}.ini",
+            )
+            self.assertIn(
+                f"setup-args=--cross-file={Path.cwd()}/scripts/build/meson/{target.abi}.ini",
+                target.row()["cibw_config_settings"],
+            )

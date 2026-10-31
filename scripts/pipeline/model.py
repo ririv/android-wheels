@@ -10,6 +10,7 @@ from typing import Literal
 
 from scripts.build.android_python import AndroidABI, PythonVersion
 from scripts.build.native_model import NativeLibrary
+from scripts.build.pep517_settings import workspace_settings
 from scripts.pipeline.compatibility import UpstreamUnsupported, upstream_unsupported
 from scripts.recipes.model import (
     Backend,
@@ -99,7 +100,7 @@ class Target:
             "cibw_arch": self.abi.value.replace("-", "_"),
             "cibw_config_settings": " ".join(
                 f"{setting.name}={shlex.quote(setting.value)}"
-                for setting in self.config_settings
+                for setting in workspace_settings(self.config_settings, Path.cwd())
             ),
             "cibw_environment": " ".join(
                 f"{variable.name}={shlex.quote(variable.value)}"

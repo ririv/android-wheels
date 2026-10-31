@@ -1,9 +1,20 @@
 """Compose PEP 517 hooks with one explicit set of backend settings."""
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Protocol
 
 from scripts.recipes.model import ConfigSetting
+
+
+def workspace_settings(
+    settings: tuple[ConfigSetting, ...], workspace: Path
+) -> tuple[ConfigSetting, ...]:
+    """Resolve explicit build configuration paths in the current checkout."""
+    return tuple(
+        ConfigSetting(s.name, s.value.replace("{workspace}", str(workspace)))
+        for s in settings
+    )
 
 
 def backend_settings(settings: tuple[ConfigSetting, ...]) -> dict[str, str | list[str]]:

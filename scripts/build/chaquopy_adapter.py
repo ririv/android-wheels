@@ -8,7 +8,11 @@ from pathlib import Path
 from scripts.build.android_python import PythonVersion, write_pyo3_config
 from scripts.build.link_flags import PAGE_LINK_FLAGS, rust_link_flags
 from scripts.build.native_libraries import build_libraries
-from scripts.build.pep517_settings import ConfiguredBuilder, backend_settings
+from scripts.build.pep517_settings import (
+    ConfiguredBuilder,
+    backend_settings,
+    workspace_settings,
+)
 from scripts.pipeline.model import Target
 
 
@@ -36,7 +40,8 @@ def prepare_builder(pypi: Path, target: Target):
 
     def create_build_env():
         builder.builder = ConfiguredBuilder(
-            builder.builder, backend_settings(target.config_settings)
+            builder.builder,
+            backend_settings(workspace_settings(target.config_settings, Path.cwd())),
         )
         create_build()
 

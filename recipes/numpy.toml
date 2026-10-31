@@ -10,4 +10,4 @@ abis = ["arm64-v8a", "x86_64"]
 api = 24
 
 [config-settings]
-setup-args = ["-Dblas=openblas", "-Dlapack=openblas", "-Duse-ilp64=false", "-Dallow-noblas=false"]
+setup-args = ["--cross-file={workspace}/scripts/build/meson/{abi}.ini", "-Dblas=openblas", "-Dlapack=openblas", "-Duse-ilp64=false", "-Dallow-noblas=false"]

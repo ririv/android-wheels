@@ -110,7 +110,7 @@ zlib = "enable"
 "cmake.define.CMAKE_C_STANDARD_LIBRARIES" = "-lpython{python}"
 ```
 
-这是后端参数名中的点号，不是 TOML 子表。参数按独立的 `-C key=value` 边界交给后端，不拼接 Shell 命令，空格和特殊字符保持字面含义；键和值写入构建计划与来源清单。cibuildwheel 和 Chaquopy 都把同一组参数传入依赖探测与构建钩子；maturin 尚不接受这项配置。值中的 `{python}` 显式替换成当前目标版本，构建计划记录替换后的字面值，例如 `-lpython3.15`。
+这是后端参数名中的点号，不是 TOML 子表。参数按独立的 `-C key=value` 边界交给后端，不拼接 Shell 命令，空格和特殊字符保持字面含义；键和值写入构建计划与来源清单。cibuildwheel 和 Chaquopy 都把同一组参数传入依赖探测与构建钩子；maturin 尚不接受这项配置。值中的 `{python}` 和 `{abi}` 在规划时显式替换成目标版本和 ABI；`{workspace}` 在执行构建时替换成当前仓库的绝对路径，可引用仓库内维护的外部配置文件。NumPy 通过 `--cross-file={workspace}/scripts/build/meson/{abi}.ini` 声明 Android 的机器属性和 `long double` 格式，避免在宿主上运行目标程序，不修改包源码。
 
 需要外部原生库时，在 TOML 顶层声明：
 

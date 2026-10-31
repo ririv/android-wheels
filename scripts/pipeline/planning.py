@@ -100,7 +100,12 @@ def recipe_plan(event_name: str, event: dict, root: Path) -> Plan:
                 recipe.environment,
                 recipe.native_dependencies,
                 tuple(
-                    ConfigSetting(s.name, s.value.replace("{python}", job.python.value))
+                    ConfigSetting(
+                        s.name,
+                        s.value.replace("{python}", job.python.value).replace(
+                            "{abi}", abi.value
+                        ),
+                    )
                     for s in recipe.config_settings
                 ),
             )
