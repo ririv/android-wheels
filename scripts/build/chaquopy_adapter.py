@@ -5,6 +5,9 @@ import os
 import sys
 from pathlib import Path
 
+from packaging.requirements import Requirement
+from packaging.utils import canonicalize_name
+
 from scripts.build.android_python import PythonVersion, write_pyo3_config
 from scripts.build.build_tools import BuildTool
 from scripts.build.fortran import configure_fortran
@@ -56,6 +59,11 @@ def prepare_builder(pypi: Path, target: Target, workspace: Path):
         prefix = Path(builder.host_env) / "chaquopy"
         env["PKG_CONFIG_PATH"] = str(prefix / "lib/pkgconfig")
         env["PKG_CONFIG"] = str(pypi / "env/bin/pkg-config")
+        if any(
+            canonicalize_name(Requirement(requirement).name) == "numpy"
+            for requirement in builder.builder.build_system_requires
+        ):
+            env["NUMPY_CONFIG"] = str(Path(builder.build_env) / "bin/numpy-config")
         env["PKG_CONFIG_ALLOW_CROSS"] = "1"
         env["NATIVE_PREFIX"] = str(prefix)
         # 使用当前编译器的 NDK，而不是宿主系统路径，供后端显式探测系统库。
