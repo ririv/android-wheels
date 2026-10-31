@@ -6,6 +6,8 @@ import sys
 from pathlib import Path
 
 from scripts.build.android_python import PythonVersion, write_pyo3_config
+from scripts.build.build_tools import BuildTool
+from scripts.build.fortran import configure_fortran
 from scripts.build.link_flags import PAGE_LINK_FLAGS, rust_link_flags
 from scripts.build.native_libraries import build_libraries
 from scripts.build.pep517_settings import (
@@ -58,6 +60,13 @@ def prepare_builder(pypi: Path, target: Target, workspace: Path):
         env["NATIVE_PREFIX"] = str(prefix)
         # 使用当前编译器的 NDK，而不是宿主系统路径，供后端显式探测系统库。
         sysroot = Path(env["AR"]).parent.parent / "sysroot"
+        if BuildTool.FORTRAN in target.build_tools:
+            from cibuildwheel.platforms.android import setup_fortran
+
+            compiler = (
+                sysroot.parent / "bin" / f"{target.abi.triplet}{target.api}-clang"
+            )
+            configure_fortran(env, compiler, setup_fortran)
         env["C_INCLUDE_PATH"] = str(sysroot / "usr/include")
         env["LIBRARY_PATH"] = str(
             sysroot / "usr/lib" / target.abi.triplet / str(target.api)

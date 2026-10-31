@@ -10,7 +10,7 @@ on:
       suite:
         description: 'Runtime suite to verify'
         type: choice
-        options: [plotting, data]
+        options: [plotting, data, numerical]
         default: plotting
         required: true
       artifact_layout:

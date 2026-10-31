@@ -108,6 +108,7 @@ def recipe_plan(event_name: str, event: dict, root: Path) -> Plan:
                     )
                     for s in recipe.config_settings
                 ),
+                recipe.build_tools,
             )
             for abi in recipe.android.abis.values
         )

@@ -7,6 +7,7 @@ from pathlib import Path, PurePosixPath
 from typing import TypeVar
 
 from scripts.build.android_python import AndroidABI, PythonVersion
+from scripts.build.build_tools import BuildTool
 from scripts.build.native_model import NativeLibrary
 from scripts.recipes.model import (
     Android,
@@ -57,6 +58,8 @@ def load_recipe(path: Path) -> Recipe:
         common.add("config-settings")
     if "environment" in data:
         common.add("environment")
+    if "build-tools" in data:
+        common.add("build-tools")
     if "pypi-version" in data:
         require_keys(data, common | {"pypi-version"}, str(path))
         if type(data["pypi-version"]) is not str or not data["pypi-version"]:
@@ -94,6 +97,9 @@ def load_recipe(path: Path) -> Recipe:
         backend=Backend(data["backend"]),
         environment=environment(data.get("environment", {})),
         config_settings=config_settings(data.get("config-settings", {})),
+        build_tools=choices(data["build-tools"], BuildTool, "build-tools").values
+        if "build-tools" in data
+        else (),
         native_dependencies=(
             choices(
                 data["native-dependencies"], NativeLibrary, "native-dependencies"

@@ -3,6 +3,7 @@ pypi-version = "1.18.1"
 directory = "."
 backend = "mesonpy"
 native-dependencies = ["openblas"]
+build-tools = ["fortran"]
 
 [android]
 python = ["3.12", "3.13", "3.14", "3.15"]

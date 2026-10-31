@@ -2,11 +2,13 @@
 
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
 from scripts.build.android_python import AndroidABI, PythonVersion
-from scripts.pipeline.artifacts import digest
+from scripts.build.tests.test_wheel_abi import elf_with_dependency
+from scripts.pipeline.artifacts import digest, record
 from scripts.pipeline.model import GitSource, Plan, Target, load_plan
 from scripts.recipes.model import Backend, Publication
 from scripts.testing.runtime_dependencies import (
@@ -41,6 +43,33 @@ def wheel(root: Path, name: str, requires: str = "") -> Path:
 
 
 class RuntimeDependencyTests(unittest.TestCase):
+    def test_lower_api_dependency_is_usable_without_changing_its_tag(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            dependency = replace(TARGET, library="helper")
+            folder = root / dependency.artifact
+            folder.mkdir()
+            path = folder / "helper-1.0-cp313-cp313-android_24_arm64_v8a.whl"
+            prefix = "helper-1.0.dist-info/"
+            write_wheel(
+                path,
+                {
+                    "helper.so": elf_with_dependency("libpython3.13.so"),
+                    prefix + "METADATA": b"Name: helper\nVersion: 1.0\n",
+                    prefix
+                    + "WHEEL": b"Wheel-Version: 1.0\nTag: cp313-cp313-android_24_arm64_v8a\n",
+                },
+            )
+            record(folder, dependency)
+            plan = root / "plan.json"
+            Plan(Publication.BUILD, (dependency,)).write(plan)
+            self.assertEqual(
+                native_dependency(plan, folder, replace(TARGET, api=26)), path
+            )
+            Plan(Publication.BUILD, (replace(dependency, api=26),)).write(plan)
+            with self.assertRaisesRegex(ValueError, "与目标不一致"):
+                native_dependency(plan, folder, TARGET)
+
     def test_patch_and_implementation_markers_follow_the_android_archive(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

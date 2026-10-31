@@ -5,6 +5,7 @@ from enum import StrEnum
 from typing import Generic, TypeVar
 
 from scripts.build.android_python import AndroidABI, PythonVersion
+from scripts.build.build_tools import BuildTool
 from scripts.build.native_model import NativeLibrary
 
 T = TypeVar("T")
@@ -83,6 +84,7 @@ class Recipe(Generic[L]):
     environment: tuple[EnvironmentVariable, ...] = ()
     native_dependencies: tuple[NativeLibrary, ...] = ()
     config_settings: tuple[ConfigSetting, ...] = ()
+    build_tools: tuple[BuildTool, ...] = ()
 
 
 @dataclass(frozen=True)

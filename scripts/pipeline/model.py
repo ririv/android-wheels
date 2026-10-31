@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Literal
 
 from scripts.build.android_python import AndroidABI, PythonVersion
+from scripts.build.build_tools import BuildTool
 from scripts.build.maturin_settings import maturin_options
 from scripts.build.native_model import NativeLibrary
 from scripts.build.pep517_settings import workspace_settings
@@ -65,14 +66,19 @@ class Target:
     environment: tuple[EnvironmentVariable, ...] = ()
     native_dependencies: tuple[NativeLibrary, ...] = ()
     config_settings: tuple[ConfigSetting, ...] = ()
+    build_tools: tuple[BuildTool, ...] = ()
 
     def to_dict(self) -> dict:
-        return {
+        result = {
             **asdict(self),
             "environment": [asdict(variable) for variable in self.environment],
             "native_dependencies": list(self.native_dependencies),
             "config_settings": [asdict(setting) for setting in self.config_settings],
         }
+        del result["build_tools"]
+        if self.build_tools:
+            result["build_tools"] = list(self.build_tools)
+        return result
 
     @property
     def builder(self) -> Builder:
@@ -169,6 +175,7 @@ def load_plan(path: Path) -> Plan:
                 tuple(EnvironmentVariable(**v) for v in row["environment"]),
                 tuple(NativeLibrary(v) for v in row["native_dependencies"]),
                 tuple(ConfigSetting(**v) for v in row["config_settings"]),
+                tuple(BuildTool(value) for value in row.get("build_tools", [])),
             )
         )
     skipped = []

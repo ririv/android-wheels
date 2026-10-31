@@ -7,6 +7,7 @@ from enum import StrEnum
 class RuntimeSuite(StrEnum):
     PLOTTING = "plotting"
     DATA = "data"
+    NUMERICAL = "numerical"
 
 
 class ArtifactLayout(StrEnum):
@@ -24,6 +25,13 @@ class Suite:
 
 
 SUITES = {
+    RuntimeSuite.NUMERICAL: Suite(
+        ("scipy",),
+        "scipy",
+        ("numpy",),
+        "numerical-pure-dependencies.json",
+        "scipy_smoke.py",
+    ),
     RuntimeSuite.PLOTTING: Suite(
         ("contourpy", "pandas", "matplotlib"),
         "matplotlib",
