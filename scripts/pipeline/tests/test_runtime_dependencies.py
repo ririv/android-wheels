@@ -3,16 +3,18 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from scripts.build.android_python import AndroidABI, PythonVersion
 from scripts.pipeline.artifacts import digest
-from scripts.pipeline.model import GitSource, Plan, Target
+from scripts.pipeline.model import GitSource, Plan, Target, load_plan
 from scripts.recipes.model import Backend, Publication
 from scripts.testing.runtime_dependencies import (
     native_dependency,
     pure_dependency,
     verify_closure,
 )
+from scripts.testing.scientific_runtime import published_dependencies
 from scripts.testing.wheels import write_wheel
 
 TARGET = Target(
@@ -39,6 +41,24 @@ def wheel(root: Path, name: str, requires: str = "") -> Path:
 
 
 class RuntimeDependencyTests(unittest.TestCase):
+    def test_published_stack_uses_recorded_sources_for_both_abis(self):
+        for abi in AndroidABI:
+            with self.subTest(abi=abi), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                with patch(
+                    "scripts.testing.scientific_runtime.download",
+                    side_effect=lambda url, sha256, destination: destination,
+                ) as fetch:
+                    arguments = published_dependencies(abi.value, root)
+                plan = load_plan(root / "published-plan.json")
+                self.assertEqual(
+                    {target.library for target in plan.targets},
+                    {"numpy", "pillow", "fonttools", "kiwisolver"},
+                )
+                self.assertTrue(all(target.abi == abi for target in plan.targets))
+                self.assertEqual(len(arguments), 12)
+                self.assertEqual(fetch.call_count, 4)
+
     def test_complete_transitive_dependency_set(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

@@ -22,7 +22,7 @@ def published_dependencies(abi: str, output: Path) -> list[str]:
         (matrix["publication"]["wheels_commit"], row)
         for row in matrix["publication"]["published_wheels"]
         if row["package"] in {"pillow", "fonttools", "kiwisolver"}
-    ] + [(numpy["publication"]["wheels_commit"], row) for row in numpy["wheels"]]
+    ] + [(numpy["publication"]["revision"], row) for row in numpy["wheels"]]
     entries = [
         (commit, row)
         for commit, row in entries
@@ -45,7 +45,7 @@ def published_dependencies(abi: str, output: Path) -> list[str]:
     for commit, row in entries:
         target = next(t for t in plan.targets if t.library == row["target"]["library"])
         folder = output / target.artifact
-        folder.mkdir()
+        folder.mkdir(exist_ok=True)
         wheel = download(
             f"https://raw.githubusercontent.com/{REPOSITORY}/{commit}/{target.library}/{row['filename']}",
             row["sha256"],
@@ -161,7 +161,7 @@ def main() -> None:
     if not re.fullmatch(r"[0-9]+(?:,[0-9]+)*", args.runs):
         raise ValueError("运行编号必须是逗号分隔的数字")
     output = args.output.resolve()
-    output.mkdir(parents=True)
+    output.mkdir(parents=True, exist_ok=True)
     plan, artifact, arguments = build_dependencies(args.runs, args.abi, output)
     arguments.extend(published_dependencies(args.abi, output))
     pure = json.loads(
