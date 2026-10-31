@@ -33,6 +33,8 @@ class NativeLibraryTests(unittest.TestCase):
         )
         arrow = commands(specs[NativeLibrary.ARROW], *arguments)
         self.assertEqual(arrow[0][arrow[0].index("-S") + 1], "/source/cpp")
+        self.assertIn("--strip", arrow[2])
+        self.assertIn("-DCMAKE_PLATFORM_NO_VERSIONED_SONAME=OFF", arrow[0])
         client = commands(specs[NativeLibrary.LIBPQ], *arguments)
         self.assertEqual(client[1], ["make", "-j2", "-C", "src/interfaces/libpq"])
         self.assertEqual(client[2], ["make", "-C", "src/interfaces/libpq", "install"])

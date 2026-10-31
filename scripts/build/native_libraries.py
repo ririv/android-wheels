@@ -173,7 +173,16 @@ def commands(
                     *args,
                 ],
                 ["cmake", "--build", str(build), "--parallel", "2"],
-                ["cmake", "--install", str(build)],
+                [
+                    "cmake",
+                    "--install",
+                    str(build),
+                    *(
+                        ["--strip"]
+                        if library.system == BuildSystem.CMAKE_SUPERBUILD
+                        else []
+                    ),
+                ],
             )
 
 
