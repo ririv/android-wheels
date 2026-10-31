@@ -57,7 +57,12 @@ def repackage(inputs: tuple[tuple[str, Path, Plan], ...], output: Path) -> None:
                 "rpath_changes": [asdict(change) for change in changes],
             }
         )
-    plan = Plan(Publication.BUILD, tuple(targets.values()))
+    skipped = tuple(
+        dict.fromkeys(
+            entry for _, _, source_plan in inputs for entry in source_plan.skipped
+        )
+    )
+    plan = Plan(Publication.BUILD, tuple(targets.values()), skipped)
     plan.write(output / "build-plan.json")
     collect(artifacts, plan)
     (output / "packaging-report.json").write_text(json.dumps(report, indent=2) + "\n")

@@ -96,6 +96,12 @@ lxml 需要在后端查询构建依赖之前找到目标原生库。流水线先
 - [Pillow 双 ABI](https://github.com/ririv/py-extra-wheels/actions/runs/40681765323)：两个目标成功并独立核验；该次包含随后修复的 lxml，整体失败且未发布。
 - [lxml 双 ABI](https://github.com/ririv/py-extra-wheels/actions/runs/40682056639)：两个目标全部成功。
 
+## NumPy 与 OpenBLAS
+
+NumPy 2.5.4 使用未修改的官方 sdist，通过外部 OpenBLAS 0.3.34、LP64 参数和 Android Meson cross file 完成接入。Python 3.12–3.15 的双 ABI 共 8 个目标构建成功；Python 3.13 的两个最终 wheel 已在 Android API 34 模拟器上通过实数、复数、线性代数、并发和 `long double` 精度检查。3.10、3.11 因上游最低 Python 版本要求跳过，不选择旧版。
+
+此前缺少 BLAS 的阻碍已经解决，没有关闭 BLAS/LAPACK 或修改上游源码。完整配置、构建与运行检查范围见 [NumPy 与 OpenBLAS 验证记录](numpy.md)。
+
 ## 暂缓项目
 
 | 包或类别 | 本次处理 |
@@ -103,8 +109,7 @@ lxml 需要在后端查询构建依赖之前找到目标原生库。流水线先
 | charset-normalizer、MarkupSafe、multidict、aiohttp、coverage | 当前 PyPI 已有官方 Android wheel，排除新增 |
 | grpcio 1.85.0 | 外部 OpenSSL 和 c-ares 均已编译，但上游硬编码宿主 `/usr/include`；调整搜索顺序后仍未通过，暂缓 |
 | mypy 2.4.0 | librt、ast-serialize 已在第五批收录；Android 下的 mypyc 自举类型检查仍失败，暂缓主包 |
-| NumPy | 已尝试 Meson 构建，但缺少 Android BLAS；不发布关闭 BLAS 的构建 |
-| contourpy | 双 ABI 编译通过，因依赖 NumPy 暂缓发布 |
+| contourpy | 先前双 ABI 编译通过；尚未结合新接入的 NumPy 重新验证和发布 |
 | psutil | 上游明确拒绝 Android 平台，不修改源码中的平台判断 |
 | uvloop | 外部配置已解决 libuv 交叉编译识别，但上游仍硬编码链接 Android 不提供的独立 pthread 库 |
 | pandas、SciPy、PyArrow、scikit-learn、matplotlib 等 | 数值/图形依赖需专项适配 |

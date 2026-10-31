@@ -1,5 +1,7 @@
 # Python 完整构建矩阵
 
+本页保留 2026-10-29 的 54 包构建快照。2026-10-31 新增 NumPy 的 8 个目标及双 ABI 运行验证见 [NumPy 与 OpenBLAS](numpy.md)，对应记录单独保存，不改写此前审计数据。
+
 ## 构建范围
 
 54 个 recipe 请求 Python 3.10–3.15、Android API 24、`arm64-v8a` 和 `x86_64`。每个包沿用当前 recipe 的源码版本，不为旧 Python 选择较早发行版，不修改上游源码。

@@ -135,7 +135,7 @@ api = 24
 
 Android 交叉编译的宿主构建钩子使用显式 `/system/bin/sh` 到宿主 `/bin/sh` 的映射；NDK sysroot 的头文件与 ABI/API 库目录显式提供给构建器，避免搜索宿主 `/usr/include` 和 `/usr/lib`。
 
-所有新构建的 ELF 加载段都必须满足 16 KB 对齐。C/C++ 原生库和 Rust 链接显式设置页大小参数，auditwheel 使用任务临时的 patchelf CLI 适配器保留新增段的对齐；不修改第三方工具源码。发布校验逐个检查 wheel 内的 ELF 加载段，发现 4 KB 段或文件偏移与虚拟地址不匹配时直接失败。[Android 官方说明](https://developer.android.com/guide/practices/page-sizes) 同时要求检查代码中的页大小假设；本仓库目前只完成构建和静态检查，没有设备运行验证。
+所有新构建的 ELF 加载段都必须满足 16 KB 对齐。C/C++ 原生库和 Rust 链接显式设置页大小参数，auditwheel 使用任务临时的 patchelf CLI 适配器保留新增段的对齐；不修改第三方工具源码。发布校验逐个检查 wheel 内的 ELF 加载段，发现 4 KB 段或文件偏移与虚拟地址不匹配时直接失败。[Android 官方说明](https://developer.android.com/guide/practices/page-sizes) 同时要求检查代码中的页大小假设；默认构建流水线只进行构建和静态检查。NumPy 另有 [独立按需运行验证](numpy.md)，覆盖 Python 3.13 的双 ABI、Android API 34 和 4 KB 页；尚未进行 16 KB 页设备运行验证。
 
 最终 wheel 的 `.dist-info/native-libraries.json` 记录实际依赖来源，`.dist-info/licenses/native/` 保存许可证；发布阶段核验这些记录与固定配置一致，并照常验证 RECORD 哈希。原生依赖接入三个构建器。旧版 Chaquopy 在建立目标 Python 开发前缀后编译依赖，再执行 PEP 517 依赖探测；最终 wheel 使用共用的 Android repair 与 16 KB 对齐校验。
 

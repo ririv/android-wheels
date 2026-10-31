@@ -1,0 +1,4241 @@
+{
+  "schema": 1,
+  "verified_at": "2026-10-31T10:53:57+08:00",
+  "package": "numpy",
+  "version": "2.5.4",
+  "requires_python": ">=3.12",
+  "excluded_python": [
+    {
+      "version": "3.10",
+      "reason": "上游 Requires-Python >=3.12；不选择较早发行版"
+    },
+    {
+      "version": "3.11",
+      "reason": "上游 Requires-Python >=3.12；不选择较早发行版"
+    }
+  ],
+  "native_libraries": [
+    {
+      "name": "openblas",
+      "version": "0.3.34",
+      "filename": "OpenBLAS-0.3.34.tar.gz",
+      "url": "https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.34/OpenBLAS-0.3.34.tar.gz",
+      "sha256": "cd7e129868320cc2d033afa920e31202dfe0b8066a5b66661900ccc0f197dfed",
+      "system": "cmake",
+      "args": [
+        "-DBUILD_SHARED_LIBS=ON",
+        "-DBUILD_STATIC_LIBS=OFF",
+        "-DNOFORTRAN=ON",
+        "-DC_LAPACK=ON",
+        "-DBUILD_WITHOUT_LAPACK=OFF",
+        "-DBUILD_WITHOUT_LAPACKE=OFF",
+        "-DINTERFACE64=OFF",
+        "-DDYNAMIC_ARCH=OFF",
+        "-DUSE_THREAD=ON",
+        "-DUSE_OPENMP=OFF",
+        "-DNUM_THREADS=8",
+        "-DBUILD_TESTING=OFF",
+        "-DBUILD_BENCHMARKS=OFF"
+      ],
+      "licenses": [
+        "LICENSE",
+        "lapack-netlib/LICENSE"
+      ],
+      "abi-args": {
+        "arm64-v8a": [
+          "-DTARGET=ARMV8"
+        ],
+        "x86_64": [
+          "-DTARGET=NEHALEM"
+        ]
+      }
+    }
+  ],
+  "build_runs": [
+    {
+      "id": 41158539798,
+      "head": "00c4a64a5d15c34f98109a40fe10b379ed313b1b",
+      "targets": "3.13 双 ABI，2/2 成功"
+    },
+    {
+      "id": 41158984712,
+      "head": "4fbe8f950e71b51f1393dc5cb50b9d61eda6e3e0",
+      "targets": "3.14、3.15 双 ABI，4/4 成功；同次 3.12 配置路径失败由下列运行修复"
+    },
+    {
+      "id": 41159165854,
+      "head": "d24f925ccd1f9280fbb4915f937dd63450f017e3",
+      "targets": "3.12 双 ABI 定向验证，2/2 成功"
+    }
+  ],
+  "repackaging": {
+    "run": 41160688726,
+    "head": "afeedfb17b59d5c41dc75c477324351220c52dde",
+    "changes": [
+      {
+        "artifact": "numpy-android-3.13-wheel-arm64-v8a",
+        "source_run": "41158539798",
+        "input_sha256": "8a928364111caf6ac7c9282cbfc83e0a70ab38a41d58d21e7e75568738b598ae",
+        "output_sha256": "6748027c9bf8f81da6320cd99f1c225ef12ecd71e765bad581d6b3b10960db05",
+        "rpath_changes": [
+          {
+            "file": "numpy/_core/_multiarray_tests.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_operand_flag_tests.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_rational_tests.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_simd.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_struct_ufunc_tests.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_umath_tests.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_bounded_integers.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_common.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_generator.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_mt19937.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_pcg64.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_philox.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_sfc64.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/bit_generator.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/mtrand.cpython-313-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-_0fr4op4/cp313-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          }
+        ]
+      },
+      {
+        "artifact": "numpy-android-3.13-wheel-x86_64",
+        "source_run": "41158539798",
+        "input_sha256": "67f99d6de1bf278665af1a183233762760b9f223e8c1da4009c025285e29b9bb",
+        "output_sha256": "53040a588bb16baee1f6119cf1a8d4ac338a371f747579e3a2e142e623d7a46e",
+        "rpath_changes": [
+          {
+            "file": "numpy/_core/_multiarray_tests.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_operand_flag_tests.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_rational_tests.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_simd.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_struct_ufunc_tests.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_umath_tests.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_bounded_integers.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_common.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_generator.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_mt19937.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_pcg64.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_philox.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_sfc64.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/bit_generator.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/mtrand.cpython-313-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-2o9_klhn/cp313-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          }
+        ]
+      },
+      {
+        "artifact": "numpy-android-3.12-wheel-arm64-v8a",
+        "source_run": "41159165854",
+        "input_sha256": "b5e1676ab88d6bb9c82c8aea14510ce75dfeb19b9a1093f9fb9e734099dcb812",
+        "output_sha256": "b5e1676ab88d6bb9c82c8aea14510ce75dfeb19b9a1093f9fb9e734099dcb812",
+        "rpath_changes": []
+      },
+      {
+        "artifact": "numpy-android-3.12-wheel-x86_64",
+        "source_run": "41159165854",
+        "input_sha256": "44cf7cba73a6c94e4a24b40e148f4693b4cce57c58ebb037772be41832786beb",
+        "output_sha256": "44cf7cba73a6c94e4a24b40e148f4693b4cce57c58ebb037772be41832786beb",
+        "rpath_changes": []
+      },
+      {
+        "artifact": "numpy-android-3.14-wheel-arm64-v8a",
+        "source_run": "41158984712",
+        "input_sha256": "256ede43fe8c2d2fce2814a1df7eb95f91b22bf02bede266e6ca2bb4b82ed457",
+        "output_sha256": "5bba9c546bf83893b07b691a9ab599fdaad9c4d37feff900fbe699b89f097b7c",
+        "rpath_changes": [
+          {
+            "file": "numpy/_core/_multiarray_tests.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_operand_flag_tests.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_rational_tests.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_simd.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_struct_ufunc_tests.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_umath_tests.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_bounded_integers.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_common.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_generator.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_mt19937.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_pcg64.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_philox.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_sfc64.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/bit_generator.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/mtrand.cpython-314-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-d_0nk3y6/cp314-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          }
+        ]
+      },
+      {
+        "artifact": "numpy-android-3.14-wheel-x86_64",
+        "source_run": "41158984712",
+        "input_sha256": "4db410e72c3bc40eea0981bdfd60128c49c98ef1e4b49c79f84e17b051494219",
+        "output_sha256": "ca05449fda4637ea23b46026a12eb0b35ff9f609fafbb6fd0f96e436dff8a208",
+        "rpath_changes": [
+          {
+            "file": "numpy/_core/_multiarray_tests.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_operand_flag_tests.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_rational_tests.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_simd.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_struct_ufunc_tests.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_umath_tests.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_bounded_integers.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_common.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_generator.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_mt19937.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_pcg64.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_philox.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_sfc64.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/bit_generator.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/mtrand.cpython-314-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-kc182pvt/cp314-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          }
+        ]
+      },
+      {
+        "artifact": "numpy-android-3.15-wheel-arm64-v8a",
+        "source_run": "41158984712",
+        "input_sha256": "97b5a657a57e24a3179eff5fd87222298f7afe1b004c3fecae326333f64ede12",
+        "output_sha256": "3d431953b8f9b7a835b64c405a72029b1bef6d9b2a2f29a4b01cab81237b433a",
+        "rpath_changes": [
+          {
+            "file": "numpy/_core/_multiarray_tests.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_operand_flag_tests.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_rational_tests.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_simd.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_struct_ufunc_tests.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_umath_tests.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_bounded_integers.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_common.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_generator.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_mt19937.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_pcg64.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_philox.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_sfc64.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/bit_generator.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/mtrand.cpython-315-aarch64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-t8thbkp0/cp315-android_arm64_v8a/python/prefix/lib"
+            ],
+            "after": []
+          }
+        ]
+      },
+      {
+        "artifact": "numpy-android-3.15-wheel-x86_64",
+        "source_run": "41158984712",
+        "input_sha256": "7f9203173f14f6026bb267d79bb3101961929267f647433ee81c214e0fc5a1f5",
+        "output_sha256": "c1564eda4f6befa57c1b67b9914e27d854d74703639b80aa7e453f781e2b30cd",
+        "rpath_changes": [
+          {
+            "file": "numpy/_core/_multiarray_tests.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_operand_flag_tests.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_rational_tests.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_simd.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_struct_ufunc_tests.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/_core/_umath_tests.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_bounded_integers.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_common.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_generator.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_mt19937.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_pcg64.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_philox.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/_sfc64.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/bit_generator.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          },
+          {
+            "file": "numpy/random/mtrand.cpython-315-x86_64-linux-android.so",
+            "before": [
+              "/tmp/cibw-run-h__tbhxs/cp315-android_x86_64/python/prefix/lib"
+            ],
+            "after": []
+          }
+        ]
+      }
+    ]
+  },
+  "ci": {
+    "run": 41160689247,
+    "head": "afeedfb17b59d5c41dc75c477324351220c52dde",
+    "python": [
+      "3.11",
+      "3.15"
+    ],
+    "tests_per_python": 79,
+    "result": "success"
+  },
+  "runtime": {
+    "x86_64_run": 41160801916,
+    "reports": [
+      {
+        "target": {
+          "library": "numpy",
+          "source": {
+            "package": "numpy",
+            "version": "2.5.4",
+            "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz",
+            "sha256": "9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+            "filename": "numpy-2.5.4.tar.gz",
+            "directory": ".",
+            "backend": "mesonpy",
+            "requires_python": ">=3.12",
+            "kind": "pypi-sdist"
+          },
+          "python": "3.13",
+          "abi": "arm64-v8a",
+          "api": 24,
+          "environment": [],
+          "native_dependencies": [
+            "openblas"
+          ],
+          "config_settings": [
+            {
+              "name": "setup-args",
+              "value": "--cross-file={workspace}/scripts/build/meson/arm64-v8a.ini"
+            },
+            {
+              "name": "setup-args",
+              "value": "-Dblas=openblas"
+            },
+            {
+              "name": "setup-args",
+              "value": "-Dlapack=openblas"
+            },
+            {
+              "name": "setup-args",
+              "value": "-Duse-ilp64=false"
+            },
+            {
+              "name": "setup-args",
+              "value": "-Dallow-noblas=false"
+            }
+          ]
+        },
+        "device": {
+          "abi": "arm64-v8a",
+          "api": 34,
+          "fingerprint": "google/sdk_gphone64_arm64/emu64a:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+        },
+        "wheel": "numpy-2.5.4-cp313-cp313-android_24_arm64_v8a.whl",
+        "sha256": "6748027c9bf8f81da6320cd99f1c225ef12ecd71e765bad581d6b3b10960db05",
+        "script_sha256": "d52088f63b0fb16af6bb0005c0ec5234e56db541e96e5e8383a31b7f11f4a7de",
+        "runtime_archive": {
+          "url": "https://repo.maven.apache.org/maven2/com/chaquo/python/python/3.13.15/python-3.13.15-aarch64-linux-android.tar.gz",
+          "sha256": "a51d1e153f68f1c40f612a5431e9f79870d993da795173b3d27564e42b056271"
+        },
+        "runtime": {
+          "numpy": "2.5.4",
+          "python": "3.13.15 (tags/v3.13.15-dirty:4061bc4c35f, Aug  8 2026, 09:39:57) [Clang 18.0.4 (https://android.googlesource.com/toolchain/llvm-project d8003a456",
+          "python_minimum_api": 21,
+          "page_size": 4096,
+          "machine": "aarch64",
+          "openblas": "OpenBLAS 0.3.34 NO_AFFINITY ARMV8 MAX_THREADS=8",
+          "openblas_threads": 2,
+          "longdouble_mantissa_bits": 112,
+          "dtypes": [
+            "float32",
+            "float64",
+            "complex64",
+            "complex128"
+          ],
+          "operations": [
+            "matmul",
+            "solve",
+            "inv",
+            "eig",
+            "eigh",
+            "svd",
+            "qr",
+            "cholesky",
+            "lstsq",
+            "fft",
+            "concurrent_solve"
+          ],
+          "result": "passed"
+        }
+      },
+      {
+        "target": {
+          "library": "numpy",
+          "source": {
+            "package": "numpy",
+            "version": "2.5.4",
+            "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz",
+            "sha256": "9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+            "filename": "numpy-2.5.4.tar.gz",
+            "directory": ".",
+            "backend": "mesonpy",
+            "requires_python": ">=3.12",
+            "kind": "pypi-sdist"
+          },
+          "python": "3.13",
+          "abi": "x86_64",
+          "api": 24,
+          "environment": [],
+          "native_dependencies": [
+            "openblas"
+          ],
+          "config_settings": [
+            {
+              "name": "setup-args",
+              "value": "--cross-file={workspace}/scripts/build/meson/x86_64.ini"
+            },
+            {
+              "name": "setup-args",
+              "value": "-Dblas=openblas"
+            },
+            {
+              "name": "setup-args",
+              "value": "-Dlapack=openblas"
+            },
+            {
+              "name": "setup-args",
+              "value": "-Duse-ilp64=false"
+            },
+            {
+              "name": "setup-args",
+              "value": "-Dallow-noblas=false"
+            }
+          ]
+        },
+        "device": {
+          "abi": "x86_64",
+          "api": 34,
+          "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys"
+        },
+        "wheel": "numpy-2.5.4-cp313-cp313-android_24_x86_64.whl",
+        "sha256": "53040a588bb16baee1f6119cf1a8d4ac338a371f747579e3a2e142e623d7a46e",
+        "script_sha256": "d52088f63b0fb16af6bb0005c0ec5234e56db541e96e5e8383a31b7f11f4a7de",
+        "runtime_archive": {
+          "url": "https://repo.maven.apache.org/maven2/com/chaquo/python/python/3.13.15/python-3.13.15-x86_64-linux-android.tar.gz",
+          "sha256": "2096ecd6e180274ad1637cf140f7d6c2a160fe5ef9bfb47fd318e3d963f2d929"
+        },
+        "runtime": {
+          "numpy": "2.5.4",
+          "python": "3.13.15 (tags/v3.13.15-dirty:4061bc4c35f, Aug  8 2026, 09:40:46) [Clang 18.0.4 (https://android.googlesource.com/toolchain/llvm-project d8003a456",
+          "python_minimum_api": 21,
+          "page_size": 4096,
+          "machine": "x86_64",
+          "openblas": "OpenBLAS 0.3.34 NO_AFFINITY NEHALEM MAX_THREADS=8",
+          "openblas_threads": 2,
+          "longdouble_mantissa_bits": 112,
+          "dtypes": [
+            "float32",
+            "float64",
+            "complex64",
+            "complex128"
+          ],
+          "operations": [
+            "matmul",
+            "solve",
+            "inv",
+            "eig",
+            "eigh",
+            "svd",
+            "qr",
+            "cholesky",
+            "lstsq",
+            "fft",
+            "concurrent_solve"
+          ],
+          "result": "passed"
+        }
+      }
+    ],
+    "scope": "Python 3.13 双 ABI，Android API 34，4 KB 页，独立 Python 启动器；不是上游完整测试、嵌入式应用测试、性能基准或 16 KB 页运行验证"
+  },
+  "verification": {
+    "wheel_record_metadata": "passed",
+    "source_manifest_sha256": "passed",
+    "elf_architecture": "passed",
+    "relative_rpaths": "passed",
+    "dynamic_dependency_closure": "passed",
+    "elf_load_alignment_16kb": "passed"
+  },
+  "publication": {
+    "status": "Published",
+    "revision": "b9da31b3c73d111609c01d962dfa982e0a812c08",
+    "remote_verification": {
+      "commit": "b9da31b3c73d111609c01d962dfa982e0a812c08",
+      "tree": "5536b5e1b4cd1cbc8412c79afdd781c81c662ec3",
+      "parent": "81214d693848502c0e11f9709c3ebfa76a3b5405",
+      "wheel_count": 662,
+      "verified_numpy_blobs": 8
+    }
+  },
+  "wheel_count": 8,
+  "elf_count": 168,
+  "wheels": [
+    {
+      "target": {
+        "library": "numpy",
+        "source": {
+          "package": "numpy",
+          "version": "2.5.4",
+          "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz",
+          "sha256": "9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+          "filename": "numpy-2.5.4.tar.gz",
+          "directory": ".",
+          "backend": "mesonpy",
+          "requires_python": ">=3.12",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [
+          "openblas"
+        ],
+        "config_settings": [
+          {
+            "name": "setup-args",
+            "value": "--cross-file={workspace}/scripts/build/meson/arm64-v8a.ini"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dblas=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dlapack=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Duse-ilp64=false"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dallow-noblas=false"
+          }
+        ]
+      },
+      "filename": "numpy-2.5.4-cp313-cp313-android_24_arm64_v8a.whl",
+      "sha256": "6748027c9bf8f81da6320cd99f1c225ef12ecd71e765bad581d6b3b10960db05",
+      "git_blob_sha1": "37d47d26cd526dea4c8c5e9555cf16b5e0914f4f",
+      "elf": [
+        {
+          "file": "numpy/_core/_multiarray_tests.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_multiarray_umath.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libopenblas-3ad7a7b8.so",
+            "libpython3.13.so",
+            "libc++_shared-d523468d.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_operand_flag_tests.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_rational_tests.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_simd.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_struct_ufunc_tests.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_umath_tests.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/fft/_pocketfft_umath.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.13.so",
+            "libc++_shared-d523468d.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/_umath_linalg.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libopenblas-3ad7a7b8.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/lapack_lite.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libopenblas-3ad7a7b8.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_bounded_integers.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_common.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_generator.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_mt19937.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_pcg64.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_philox.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_sfc64.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/bit_generator.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/mtrand.cpython-313-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libc++_shared-d523468d.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libc.so",
+            "libm.so",
+            "libdl.so"
+          ],
+          "sonames": [
+            "libc++_shared-d523468d.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libopenblas-3ad7a7b8.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [
+            "libopenblas-3ad7a7b8.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        }
+      ],
+      "source_run": "41158539798"
+    },
+    {
+      "target": {
+        "library": "numpy",
+        "source": {
+          "package": "numpy",
+          "version": "2.5.4",
+          "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz",
+          "sha256": "9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+          "filename": "numpy-2.5.4.tar.gz",
+          "directory": ".",
+          "backend": "mesonpy",
+          "requires_python": ">=3.12",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.13",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [
+          "openblas"
+        ],
+        "config_settings": [
+          {
+            "name": "setup-args",
+            "value": "--cross-file={workspace}/scripts/build/meson/x86_64.ini"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dblas=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dlapack=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Duse-ilp64=false"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dallow-noblas=false"
+          }
+        ]
+      },
+      "filename": "numpy-2.5.4-cp313-cp313-android_24_x86_64.whl",
+      "sha256": "53040a588bb16baee1f6119cf1a8d4ac338a371f747579e3a2e142e623d7a46e",
+      "git_blob_sha1": "c299d48c08f0bab2b303b6fd9f5b7911ecba0e0f",
+      "elf": [
+        {
+          "file": "numpy/_core/_multiarray_tests.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_multiarray_umath.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libopenblas-babbe100.so",
+            "libpython3.13.so",
+            "libc++_shared-3d8817f3.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_operand_flag_tests.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_rational_tests.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_simd.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_struct_ufunc_tests.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_umath_tests.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/fft/_pocketfft_umath.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.13.so",
+            "libc++_shared-3d8817f3.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/_umath_linalg.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libopenblas-babbe100.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/lapack_lite.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libopenblas-babbe100.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_bounded_integers.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_common.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_generator.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_mt19937.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_pcg64.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_philox.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_sfc64.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/bit_generator.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/mtrand.cpython-313-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.13.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libc++_shared-3d8817f3.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libc.so",
+            "libm.so",
+            "libdl.so"
+          ],
+          "sonames": [
+            "libc++_shared-3d8817f3.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libopenblas-babbe100.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [
+            "libopenblas-babbe100.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        }
+      ],
+      "source_run": "41158539798"
+    },
+    {
+      "target": {
+        "library": "numpy",
+        "source": {
+          "package": "numpy",
+          "version": "2.5.4",
+          "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz",
+          "sha256": "9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+          "filename": "numpy-2.5.4.tar.gz",
+          "directory": ".",
+          "backend": "mesonpy",
+          "requires_python": ">=3.12",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.12",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [
+          "openblas"
+        ],
+        "config_settings": [
+          {
+            "name": "setup-args",
+            "value": "--cross-file={workspace}/scripts/build/meson/arm64-v8a.ini"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dblas=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dlapack=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Duse-ilp64=false"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dallow-noblas=false"
+          }
+        ]
+      },
+      "filename": "numpy-2.5.4-cp312-cp312-android_24_arm64_v8a.whl",
+      "sha256": "b5e1676ab88d6bb9c82c8aea14510ce75dfeb19b9a1093f9fb9e734099dcb812",
+      "git_blob_sha1": "fd69fa724dd9ee555e4966ccddb21810a9594a5b",
+      "elf": [
+        {
+          "file": "numpy/_core/_multiarray_tests.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_multiarray_umath.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libopenblas-83d43b35.so",
+            "libc++_shared-d523468d.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_operand_flag_tests.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_rational_tests.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_simd.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_struct_ufunc_tests.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_umath_tests.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/fft/_pocketfft_umath.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libc++_shared-d523468d.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/_umath_linalg.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libopenblas-83d43b35.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/lapack_lite.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.12.so",
+            "libopenblas-83d43b35.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_bounded_integers.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_common.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_generator.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_mt19937.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_pcg64.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_philox.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_sfc64.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/bit_generator.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/mtrand.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libc++_shared-d523468d.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libc.so",
+            "libm.so",
+            "libdl.so"
+          ],
+          "sonames": [
+            "libc++_shared-d523468d.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libopenblas-83d43b35.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [
+            "libopenblas-83d43b35.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        }
+      ],
+      "source_run": "41159165854"
+    },
+    {
+      "target": {
+        "library": "numpy",
+        "source": {
+          "package": "numpy",
+          "version": "2.5.4",
+          "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz",
+          "sha256": "9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+          "filename": "numpy-2.5.4.tar.gz",
+          "directory": ".",
+          "backend": "mesonpy",
+          "requires_python": ">=3.12",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.12",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [
+          "openblas"
+        ],
+        "config_settings": [
+          {
+            "name": "setup-args",
+            "value": "--cross-file={workspace}/scripts/build/meson/x86_64.ini"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dblas=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dlapack=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Duse-ilp64=false"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dallow-noblas=false"
+          }
+        ]
+      },
+      "filename": "numpy-2.5.4-cp312-cp312-android_24_x86_64.whl",
+      "sha256": "44cf7cba73a6c94e4a24b40e148f4693b4cce57c58ebb037772be41832786beb",
+      "git_blob_sha1": "c67bcf784ad886bfa98e6460be8b6d656157581c",
+      "elf": [
+        {
+          "file": "numpy/_core/_multiarray_tests.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_multiarray_umath.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libopenblas-956a0071.so",
+            "libc++_shared-3d8817f3.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_operand_flag_tests.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_rational_tests.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_simd.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_struct_ufunc_tests.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_umath_tests.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/fft/_pocketfft_umath.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libc++_shared-3d8817f3.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/_umath_linalg.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libopenblas-956a0071.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/lapack_lite.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.12.so",
+            "libopenblas-956a0071.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_bounded_integers.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_common.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_generator.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_mt19937.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_pcg64.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_philox.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_sfc64.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/bit_generator.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/mtrand.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.12.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libc++_shared-3d8817f3.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libc.so",
+            "libm.so",
+            "libdl.so"
+          ],
+          "sonames": [
+            "libc++_shared-3d8817f3.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libopenblas-956a0071.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [
+            "libopenblas-956a0071.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        }
+      ],
+      "source_run": "41159165854"
+    },
+    {
+      "target": {
+        "library": "numpy",
+        "source": {
+          "package": "numpy",
+          "version": "2.5.4",
+          "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz",
+          "sha256": "9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+          "filename": "numpy-2.5.4.tar.gz",
+          "directory": ".",
+          "backend": "mesonpy",
+          "requires_python": ">=3.12",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.14",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [
+          "openblas"
+        ],
+        "config_settings": [
+          {
+            "name": "setup-args",
+            "value": "--cross-file={workspace}/scripts/build/meson/arm64-v8a.ini"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dblas=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dlapack=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Duse-ilp64=false"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dallow-noblas=false"
+          }
+        ]
+      },
+      "filename": "numpy-2.5.4-cp314-cp314-android_24_arm64_v8a.whl",
+      "sha256": "5bba9c546bf83893b07b691a9ab599fdaad9c4d37feff900fbe699b89f097b7c",
+      "git_blob_sha1": "865c0e4291f9c3fb500032246e84e2071a1b5e09",
+      "elf": [
+        {
+          "file": "numpy/_core/_multiarray_tests.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_multiarray_umath.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libopenblas-6fd49681.so",
+            "libpython3.14.so",
+            "libc++_shared-d523468d.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_operand_flag_tests.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_rational_tests.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_simd.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_struct_ufunc_tests.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_umath_tests.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/fft/_pocketfft_umath.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.14.so",
+            "libc++_shared-d523468d.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/_umath_linalg.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libopenblas-6fd49681.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/lapack_lite.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libopenblas-6fd49681.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_bounded_integers.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_common.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_generator.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_mt19937.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_pcg64.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_philox.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_sfc64.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/bit_generator.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/mtrand.cpython-314-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libc++_shared-d523468d.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libc.so",
+            "libm.so",
+            "libdl.so"
+          ],
+          "sonames": [
+            "libc++_shared-d523468d.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libopenblas-6fd49681.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [
+            "libopenblas-6fd49681.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        }
+      ],
+      "source_run": "41158984712"
+    },
+    {
+      "target": {
+        "library": "numpy",
+        "source": {
+          "package": "numpy",
+          "version": "2.5.4",
+          "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz",
+          "sha256": "9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+          "filename": "numpy-2.5.4.tar.gz",
+          "directory": ".",
+          "backend": "mesonpy",
+          "requires_python": ">=3.12",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.14",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [
+          "openblas"
+        ],
+        "config_settings": [
+          {
+            "name": "setup-args",
+            "value": "--cross-file={workspace}/scripts/build/meson/x86_64.ini"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dblas=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dlapack=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Duse-ilp64=false"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dallow-noblas=false"
+          }
+        ]
+      },
+      "filename": "numpy-2.5.4-cp314-cp314-android_24_x86_64.whl",
+      "sha256": "ca05449fda4637ea23b46026a12eb0b35ff9f609fafbb6fd0f96e436dff8a208",
+      "git_blob_sha1": "c3b967798d7dc8da540e6480690a094606849f54",
+      "elf": [
+        {
+          "file": "numpy/_core/_multiarray_tests.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_multiarray_umath.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libopenblas-34bffff2.so",
+            "libpython3.14.so",
+            "libc++_shared-3d8817f3.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_operand_flag_tests.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_rational_tests.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_simd.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_struct_ufunc_tests.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_umath_tests.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/fft/_pocketfft_umath.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.14.so",
+            "libc++_shared-3d8817f3.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/_umath_linalg.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libopenblas-34bffff2.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/lapack_lite.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libopenblas-34bffff2.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_bounded_integers.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_common.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_generator.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_mt19937.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_pcg64.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_philox.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_sfc64.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/bit_generator.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/mtrand.cpython-314-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.14.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libc++_shared-3d8817f3.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libc.so",
+            "libm.so",
+            "libdl.so"
+          ],
+          "sonames": [
+            "libc++_shared-3d8817f3.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libopenblas-34bffff2.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [
+            "libopenblas-34bffff2.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        }
+      ],
+      "source_run": "41158984712"
+    },
+    {
+      "target": {
+        "library": "numpy",
+        "source": {
+          "package": "numpy",
+          "version": "2.5.4",
+          "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz",
+          "sha256": "9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+          "filename": "numpy-2.5.4.tar.gz",
+          "directory": ".",
+          "backend": "mesonpy",
+          "requires_python": ">=3.12",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.15",
+        "abi": "arm64-v8a",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [
+          "openblas"
+        ],
+        "config_settings": [
+          {
+            "name": "setup-args",
+            "value": "--cross-file={workspace}/scripts/build/meson/arm64-v8a.ini"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dblas=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dlapack=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Duse-ilp64=false"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dallow-noblas=false"
+          }
+        ]
+      },
+      "filename": "numpy-2.5.4-cp315-cp315-android_24_arm64_v8a.whl",
+      "sha256": "3d431953b8f9b7a835b64c405a72029b1bef6d9b2a2f29a4b01cab81237b433a",
+      "git_blob_sha1": "7a838cfc72fe2558b9acc7dc62aba317f9124b29",
+      "elf": [
+        {
+          "file": "numpy/_core/_multiarray_tests.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_multiarray_umath.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libopenblas-ecd70ebd.so",
+            "libpython3.15.so",
+            "libc++_shared-d523468d.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_operand_flag_tests.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_rational_tests.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_simd.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_struct_ufunc_tests.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_umath_tests.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/fft/_pocketfft_umath.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.15.so",
+            "libc++_shared-d523468d.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/_umath_linalg.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libopenblas-ecd70ebd.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/lapack_lite.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libopenblas-ecd70ebd.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_bounded_integers.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_common.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_generator.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_mt19937.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_pcg64.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_philox.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_sfc64.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/bit_generator.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/mtrand.cpython-315-aarch64-linux-android.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libc++_shared-d523468d.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libc.so",
+            "libm.so",
+            "libdl.so"
+          ],
+          "sonames": [
+            "libc++_shared-d523468d.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libopenblas-ecd70ebd.so",
+          "machine": "EM_AARCH64",
+          "needed": [
+            "libm.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [
+            "libopenblas-ecd70ebd.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        }
+      ],
+      "source_run": "41158984712"
+    },
+    {
+      "target": {
+        "library": "numpy",
+        "source": {
+          "package": "numpy",
+          "version": "2.5.4",
+          "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz",
+          "sha256": "9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+          "filename": "numpy-2.5.4.tar.gz",
+          "directory": ".",
+          "backend": "mesonpy",
+          "requires_python": ">=3.12",
+          "kind": "pypi-sdist"
+        },
+        "python": "3.15",
+        "abi": "x86_64",
+        "api": 24,
+        "environment": [],
+        "native_dependencies": [
+          "openblas"
+        ],
+        "config_settings": [
+          {
+            "name": "setup-args",
+            "value": "--cross-file={workspace}/scripts/build/meson/x86_64.ini"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dblas=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dlapack=openblas"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Duse-ilp64=false"
+          },
+          {
+            "name": "setup-args",
+            "value": "-Dallow-noblas=false"
+          }
+        ]
+      },
+      "filename": "numpy-2.5.4-cp315-cp315-android_24_x86_64.whl",
+      "sha256": "c1564eda4f6befa57c1b67b9914e27d854d74703639b80aa7e453f781e2b30cd",
+      "git_blob_sha1": "ba8c25018b11515ce610ce49cce8f9be1e46abcc",
+      "elf": [
+        {
+          "file": "numpy/_core/_multiarray_tests.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_multiarray_umath.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libopenblas-0362f315.so",
+            "libpython3.15.so",
+            "libc++_shared-3d8817f3.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_operand_flag_tests.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_rational_tests.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_simd.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_struct_ufunc_tests.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/_core/_umath_tests.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/fft/_pocketfft_umath.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.15.so",
+            "libc++_shared-3d8817f3.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/_umath_linalg.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libopenblas-0362f315.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/linalg/lapack_lite.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libopenblas-0362f315.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [
+            "$ORIGIN/../../numpy.libs"
+          ],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_bounded_integers.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_common.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_generator.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_mt19937.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_pcg64.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_philox.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/_sfc64.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/bit_generator.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy/random/mtrand.cpython-315-x86_64-linux-android.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libpython3.15.so",
+            "libc.so"
+          ],
+          "sonames": [],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libc++_shared-3d8817f3.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libc.so",
+            "libm.so",
+            "libdl.so"
+          ],
+          "sonames": [
+            "libc++_shared-3d8817f3.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        },
+        {
+          "file": "numpy.libs/libopenblas-0362f315.so",
+          "machine": "EM_X86_64",
+          "needed": [
+            "libm.so",
+            "libdl.so",
+            "libc.so"
+          ],
+          "sonames": [
+            "libopenblas-0362f315.so"
+          ],
+          "rpath": [],
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ]
+        }
+      ],
+      "source_run": "41158984712"
+    }
+  ],
+  "deployment": {
+    "primary_deploy": 41161674103,
+    "legacy_sync_run": 41161692479,
+    "wheels_tree": "5536b5e1b4cd1cbc8412c79afdd781c81c662ec3",
+    "pages_tree": "aa01d28289804112ba76d580a51e57ba9aa519e1",
+    "pages_commit": "78dbbcca9a874649d16c6beef2d0bbb9d81774fc",
+    "results": {
+      "primary_root": {
+        "url": "https://ririv.github.io/py-extra-wheels/",
+        "status": 200
+      },
+      "primary_numpy": {
+        "url": "https://ririv.github.io/py-extra-wheels/numpy/",
+        "status": 200,
+        "numpy_wheel_links": 8
+      },
+      "legacy_root": {
+        "url": "https://ririv.github.io/android-wheels/",
+        "status": 200
+      },
+      "legacy_numpy": {
+        "url": "https://ririv.github.io/android-wheels/numpy/",
+        "status": 200,
+        "numpy_wheel_links": 8
+      },
+      "primary_state": {
+        "url": "https://ririv.github.io/py-extra-wheels/index-state.json",
+        "status": 200
+      },
+      "legacy_sync": {
+        "url": "https://ririv.github.io/android-wheels/sync-state.json",
+        "status": 200
+      }
+    }
+  }
+}

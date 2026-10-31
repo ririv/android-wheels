@@ -43,6 +43,8 @@ Recipes currently request all six Python versions by default. The separate workf
 
 The matrix validated on **2026-10-29** contains **624 wheels across 54 packages**, including **104 wheels across 52 packages for Python 3.15**. These results cover builds and static checks; device and emulator runtime tests have not been performed. See the [complete matrix and verification record](docs/python-matrix.md).
 
+On **2026-10-31**, NumPy 2.5.4 adds **eight Android wheels for Python 3.12–3.15**. Its Python 3.13 wheels passed numerical smoke tests on both ABIs using Android API 34 emulators. See [NumPy and OpenBLAS validation](docs/numpy.md).
+
 ## Build and publish
 
 GitHub Actions runs the shared pipeline:

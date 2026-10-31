@@ -8,7 +8,7 @@ from pathlib import Path
 from scripts.build.android_python import AndroidABI, PythonVersion
 from scripts.build.tests.test_wheel_abi import elf_with_dependency
 from scripts.pipeline.artifacts import collect, record
-from scripts.pipeline.model import GitSource, Plan, Target, load_plan
+from scripts.pipeline.model import GitSource, Plan, Target, UnsupportedPython, load_plan
 from scripts.pipeline.repackage import repackage
 from scripts.recipes.model import Backend, Publication
 from scripts.testing.wheels import write_wheel
@@ -43,15 +43,17 @@ class RepackageTests(unittest.TestCase):
                     },
                 )
                 record(folder, target)
+            skipped = (UnsupportedPython("example", PythonVersion.PY310, ">=3.11"),)
             repackage(
                 (
-                    ("1", root / "first", Plan(Publication.BUILD, targets)),
+                    ("1", root / "first", Plan(Publication.BUILD, targets, skipped)),
                     ("2", root / "retry", Plan(Publication.BUILD, targets[1:])),
                 ),
                 root / "output",
             )
             plan = load_plan(root / "output/build-plan.json")
             self.assertEqual(plan.targets, targets)
+            self.assertEqual(plan.skipped, skipped)
             self.assertEqual(len(collect(root / "output/artifacts", plan)), 2)
             report = json.loads((root / "output/packaging-report.json").read_text())
             self.assertEqual([row["source_run"] for row in report], ["1", "2"])

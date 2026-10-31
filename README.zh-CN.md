@@ -43,6 +43,8 @@ xxhash
 
 **2026-10-29** 验证的矩阵包含 **54 个包、624 个 wheel**，其中 Python 3.15 覆盖 **52 个包、104 个 wheel**。这些结果涵盖构建和静态检查，尚未进行设备或模拟器运行测试。详见 [完整矩阵与验证记录](docs/python-matrix.md)。
 
+**2026-10-31**，NumPy 2.5.4 新增 **Python 3.12–3.15 的 8 个 Android wheel**。其 Python 3.13 产物已在 Android API 34 模拟器上通过双 ABI 数值冒烟测试。详见 [NumPy 与 OpenBLAS 验证记录](docs/numpy.md)。
+
 ## 构建与发布
 
 GitHub Actions 执行统一流水线：
