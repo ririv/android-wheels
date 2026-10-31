@@ -12,5 +12,5 @@ api = 26
 PIP_EXTRA_INDEX_URL = "https://ririv.github.io/py-extra-wheels"
 
 [config-settings]
-setup-args = ["--cross-file={workspace}/scripts/build/meson/{abi}.ini", "-Dc_args=-fopenmp", "-Dc_link_args=-fopenmp", "-Dcpp_args=-fopenmp", "-Dcpp_link_args=-fopenmp"]
+setup-args = ["--cross-file={workspace}/scripts/build/meson/{abi}.ini"]
 compile-args = ["-j2"]
