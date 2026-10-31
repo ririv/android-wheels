@@ -15,6 +15,7 @@ CMAKE_BUILD_PARALLEL_LEVEL = "2"
 SETUPTOOLS_SCM_PRETEND_VERSION_FOR_PYARROW = "26.0.0"
 
 [config-settings]
+build-dir = "build/{python}-{abi}"
 "cmake.define.PYARROW_BUNDLE_ARROW_CPP" = "ON"
 "cmake.define.CMAKE_PROJECT_INCLUDE_BEFORE" = "{workspace}/scripts/build/cmake/android-native-prefix.cmake"
 "cmake.define.CMAKE_C_STANDARD_LIBRARIES" = "-lpython{python}"
