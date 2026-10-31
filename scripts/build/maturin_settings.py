@@ -36,7 +36,8 @@ def maturin_options(settings: tuple[ConfigSetting, ...]) -> MaturinOptions:
         match setting.name:
             case "features":
                 if not re.fullmatch(
-                    r"[A-Za-z0-9_-]+(?:/[A-Za-z0-9_-]+)?", setting.value
+                    r"[A-Za-z0-9_][A-Za-z0-9_-]*(?:/[A-Za-z0-9_][A-Za-z0-9_-]*)?",
+                    setting.value,
                 ):
                     raise ValueError("maturin features 必须逐项给出 Cargo feature 名称")
                 features.append(setting.value)
