@@ -19,6 +19,7 @@ from scripts.build.pep517_settings import (
     backend_settings,
     workspace_settings,
 )
+from scripts.build.python_pkgconfig import write_python_pkgconfig
 from scripts.pipeline.model import Target
 
 
@@ -38,6 +39,7 @@ def prepare_builder(pypi: Path, target: Target, workspace: Path):
     def create_host_env():
         create_host()
         prefix = Path(builder.host_env) / "chaquopy"
+        write_python_pkgconfig(prefix, target.python)
         ndk = Path(os.environ["ANDROID_NDK"])
         toolchain = ndk / "toolchains/llvm/prebuilt/linux-x86_64"
         build_libraries(

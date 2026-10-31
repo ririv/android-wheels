@@ -73,7 +73,7 @@ api = 24
 | `android.abis` | ABI 构建集合，支持 `arm64-v8a`、`x86_64` |
 | `android.api` | Android API 整数，至少为 24 |
 
-目前显式建模的后端为 `maturin`、`setuptools.build_meta`、`_pyyaml_pep517`、`pep517_backend.hooks`、`mesonpy`、`hatchling.build`、`setuptools.build_meta:__legacy__`、Pillow 的 `backend` 和 `scikit_build_core.build`。新增已有后端的包只需添加 TOML；其他后端须先扩展枚举并验证构建路径。
+目前显式建模的后端为 `maturin`、`setuptools.build_meta`、`_pyyaml_pep517`、`pep517_backend.hooks`、`mesonpy`、`hatchling.build`、`setuptools.build_meta:__legacy__`、Pillow 的 `backend`、`scikit_build_core.build` 和 DuckDB 的 `duckdb_packaging.build_backend`。新增已有后端的包只需添加 TOML；其他后端须先扩展枚举并验证构建路径。
 
 固定版本 PyPI sdist 若没有声明 `build-backend`，且保留 `setup.py`，可显式选择 `setuptools.build_meta:__legacy__`。选择其他后端时仍要求源码声明与之吻合；不会因为缺少 `pyproject.toml` 自动改用 legacy，也不会生成或修改元数据。
 
@@ -110,7 +110,17 @@ zlib = "enable"
 "cmake.define.CMAKE_C_STANDARD_LIBRARIES" = "-lpython{python}"
 ```
 
-这是后端参数名中的点号，不是 TOML 子表。参数按独立的 `-C key=value` 边界交给后端，不拼接 Shell 命令，空格和特殊字符保持字面含义；键和值写入构建计划与来源清单。cibuildwheel 和 Chaquopy 都把同一组参数传入依赖探测与构建钩子；maturin 尚不接受这项配置。值中的 `{python}` 和 `{abi}` 在规划时显式替换成目标版本和 ABI；`{workspace}` 在执行构建时替换成当前仓库的绝对路径，可引用仓库内维护的外部配置文件。NumPy 通过 `--cross-file={workspace}/scripts/build/meson/{abi}.ini` 声明 Android 的机器属性和 `long double` 格式，避免在宿主上运行目标程序，不修改包源码。
+这是后端参数名中的点号，不是 TOML 子表。参数按独立的 `-C key=value` 边界交给后端，不拼接 Shell 命令，空格和特殊字符保持字面含义；键和值写入构建计划与来源清单。cibuildwheel 和 Chaquopy 都把同一组参数传入依赖探测与构建钩子。值中的 `{python}` 和 `{abi}` 在规划时显式替换成目标版本和 ABI；`{workspace}` 在执行构建时替换成当前仓库的绝对路径，可引用仓库内维护的外部配置文件。NumPy 通过 `--cross-file={workspace}/scripts/build/meson/{abi}.ini` 声明 Android 的机器属性和 `long double` 格式，避免在宿主上运行目标程序，不修改包源码。
+
+maturin 仅接入两种显式 Cargo 参数，不把任意 PEP 517 参数传给命令行：
+
+```toml
+[config-settings]
+no-default-features = "true"
+features = ["csv", "parquet", "polars-python/streaming"]
+```
+
+`no-default-features` 必须为单个 `"true"` 或 `"false"` 字符串；`features` 逐项声明 feature，可使用 `依赖名/feature`。构建器生成独立的 `--no-default-features`、`--features` 参数，不拼接 Shell，也不隐式拆分字符串。完整选择写入构建计划与来源清单。
 
 需要外部原生库时，在 TOML 顶层声明：
 
@@ -127,7 +137,7 @@ abis = ["arm64-v8a", "x86_64"]
 api = 24
 ```
 
-依赖名由 `NativeLibrary` 枚举限制，固定源码 URL、版本、SHA-256、构建系统、配置参数和许可证文件在 `scripts/build/native-libraries.toml`。目前提供 libffi、libsodium、OpenSSL、CRC32C、libjpeg-turbo、libiconv、libxml2、libxslt、OpenBLAS；它们是构建依赖，不计作新增 Python 包。
+依赖名由 `NativeLibrary` 枚举限制，固定源码 URL、版本、SHA-256、构建系统、配置参数和许可证文件在 `scripts/build/native-libraries.toml`。目前提供 libffi、libsodium、OpenSSL、CRC32C、libjpeg-turbo、libiconv、libxml2、libxslt、OpenBLAS、GEOS；它们是构建依赖，不计作新增 Python 包。
 
 原生依赖的公共参数放在 `args`；需要区分架构时，使用该依赖的 `abi-args` 表，显式给出 `arm64-v8a` 和 `x86_64` 两组参数，构建时只追加当前 ABI 的一组。原有未声明该表的依赖继续只使用公共参数，来源清单保持原格式。OpenBLAS 显式选择 LP64、上游自带的 C 版 LAPACK，以及 ARMV8/NEHALEM CPU 目标，不需要 Fortran 编译器或源码补丁。
 
@@ -142,6 +152,12 @@ Android 交叉编译的宿主构建钩子使用显式 `/system/bin/sh` 到宿主
 上游在 wheel 中漏带捆绑库许可证时，使用 `scripts/build/bundled-licenses.toml` 显式固定 sdist、原生库压缩包和许可文件哈希；打包阶段补入文件及来源清单，保持二进制原样，发布阶段复核。目前用于 Matplotlib，详见 [科学计算依赖栈](scientific.md)。
 
 maturin 构建还会读取原始 `build-system.requires`，在匹配目标版本的宿主 Python 环境安装其构建依赖，继续使用统一固定的 maturin 构建器。驱动 Python 与宿主、目标 Python 分离，保留已有 Python 3.10 构建路径。
+
+## 外部构建工具
+
+需要 Fortran 的 recipe 在顶层显式声明 `build-tools = ["fortran"]`，工具名由 `BuildTool` 枚举限制。Android cibuildwheel 使用其内置 Flang 工具链准备过程；旧版 Chaquopy 通过独立启动器将同一过程绑定到实际 NDK 编译器，避免把编译器 wrapper 误当作 NDK 路径。目标 API、ABI 和包源码保持原声明，工具准备失败即停止。
+
+旧版构建器显式启用 `-O2`，保留既有平台参数。声明 NumPy 构建依赖的项目通过构建环境中官方 `numpy-config --pkgconfigdir` 提供 Meson 查询目录。maturin 的当前项目目录中提供链接脚本，将旧 `libgcc` 名称映射到 NDK `libunwind`，将 `libpython3` 映射到目标版本动态库；不会修改 NDK 或宿主 SDK。
 
 ## 自动选择构建范围
 
