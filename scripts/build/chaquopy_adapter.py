@@ -16,7 +16,7 @@ from scripts.build.pep517_settings import (
 from scripts.pipeline.model import Target
 
 
-def prepare_builder(pypi: Path, target: Target):
+def prepare_builder(pypi: Path, target: Target, workspace: Path):
     specification = importlib.util.spec_from_file_location(
         "chaquopy_build", pypi / "build-wheel.py"
     )
@@ -41,7 +41,7 @@ def prepare_builder(pypi: Path, target: Target):
     def create_build_env():
         builder.builder = ConfiguredBuilder(
             builder.builder,
-            backend_settings(workspace_settings(target.config_settings, Path.cwd())),
+            backend_settings(workspace_settings(target.config_settings, workspace)),
         )
         create_build()
 

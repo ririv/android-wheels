@@ -66,7 +66,7 @@ def main() -> None:
         (Path(recipe_dir) / "meta.yaml").write_text(
             yaml.safe_dump(recipe), encoding="utf-8"
         )
-        builder = prepare_builder(pypi_dir, target)
+        builder = prepare_builder(pypi_dir, target, workspace)
         sys.argv = [
             str(pypi_dir / "build-wheel.py"),
             "--no-build",
