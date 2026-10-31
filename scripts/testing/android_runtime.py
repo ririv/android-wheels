@@ -25,6 +25,7 @@ from scripts.testing.runtime_dependencies import (
     pure_dependency,
     verify_closure,
 )
+from scripts.testing.runtime_files import copy_resources
 
 
 def main() -> None:
@@ -36,6 +37,7 @@ def main() -> None:
     parser.add_argument("--toolchain", type=Path, required=True)
     parser.add_argument("--script", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--resource", nargs=2, action="append", default=[])
     parser.add_argument(
         "--dependency",
         nargs=2,
@@ -152,6 +154,7 @@ def main() -> None:
             check=True,
         )
         shutil.copy2(args.script, prefix / "runtime-test.py")
+        resources = copy_resources(args.resource, prefix)
         remote = "/data/local/tmp/" + root.name
         shell("mkdir", remote)
         try:
@@ -179,6 +182,7 @@ def main() -> None:
                 "sha256": manifest["sha256"],
                 "installed_wheels": inventory,
                 "script_sha256": digest(args.script),
+                "resources": resources,
                 "runtime_archive": {
                     "url": PYTHON_ARCHIVES[target.python].url(target.abi),
                     "sha256": digest(

@@ -10,6 +10,7 @@ from pathlib import Path
 from scripts.pipeline.artifacts import artifact_wheel, digest
 from scripts.pipeline.model import load_plan
 from scripts.pipeline.sdists import download
+from scripts.testing.runtime_files import manifest_resources
 from scripts.testing.runtime_suites import SUITES, ArtifactLayout, RuntimeSuite, Suite
 
 REPOSITORY = "ririv/py-extra-wheels"
@@ -24,6 +25,9 @@ def published_dependencies(
     matrix = json.loads((ROOT / "docs/data/python-matrix-2026-10.json").read_text())
     numpy = json.loads((ROOT / "docs/data/numpy-2026-10.json").read_text())
     scientific = json.loads((ROOT / "docs/data/scientific-2026-10.json").read_text())
+    processing = json.loads(
+        (ROOT / "docs/data/data-processing-2026-10.json").read_text()
+    )
     entries = (
         [
             (matrix["publication"]["wheels_commit"], row)
@@ -31,6 +35,7 @@ def published_dependencies(
         ]
         + [(numpy["publication"]["revision"], row) for row in numpy["wheels"]]
         + [(scientific["publication"]["revision"], row) for row in scientific["wheels"]]
+        + [(processing["publication"]["revision"], row) for row in processing["wheels"]]
     )
     entries = [
         (commit, row)
@@ -201,6 +206,8 @@ def main() -> None:
     parser.add_argument("--serial", required=True)
     parser.add_argument("--toolchain", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--resource", nargs=2, action="append", default=[])
+    parser.add_argument("--resource-manifest", type=Path)
     args = parser.parse_args()
     if not re.fullmatch(r"[0-9]+(?:,[0-9]+)*", args.runs):
         raise ValueError("运行编号必须是逗号分隔的数字")
@@ -215,6 +222,11 @@ def main() -> None:
     for row in pure:
         wheel = download(row["url"], row["sha256"], output / row["filename"])
         arguments.extend(["--pure-dependency", str(wheel), row["sha256"]])
+    for path, sha256 in args.resource:
+        arguments.extend(["--resource", path, sha256])
+    if args.resource_manifest is not None:
+        for path, sha256 in manifest_resources(args.resource_manifest):
+            arguments.extend(["--resource", path, sha256])
     subprocess.run(
         [
             sys.executable,

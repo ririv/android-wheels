@@ -1,0 +1,23 @@
+[
+  {
+    "name": "joblib",
+    "version": "1.6.0",
+    "filename": "joblib-1.6.0-py3-none-any.whl",
+    "url": "https://files.pythonhosted.org/packages/18/53/84099323c2ec4be98d935f63c033ac4151ee83836ca1050ede3b3aadf155/joblib-1.6.0-py3-none-any.whl",
+    "sha256": "3dbbf9f6e4b592a2357b854608e980fe6390d131d7a82f011a377ef2ebef7aba"
+  },
+  {
+    "name": "narwhals",
+    "version": "2.28.0",
+    "filename": "narwhals-2.28.0-py3-none-any.whl",
+    "url": "https://files.pythonhosted.org/packages/cf/82/8ef9c7e0f50493307a49c09cfa7f00c5a778b6d1921f7b2dabe1d3a5809e/narwhals-2.28.0-py3-none-any.whl",
+    "sha256": "1f69d6385ec30e2fa6e1fdeb37c562ecabd0f713f6f3e3b58a668c5c9df9567f"
+  },
+  {
+    "name": "threadpoolctl",
+    "version": "3.7.0",
+    "filename": "threadpoolctl-3.7.0-py3-none-any.whl",
+    "url": "https://files.pythonhosted.org/packages/43/3f/f88a53f60a472b46f4023f56d204dd7de33d34c5d2acbfa0d70a674e639e/threadpoolctl-3.7.0-py3-none-any.whl",
+    "sha256": "cd8b60b5641b45c67bbf73c64c843235fc2d8a480c87389f52f5dbee893b86be"
+  }
+]

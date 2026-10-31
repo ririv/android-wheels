@@ -8,6 +8,8 @@ class RuntimeSuite(StrEnum):
     PLOTTING = "plotting"
     DATA = "data"
     NUMERICAL = "numerical"
+    LEARNING = "learning"
+    ANALYTICS = "analytics"
 
 
 class ArtifactLayout(StrEnum):
@@ -25,6 +27,20 @@ class Suite:
 
 
 SUITES = {
+    RuntimeSuite.LEARNING: Suite(
+        ("scikit-learn",),
+        "scikit-learn",
+        ("numpy", "scipy"),
+        "learning-pure-dependencies.json",
+        "learning_smoke.py",
+    ),
+    RuntimeSuite.ANALYTICS: Suite(
+        ("pyarrow", "psycopg2-binary"),
+        "psycopg2-binary",
+        ("numpy", "pandas"),
+        "analytics-pure-dependencies.json",
+        "analytics_smoke.py",
+    ),
     RuntimeSuite.NUMERICAL: Suite(
         ("scipy",),
         "scipy",

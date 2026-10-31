@@ -10,7 +10,7 @@ on:
       suite:
         description: 'Runtime suite to verify'
         type: choice
-        options: [plotting, data]
+        options: [plotting, data, analytics]
         default: plotting
         required: true
       artifact_layout:
@@ -28,9 +28,29 @@ jobs:
   runtime:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    services:
+      postgres:
+        image: ${{ inputs.suite == 'analytics' && 'postgres:18.6@sha256:979bccfde35445db618c65107d27d08c6c21339d8dc3ad4c830c6633947be0e4' || '' }}
+        env:
+          POSTGRES_USER: wheeltest
+          POSTGRES_PASSWORD: wheeltest-password
+          POSTGRES_DB: wheeltest
+          POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+        ports:
+          - 15432:5432
+        options: >-
+          --health-cmd "pg_isready -U wheeltest -d wheeltest"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-tools
+      - name: Prepare verified PostgreSQL TLS connection
+        if: inputs.suite == 'analytics'
+        env:
+          POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+        run: python -B -m scripts.testing.postgres_fixtures --root verification/server --container "$POSTGRES_CONTAINER"
       - name: Enable KVM for the Android emulator
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -48,7 +68,7 @@ jobs:
           arch: x86_64
           target: google_apis
           disable-animations: true
-          script: python -B -m scripts.testing.scientific_runtime --runs "$BUILD_RUNS" --layout "$ARTIFACT_LAYOUT" --suite "$RUNTIME_SUITE" --abi x86_64 --output verification/inputs --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --toolchain "$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64" --report verification/scientific-x86_64.json
+          script: python -B -m scripts.testing.scientific_runtime --runs "$BUILD_RUNS" --layout "$ARTIFACT_LAYOUT" --suite "$RUNTIME_SUITE" --abi x86_64 --output verification/inputs --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --toolchain "$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64" --report verification/scientific-x86_64.json ${{ inputs.suite == 'analytics' && '--resource-manifest verification/server/resources.json' || '' }}
       - uses: actions/upload-artifact@v4
         with:
           name: scientific-runtime-x86_64
