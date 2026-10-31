@@ -47,6 +47,9 @@ def prepare_builder(pypi: Path, target: Target, workspace: Path):
 
     def get_common_env_vars(env):
         common_environment(env)
+        # 旧构建器只设置平台参数，显式启用发布优化，避免沿用未优化的宿主默认值。
+        for name in ("CFLAGS", "CXXFLAGS"):
+            env[name] += " -O2"
         env["LDFLAGS"] += " " + " ".join(PAGE_LINK_FLAGS)
         prefix = Path(builder.host_env) / "chaquopy"
         env["PKG_CONFIG_PATH"] = str(prefix / "lib/pkgconfig")
