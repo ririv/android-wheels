@@ -18,11 +18,10 @@ from scripts.pipeline.wheel import tag_set, verify_record, verify_wheel
 
 def native_dependency(plan: Path, artifact: Path, target: Target) -> Path:
     dependency = load_plan(plan).target(artifact.name)
-    if (dependency.python, dependency.abi, dependency.api) != (
+    if (dependency.python, dependency.abi) != (
         target.python,
         target.abi,
-        target.api,
-    ):
+    ) or dependency.api > target.api:
         raise ValueError("运行依赖的 Python、ABI 或 API 与目标不一致")
     wheel = artifact_wheel(artifact, dependency)
     verify_wheel(wheel, dependency)

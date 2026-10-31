@@ -131,8 +131,14 @@ def main() -> None:
                 "--no-deps",
                 "--no-compile",
                 "--only-binary=:all:",
-                "--platform",
-                f"android_{target.api}_{target.abi.value.replace('-', '_')}",
+                *(
+                    argument
+                    for api in range(target.api, 20, -1)
+                    for argument in (
+                        "--platform",
+                        f"android_{api}_{target.abi.value.replace('-', '_')}",
+                    )
+                ),
                 "--python-version",
                 target.python.value,
                 "--implementation",
