@@ -65,7 +65,7 @@ def published_dependencies(abi: str, output: Path) -> list[str]:
 
 
 def build_dependencies(
-    runs: str, abi: str, output: Path
+    runs: str, abi: str, output: Path, layout: str
 ) -> tuple[Path, Path, list[str]]:
     selected = {}
     for run in runs.split(","):
@@ -100,15 +100,7 @@ def build_dependencies(
                 text=True,
             ).splitlines()
         )
-        for target in plan.targets:
-            if (
-                target.library not in {"contourpy", "pandas", "matplotlib"}
-                or target.python.value != "3.13"
-                or target.abi.value != abi
-                or target.artifact not in available
-            ):
-                continue
-            artifact = folder / target.artifact
+        if layout == "repackaged":
             subprocess.run(
                 [
                     "gh",
@@ -118,12 +110,39 @@ def build_dependencies(
                     "--repo",
                     REPOSITORY,
                     "--name",
-                    target.artifact,
+                    "repackaged-wheels",
                     "--dir",
-                    str(artifact),
+                    str(folder / "artifacts"),
                 ],
                 check=True,
             )
+        for target in plan.targets:
+            if (
+                target.library not in {"contourpy", "pandas", "matplotlib"}
+                or target.python.value != "3.13"
+                or target.abi.value != abi
+                or (layout == "build" and target.artifact not in available)
+            ):
+                continue
+            artifact = (
+                folder if layout == "build" else folder / "artifacts"
+            ) / target.artifact
+            if layout == "build":
+                subprocess.run(
+                    [
+                        "gh",
+                        "run",
+                        "download",
+                        run,
+                        "--repo",
+                        REPOSITORY,
+                        "--name",
+                        target.artifact,
+                        "--dir",
+                        str(artifact),
+                    ],
+                    check=True,
+                )
             wheel = artifact_wheel(artifact, target)
             if target.library in selected:
                 previous_plan, previous_artifact, previous_hash = selected[
@@ -151,6 +170,7 @@ def build_dependencies(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs", required=True)
+    parser.add_argument("--layout", choices=["build", "repackaged"], default="build")
     parser.add_argument("--abi", choices=["arm64-v8a", "x86_64"], required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--adb", type=Path, required=True)
@@ -162,7 +182,9 @@ def main() -> None:
         raise ValueError("运行编号必须是逗号分隔的数字")
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
-    plan, artifact, arguments = build_dependencies(args.runs, args.abi, output)
+    plan, artifact, arguments = build_dependencies(
+        args.runs, args.abi, output, args.layout
+    )
     arguments.extend(published_dependencies(args.abi, output))
     pure = json.loads(
         Path(__file__).with_name("scientific-pure-dependencies.json").read_text()

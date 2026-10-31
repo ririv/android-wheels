@@ -16,6 +16,7 @@ from packaging.specifiers import SpecifierSet
 
 from scripts.build.native_libraries import library_specs
 from scripts.build.wheel_alignment import verify_alignment
+from scripts.build.wheel_licenses import verify_bundled_licenses
 from scripts.build.wheel_rpath import verify_rpaths
 from scripts.pipeline.model import SdistSource, Target
 
@@ -99,6 +100,7 @@ def verify_wheel(path: Path, target: Target) -> None:
         if len(metadata_files) != 1:
             raise ValueError("wheel 必须包含唯一 METADATA")
         prefix = metadata_files[0].removesuffix("METADATA")
+        verify_bundled_licenses(archive, target, prefix)
         metadata = BytesParser().parsebytes(archive.read(prefix + "METADATA"))
         if (
             normalized(metadata["Name"]) != normalized(target.library)

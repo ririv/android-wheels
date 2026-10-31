@@ -6,6 +6,7 @@ from pathlib import Path
 
 from wheel.cli.tags import tags
 
+from scripts.build.wheel_licenses import attach_bundled_licenses
 from scripts.pipeline.model import Plan, Target
 from scripts.pipeline.wheel import normalized, verify_wheel
 
@@ -31,6 +32,7 @@ def record(directory: Path, target: Target) -> None:
             + (target.abi.value.replace("-", "_") if platform == "any" else ""),
             remove=True,
         )
+    attach_bundled_licenses(wheel, target)
     verify_wheel(wheel, target)
     (directory / "manifest.json").write_text(
         json.dumps(

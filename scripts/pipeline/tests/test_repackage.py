@@ -9,12 +9,34 @@ from scripts.build.android_python import AndroidABI, PythonVersion
 from scripts.build.tests.test_wheel_abi import elf_with_dependency
 from scripts.pipeline.artifacts import collect, record
 from scripts.pipeline.model import GitSource, Plan, Target, UnsupportedPython, load_plan
-from scripts.pipeline.repackage import repackage
+from scripts.pipeline.repackage import repackage, select_plan
 from scripts.recipes.model import Backend, Publication
 from scripts.testing.wheels import write_wheel
 
 
 class RepackageTests(unittest.TestCase):
+    def test_explicit_recipe_selection_keeps_all_selected_versions_and_skips(self):
+        source = GitSource("owner/repo", "main", "a" * 40, ".", Backend.SETUPTOOLS)
+        targets = tuple(
+            Target(name, source, version, abi, 24)
+            for name in ("retained", "excluded")
+            for version in (PythonVersion.PY313, PythonVersion.PY314)
+            for abi in AndroidABI
+        )
+        skipped = tuple(
+            UnsupportedPython(name, PythonVersion.PY310, ">=3.11")
+            for name in ("retained", "excluded")
+        )
+        plan = select_plan(Plan(Publication.BUILD, targets, skipped), ["retained"])
+        self.assertEqual(plan.targets, targets[:4])
+        self.assertEqual(plan.skipped, skipped[:1])
+        for names in ([], ["unknown"], ["retained", "retained"]):
+            with (
+                self.subTest(names=names),
+                self.assertRaisesRegex(ValueError, "显式选择"),
+            ):
+                select_plan(plan, names)
+
     def test_partial_run_and_targeted_retry_form_one_complete_cohort(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

@@ -7,6 +7,11 @@ on:
         description: 'Comma-separated build run IDs whose plans form one complete cohort'
         type: string
         required: true
+      recipe_selections:
+        description: 'Explicit optional JSON map of run IDs to recipe-name arrays; other runs keep their full plans'
+        type: string
+        default: '{}'
+        required: true
 
 permissions:
   contents: read
@@ -26,7 +31,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           SOURCE_RUNS: ${{ inputs.build_runs }}
-        run: python -B -m scripts.pipeline.repackage --runs "$SOURCE_RUNS" --repository "$GITHUB_REPOSITORY" --output "$RUNNER_TEMP/repackaged"
+          RECIPE_SELECTIONS: ${{ inputs.recipe_selections }}
+        run: python -B -m scripts.pipeline.repackage --runs "$SOURCE_RUNS" --recipe-selections "$RECIPE_SELECTIONS" --repository "$GITHUB_REPOSITORY" --output "$RUNNER_TEMP/repackaged"
       - uses: actions/upload-artifact@v4
         with:
           name: build-plan
