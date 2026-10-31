@@ -10,6 +10,7 @@ from packaging.specifiers import SpecifierSet
 from packaging.utils import canonicalize_name, parse_wheel_filename
 from packaging.version import Version
 
+from scripts.build.android_python import PYTHON_ARCHIVES
 from scripts.pipeline.artifacts import artifact_wheel, digest
 from scripts.pipeline.model import Target, load_plan
 from scripts.pipeline.wheel import tag_set, verify_record, verify_wheel
@@ -101,10 +102,15 @@ def verify_closure(wheels: tuple[Path, ...], target: Target) -> list[dict]:
                 "sha256": digest(wheel),
             }
         )
+    release = PYTHON_ARCHIVES[target.python].release.partition("-")[0]
     environment = {
         **default_environment(),
         "python_version": target.python.value,
-        "python_full_version": target.python.value + ".0",
+        "python_full_version": release,
+        "implementation_version": release,
+        "implementation_name": "cpython",
+        "platform_python_implementation": "CPython",
+        "os_name": "posix",
         "sys_platform": "android",
         "platform_system": "Android",
         "platform_machine": {"arm64-v8a": "aarch64", "x86_64": "x86_64"}[

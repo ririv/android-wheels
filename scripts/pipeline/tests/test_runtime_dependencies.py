@@ -41,6 +41,20 @@ def wheel(root: Path, name: str, requires: str = "") -> Path:
 
 
 class RuntimeDependencyTests(unittest.TestCase):
+    def test_patch_and_implementation_markers_follow_the_android_archive(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            first = wheel(
+                root,
+                "example",
+                'Requires-Dist: helper; python_full_version >= "3.13.10" and implementation_version < "3.14"\n',
+            )
+            with self.assertRaisesRegex(ValueError, "运行依赖不满足"):
+                verify_closure((first,), TARGET)
+            self.assertEqual(
+                len(verify_closure((first, wheel(root, "helper")), TARGET)), 2
+            )
+
     def test_published_stack_uses_recorded_sources_for_both_abis(self):
         for abi in AndroidABI:
             with self.subTest(abi=abi), tempfile.TemporaryDirectory() as temporary:
