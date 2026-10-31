@@ -13,7 +13,9 @@ HOST_SUFFIX = re.compile(r"\.cpython-\d+[a-z]*-(?:x86_64|aarch64)-linux-gnu\.so$
 
 def normalize_extensions(wheel: Path) -> None:
     """Use CPython's portable .so suffix without altering compiled code."""
-    with tempfile.TemporaryDirectory(prefix="wheel-extensions-") as temporary:
+    with tempfile.TemporaryDirectory(
+        prefix="wheel-extensions-", dir=wheel.parent
+    ) as temporary:
         destination = Path(temporary) / wheel.name
         with (
             WheelFile(str(wheel)) as source,

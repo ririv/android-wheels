@@ -132,3 +132,281 @@ filename = "qhull-8.0.2.tgz"
 [[matplotlib.sources.files]]
 path = "COPYING.txt"
 sha256 = "106d55c931fd6a84822e5345d900273d059f1c27310d02567ccb313c5d18c55d"
+
+[duckdb]
+sdist-sha256 = "09de511ef0dc76a5213e8d3d87a8b89bb4d3e8a6fe73a9f60dc001269946b44f"
+
+[[duckdb.sources]]
+name = "duckdb"
+url = "https://files.pythonhosted.org/packages/c2/7c/dfdf5e9cebefd032f57f09b224993e861ecb55f61e36c709544b04b44f70/duckdb-2.0.0.tar.gz"
+sha256 = "09de511ef0dc76a5213e8d3d87a8b89bb4d3e8a6fe73a9f60dc001269946b44f"
+filename = "duckdb-2.0.0.tar.gz"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/brotli/LICENSE"
+sha256 = "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/concurrentqueue/LICENSE"
+sha256 = "eaf0df40f77e929cd83cd4485de2bdf806c7908db84a52007a700588f6566331"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/fast_float/LICENSE"
+sha256 = "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/fastpforlib/LICENSE"
+sha256 = "9ff562631a04b8cb1030c53fdf461bd749c9af0655d86e4f17eb270e935a7fe2"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/fmt/LICENSE"
+sha256 = "825c9324e70f8c839c8ba910543dd4a7daee243b86ef960594c11381a19980b8"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/fsst/LICENSE"
+sha256 = "20e9c14ff437a73a6e2b105f1b5aaf9ef24a84d962741c0ab01d04b4910294ab"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/httplib/LICENSE"
+sha256 = "4b45cbe16d7b71b89ae6127e26e0d90a029198ca5e958ad8e3d0b8bbed364d8b"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/hyperloglog/LICENSE"
+sha256 = "3a3fcdbaecbeb1e7dea97843961100c637766e59de4674fed809760283b716e1"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/jaro_winkler/LICENSE"
+sha256 = "077815ffd10f0677d060e9d5c0059592d28c41d1e9985c848435e0ea17ea06c3"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/jemalloc/LICENSE"
+sha256 = "94aa2caa98c25d942f58b956c71dba6a99ff98fc3a31cbc669fe2a4cd0268b53"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/lz4/LICENSE"
+sha256 = "99b8d2d8011d1ce548c5aaf3270c6bee014507fa821c4f9a7e300a9e11015db7"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/mbedtls/LICENSE"
+sha256 = "9b405ef4c89342f5eae1dd828882f931747f71001cfba7d114801039b52ad09b"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/miniz/LICENSE"
+sha256 = "0115478d567121238cf6cc1c0c361926cf07a49d9e4c9e66da97fac6a01646b3"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/parquet/LICENSE"
+sha256 = "70b6a7d630fae9f49643f9b16bee42a2feda68301f9c14470e7fb5ad0599bb9f"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/pcg/LICENSE"
+sha256 = "3febf788fd814bf1f350db169bdc51b28ff7e7596ff1f09cc0181e4fde42b480"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/pdqsort/LICENSE"
+sha256 = "323fc18e35fcf058d69d684022ef844f206cb8fefb2bac1298fa1767e0b9ae38"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/re2/LICENSE"
+sha256 = "6040cda75d90b1738292a631d89934c411ef7ffd543c4d6a1b7edfc8edf29449"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/ska_sort/LICENSE"
+sha256 = "3c3a838f6ac2201bb8255b374fad34e3e1de07940c3acdc09e661e118fb75078"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/skiplist/LICENSE"
+sha256 = "3b9cac57dbb2d7ec76298cb0d33afe12f891e1d0dbb38ff17993a14f3480ee7c"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/snappy/LICENSE"
+sha256 = "55172044f7e241207117448a4d9d6ba1d0925c8ad66b5d4c08c70adfa9cc3de6"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/tdigest/LICENSE"
+sha256 = "43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/tdigest/NOTICES"
+sha256 = "5ded9726da6c5360c0b0ba0725455f57b367dc9b4954bed7ca8f235d26cee33b"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/thrift/thrift/LICENSE"
+sha256 = "23df881cec3192d1f4474633c14eb2ec30a45b84f8daeb82b9de5d2bd3ac8218"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/utf8proc/LICENSE"
+sha256 = "fbc720fcc90fb44396985646f67e4d19be03e0c0539f7138ed9dc6efba49dc49"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/vergesort/LICENSE"
+sha256 = "12dd392860ea2a3633bce5f33d7eebd4308a7e3386b4372260e5e72be7a64033"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/yyjson/LICENSE"
+sha256 = "734d7fb3eb56f0a04e6b7ab0c5d3634624a8bfaa2acc87a2c03a029b20868cf8"
+
+[[duckdb.sources.files]]
+path = "external/duckdb/third_party/zstd/LICENSE"
+sha256 = "8b7bc50ec3ecee27224e17d4d316a939fa2ddda9c88e0ddc2f059ce432edbfb9"
+
+[scipy]
+sdist-sha256 = "52c4b7422442aba924d03ad4019852b08a92e64ea187b933135687bfe2747307"
+
+[[scipy.sources]]
+name = "scipy"
+url = "https://files.pythonhosted.org/packages/7e/74/66de6258867beb2ef08f35f9f2ac017a52cacd5081714d239ff1a442d458/scipy-1.18.1.tar.gz"
+sha256 = "52c4b7422442aba924d03ad4019852b08a92e64ea187b933135687bfe2747307"
+filename = "scipy-1.18.1.tar.gz"
+
+[[scipy.sources.files]]
+path = "LICENSE.txt"
+sha256 = "221e59f5e910fd7f94e44f0dac77436a11338c285c6346232e4a850a50da0e94"
+
+[[scipy.sources.files]]
+path = "LICENSES_bundled.txt"
+sha256 = "45b1a2cf4eb57277812fcbca2b6af7d84e98c942a5e4dcc360610f49de16c63f"
+
+[[scipy.sources.files]]
+path = "scipy/_build_utils/tempita/LICENSE.txt"
+sha256 = "743b0f4a0087fe3607167113fffab6f2ca069c8da321763697ab5d0d8411634a"
+
+[[scipy.sources.files]]
+path = "scipy/_external/packaging_version/src/LICENSE.BSD"
+sha256 = "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+
+[[scipy.sources.files]]
+path = "scipy/_lib/_uarray/LICENSE"
+sha256 = "c80c39b5fce06ba4897e14e0b0a88b54458334d951eb1361402ffad2cfb863b4"
+
+[[scipy.sources.files]]
+path = "scipy/fft/_duccfft/LICENSE.md"
+sha256 = "c254b2b5fd30ae3c89d36ba061730563b9760fca04f1b746a1b2c3157da2c789"
+
+[[scipy.sources.files]]
+path = "scipy/integrate/_lebedev.py"
+sha256 = "9dfe2476c3cece2672694bbf9dabee87a3228eccaf123cbe15f8d184198dc4dc"
+
+[[scipy.sources.files]]
+path = "scipy/integrate/src/LICENSE_DOP"
+sha256 = "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357"
+
+[[scipy.sources.files]]
+path = "scipy/interpolate/_bary_rational.py"
+sha256 = "7d4cffe85836beec002e2889431370739620b78e47641b751dfaa3239c34c8ac"
+
+[[scipy.sources.files]]
+path = "scipy/io/_fast_matrix_market/LICENSE.txt"
+sha256 = "4421977664ada9a02087ab1b031b50335f02b500e2cb58a1757074f31b4a89f5"
+
+[[scipy.sources.files]]
+path = "scipy/io/_fast_matrix_market/fast_matrix_market/dependencies/fast_float/LICENSE-MIT"
+sha256 = "e562f3f974ced7e69dd1db77b820b36bcf8f30377f1aa105723fba449c53c4e6"
+
+[[scipy.sources.files]]
+path = "scipy/io/_fast_matrix_market/fast_matrix_market/dependencies/ryu/LICENSE-Boost"
+sha256 = "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566"
+
+[[scipy.sources.files]]
+path = "scipy/io/_fast_matrix_market/src/pystreambuf.h"
+sha256 = "017cbea09dcbeade28614de7987d4e5122de2406e1e6715e4fa74d3f2c6791f4"
+
+[[scipy.sources.files]]
+path = "scipy/ndimage/LICENSE.txt"
+sha256 = "606209a000716c5f66e33e180ce08434b96ed17db4975ab9723c6b5fbcc89609"
+
+[[scipy.sources.files]]
+path = "scipy/optimize/_direct/COPYING"
+sha256 = "a7669da81aac1b0539f161cf93d6a94956d24ff476537e0b0579925997eec3f0"
+
+[[scipy.sources.files]]
+path = "scipy/optimize/tnc/LICENSE"
+sha256 = "3df9207af2fdb861af0ae3b22026f163b9bcfab4e525dc4943afe2ffa3f77624"
+
+[[scipy.sources.files]]
+path = "scipy/sparse/linalg/_dsolve/SuperLU/License.txt"
+sha256 = "f0cedf52503b2d42b83411a0a16e6fefac346dfad8fddc66f50050150123470c"
+
+[[scipy.sources.files]]
+path = "scipy/sparse/linalg/_eigen/arpack/arnaud/LICENSE"
+sha256 = "f49da99252dee2c12dbd5c71762b0724063f4531de193fbcece550ad9a3b6354"
+
+[[scipy.sources.files]]
+path = "scipy/sparse/linalg/_propack/PROPACK/LICENSE"
+sha256 = "f49da99252dee2c12dbd5c71762b0724063f4531de193fbcece550ad9a3b6354"
+
+[[scipy.sources.files]]
+path = "scipy/spatial/COPYING_QHULL.txt"
+sha256 = "106d55c931fd6a84822e5345d900273d059f1c27310d02567ccb313c5d18c55d"
+
+[[scipy.sources.files]]
+path = "scipy/stats/biasedurn/license.txt"
+sha256 = "c2bf3b1e5a5cde539b9f8e38b5c870f49db0b5f01c7f9cdd1d1291bafc81d22f"
+
+[[scipy.sources.files]]
+path = "scipy/stats/libnpyrandom/logfactorial.h"
+sha256 = "1c51c5a9c411851d4ba4c107912630d9428ec5c3b9f4edb919fedcb85b905b2e"
+
+[[scipy.sources.files]]
+path = "subprojects/array_api_compat/array_api_compat/LICENSE"
+sha256 = "4ffd978e3fa18d058d98c66771cfea7ed634aaf7023cf9612b8b55eee9a8f0fe"
+
+[[scipy.sources.files]]
+path = "subprojects/array_api_extra/LICENSE"
+sha256 = "58494398fe147fdce76a68b2decd4c08ce3a1ea237b6d6785001c15f822c6ed6"
+
+[[scipy.sources.files]]
+path = "subprojects/boost_math/math/LICENSE"
+sha256 = "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566"
+
+[[scipy.sources.files]]
+path = "subprojects/cobyqa/LICENSE"
+sha256 = "a4d7975be6d6487b7125ce6e79f299a5396b300b1a67e3644a1cf6467b426708"
+
+[[scipy.sources.files]]
+path = "subprojects/duccfft/LICENSE.md"
+sha256 = "c254b2b5fd30ae3c89d36ba061730563b9760fca04f1b746a1b2c3157da2c789"
+
+[[scipy.sources.files]]
+path = "subprojects/highs/LICENSE.txt"
+sha256 = "10b39dba7b7731175f0705398b6db4320b64add1bd2ed9f9ec5b512a9ef1bd95"
+
+[[scipy.sources.files]]
+path = "subprojects/highs/extern/LICENCE_1_0.txt"
+sha256 = "8d8291caf1cee26d23acf3eb67c9f9a2d58f1c681b16a4fbe8cbfb9e3c0b5a9b"
+
+[[scipy.sources.files]]
+path = "subprojects/highs/extern/filereaderlp/LICENSE"
+sha256 = "4374bb8064e5302f5ac6b82fd3e153a36670f04d0a6ee1bc55b3dc3faee923cc"
+
+[[scipy.sources.files]]
+path = "subprojects/highs/extern/pdqsort/license.txt"
+sha256 = "323fc18e35fcf058d69d684022ef844f206cb8fefb2bac1298fa1767e0b9ae38"
+
+[[scipy.sources.files]]
+path = "subprojects/pyprima/pyprima/LICENCE.txt"
+sha256 = "997379b2c1bf53a391d2fd3295dce75bf3c94ed28d64882ede30d1b518cb0dd6"
+
+[[scipy.sources.files]]
+path = "subprojects/qhull_r/libqhull_r/COPYING.txt"
+sha256 = "106d55c931fd6a84822e5345d900273d059f1c27310d02567ccb313c5d18c55d"
+
+[[scipy.sources.files]]
+path = "subprojects/unuran/license.txt"
+sha256 = "8d62d5c8e1752ee5c3d3a0f8fd0dd0b45865c243fa282cf5e63f00288a01c5ee"
+
+[[scipy.sources.files]]
+path = "subprojects/xsf/LICENSE"
+sha256 = "632f86f8bd24a264ac49c002f39866f407a38e8cbd8a6568df7596cc7fbe0048"
+
+[[scipy.sources.files]]
+path = "subprojects/xsf/LICENSES_bundled.txt"
+sha256 = "e28d89b1e6c248e98d1f02c946f52556e76e8757bec371cf5a67bffe7aa43cac"
+
+[[scipy.sources.files]]
+path = "scipy/sparse/linalg/_eigen/arpack/arnaud/ARPACK_LICENSE.txt"
+sha256 = "53c82c54b92d94ef8c2ffee82e12135c6c3fdf23c3949d7bf6315282b14d6b8b"
+
+[[scipy.sources.files]]
+path = "scipy/sparse/linalg/_propack/PROPACK/PROPACK_LICENSE.txt"
+sha256 = "7f961824c2570a623cb1420269cd4336807776379ac161771aacbecfdcf176c0"

@@ -48,7 +48,9 @@ class RpathChange:
 
 def normalize_rpaths(wheel: Path) -> tuple[RpathChange, ...]:
     changes = []
-    with tempfile.TemporaryDirectory(prefix="wheel-rpath-") as temporary:
+    with tempfile.TemporaryDirectory(
+        prefix="wheel-rpath-", dir=wheel.parent
+    ) as temporary:
         destination = Path(temporary) / wheel.name
         binary = Path(temporary) / "library.so"
         with (

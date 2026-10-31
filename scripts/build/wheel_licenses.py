@@ -106,7 +106,9 @@ def attach_bundled_licenses(wheel: Path, target: Target) -> None:
             verify_bundled_licenses(archive, target, prefix)
             return
     payload = license_payload(target.library, target.source.sha256)
-    with tempfile.TemporaryDirectory(prefix="wheel-licenses-output-") as temporary:
+    with tempfile.TemporaryDirectory(
+        prefix="wheel-licenses-output-", dir=wheel.parent
+    ) as temporary:
         destination = Path(temporary) / wheel.name
         with (
             WheelFile(str(wheel)) as source,

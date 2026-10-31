@@ -22,7 +22,9 @@ def attach_native_metadata(wheel: Path) -> None:
     metadata = (prefix / "native-libraries.json").read_bytes()
     if tuple(row["name"] for row in json.loads(metadata)) != names:
         raise ValueError("已编译的原生依赖与构建目标不一致")
-    with tempfile.TemporaryDirectory(prefix="wheel-native-") as temporary:
+    with tempfile.TemporaryDirectory(
+        prefix="wheel-native-", dir=wheel.parent
+    ) as temporary:
         destination = Path(temporary) / wheel.name
         with (
             WheelFile(str(wheel)) as source,
