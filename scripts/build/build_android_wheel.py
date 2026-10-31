@@ -39,6 +39,11 @@ def create_cargo_config(
     print("--- Creating .cargo/config.toml for cross-compilation ---")
     cargo_dir = project_path / ".cargo"
     cargo_dir.mkdir(exist_ok=True)
+    # 旧链接元数据中的 libgcc 展开到 NDK 的 libunwind，仅作用于当前项目。
+    compatibility = cargo_dir / "android-linker"
+    compatibility.mkdir(exist_ok=True)
+    (compatibility / "libgcc.a").write_text("INPUT(-lunwind)\n")
+    (compatibility / "libpython3.so").write_text(f"INPUT(-lpython{python_version})\n")
 
     print(f"Using linker {linker_name}")
 
@@ -49,9 +54,10 @@ def create_cargo_config(
     rustflags = target_config.get("rustflags", [])
     if isinstance(rustflags, str):
         rustflags = shlex.split(rustflags)
-    library_flag = ["-L", str(python_lib_dir)]
-    if not any(rustflags[i : i + 2] == library_flag for i in range(len(rustflags))):
-        rustflags.extend(library_flag)
+    for directory in (compatibility, python_lib_dir):
+        library_flag = ["-L", str(directory)]
+        if not any(rustflags[i : i + 2] == library_flag for i in range(len(rustflags))):
+            rustflags.extend(library_flag)
     # extension-module/abi3 会禁用 PyO3 的自动链接；Android 必须显式保留该依赖。
     target_config["rustflags"] = rust_link_flags(
         rustflags,

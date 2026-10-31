@@ -221,6 +221,8 @@ class AndroidPythonTests(unittest.TestCase):
                         "-C",
                         "opt-level=2",
                         "-L",
+                        str(root / ".cargo/android-linker"),
+                        "-L",
                         "/python/lib",
                         "-C",
                         "link-arg=-Wl,--no-as-needed",
@@ -243,6 +245,14 @@ class AndroidPythonTests(unittest.TestCase):
                 "3.13",
             )
             self.assertEqual(tomllib.loads(config.read_text()), actual)
+            self.assertEqual(
+                (root / ".cargo/android-linker/libgcc.a").read_text(),
+                "INPUT(-lunwind)\n",
+            )
+            self.assertEqual(
+                (root / ".cargo/android-linker/libpython3.so").read_text(),
+                "INPUT(-lpython3.13)\n",
+            )
 
 
 class WheelTagsTests(unittest.TestCase):
