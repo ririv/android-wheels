@@ -65,7 +65,7 @@ jobs:
         if: fromJSON(inputs.target).builder == 'cibuildwheel'
         run: echo "CIBW_BUILD=cp${TARGET_PYTHON_VERSION//./}-*" >> "$GITHUB_ENV"
       - name: Identify native SDK independently of Python
-        if: fromJSON(inputs.target).builder == 'cibuildwheel' && join(fromJSON(inputs.target).native_dependencies, ',') != ''
+        if: fromJSON(inputs.target).builder != 'maturin' && join(fromJSON(inputs.target).native_dependencies, ',') != ''
         id: native_key
         run: python -B -m scripts.build.native_cache --output "$GITHUB_OUTPUT"
       - uses: actions/cache/restore@v4
@@ -79,7 +79,7 @@ jobs:
         env:
           NATIVE_CACHE_KEY: ${{ steps.native_key.outputs.key }}
           NATIVE_PREPARATION: ${{ steps.native_cache.outputs.cache-hit == 'true' && 'restore' || 'build' }}
-        run: python -B -m scripts.build.cibuildwheel_native --mode "$NATIVE_PREPARATION" --key "$NATIVE_CACHE_KEY"
+        run: python -B -m scripts.build.native_prepare --mode "$NATIVE_PREPARATION" --key "$NATIVE_CACHE_KEY"
       - uses: actions/cache/save@v4
         if: steps.native_key.outputs.key != '' && steps.native_cache.outputs.cache-hit != 'true'
         with:

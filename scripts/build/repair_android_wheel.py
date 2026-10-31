@@ -21,7 +21,7 @@ from pathlib import Path
 from scripts.build.link_flags import PAGE_SIZE
 from scripts.build.wheel_abi import constrain_abi
 from scripts.build.wheel_native import attach_native_metadata
-from scripts.build.wheel_rpath import normalize_rpaths
+from scripts.build.wheel_rpath import RpathMode, normalize_rpaths
 
 
 def contains_elf(wheel: str) -> bool:
@@ -38,6 +38,7 @@ def contains_elf(wheel: str) -> bool:
 def repair(wheel: str, dest_dir: str, ldpaths: str) -> None:
     Path(dest_dir).mkdir(parents=True, exist_ok=True)
     if contains_elf(wheel):
+        normalize_rpaths(Path(wheel), RpathMode.RESOLVE_INTERNAL)
         paths = ldpaths.split(os.pathsep)
         if os.environ["NATIVE_DEPENDENCIES"]:
             paths.insert(0, str(Path(os.environ["NATIVE_PREFIX"]) / "lib"))

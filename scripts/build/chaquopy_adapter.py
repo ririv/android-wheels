@@ -13,7 +13,7 @@ from scripts.build.android_python import PythonVersion, write_pyo3_config
 from scripts.build.build_tools import BuildTool
 from scripts.build.fortran import configure_fortran
 from scripts.build.link_flags import PAGE_LINK_FLAGS, rust_link_flags
-from scripts.build.native_libraries import build_libraries
+from scripts.build.native_prefix import install_libraries
 from scripts.build.pep517_settings import (
     ConfiguredBuilder,
     backend_settings,
@@ -40,11 +40,10 @@ def prepare_builder(pypi: Path, target: Target, workspace: Path):
         create_host()
         prefix = Path(builder.host_env) / "chaquopy"
         write_python_pkgconfig(prefix, target.python)
-        ndk = Path(os.environ["ANDROID_NDK"])
-        toolchain = ndk / "toolchains/llvm/prebuilt/linux-x86_64"
-        build_libraries(
-            target.native_dependencies, prefix, ndk, toolchain, target.abi, target.api
-        )
+        if target.native_dependencies:
+            install_libraries(
+                Path(os.environ["NATIVE_PREFIX"]), prefix, target.native_dependencies
+            )
 
     def create_build_env():
         builder.builder = ConfiguredBuilder(

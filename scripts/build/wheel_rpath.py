@@ -5,7 +5,9 @@ import os
 import subprocess
 import tempfile
 from dataclasses import dataclass
+from enum import StrEnum
 from pathlib import Path
+from posixpath import normpath, relpath
 
 from elftools.elf.elffile import ELFFile
 from wheel.wheelfile import WheelFile
@@ -46,7 +48,44 @@ class RpathChange:
     after: tuple[str, ...]
 
 
-def normalize_rpaths(wheel: Path) -> tuple[RpathChange, ...]:
+class RpathMode(StrEnum):
+    NORMALIZE = "normalize"
+    RESOLVE_INTERNAL = "resolve-internal"
+
+
+def internal_paths(
+    data: bytes, filename: str, files: tuple[str, ...], paths: tuple[str, ...]
+) -> tuple[str, ...]:
+    """Resolve unique in-wheel dependencies without selecting an external library."""
+    dynamic = ELFFile(io.BytesIO(data)).get_section_by_name(".dynamic")
+    if dynamic is None:
+        return paths
+    parent = str(Path(filename).parent)
+    result = list(paths)
+    for tag in dynamic.iter_tags("DT_NEEDED"):
+        candidates = [name for name in files if Path(name).name == tag.needed]
+        if not candidates:
+            continue
+        resolved = {
+            normpath(
+                path.replace("${ORIGIN}", parent).replace("$ORIGIN", parent)
+                + "/"
+                + tag.needed
+            )
+            for path in result
+        }
+        if resolved.intersection(candidates):
+            continue
+        if len(candidates) != 1:
+            raise ValueError(f"包内动态依赖存在歧义：{filename} → {tag.needed}")
+        relative = relpath(str(Path(candidates[0]).parent), parent)
+        result.append("$ORIGIN" if relative == "." else "$ORIGIN/" + relative)
+    return tuple(dict.fromkeys(result))
+
+
+def normalize_rpaths(
+    wheel: Path, mode: RpathMode = RpathMode.NORMALIZE
+) -> tuple[RpathChange, ...]:
     changes = []
     with tempfile.TemporaryDirectory(
         prefix="wheel-rpath-", dir=wheel.parent
@@ -57,6 +96,9 @@ def normalize_rpaths(wheel: Path) -> tuple[RpathChange, ...]:
             WheelFile(str(wheel)) as source,
             WheelFile(str(destination), "w") as output,
         ):
+            files = tuple(
+                member.filename for member in source.infolist() if not member.is_dir()
+            )
             for member in source.infolist():
                 if member.is_dir() or member.filename.endswith(
                     (
@@ -72,6 +114,9 @@ def normalize_rpaths(wheel: Path) -> tuple[RpathChange, ...]:
                     after = tuple(
                         dict.fromkeys(path for path in before if is_portable(path))
                     )
+                    if mode == RpathMode.RESOLVE_INTERNAL:
+                        # 修复前保留外部库的原搜索路径，供 auditwheel 发现；最终再清理宿主路径。
+                        after = internal_paths(data, member.filename, files, before)
                     if any(
                         path and not path.startswith("/") and not is_portable(path)
                         for path in before
@@ -97,7 +142,8 @@ def normalize_rpaths(wheel: Path) -> tuple[RpathChange, ...]:
                         )
                         data = binary.read_bytes()
                         verify_alignment(io.BytesIO(data), member.filename)
-                        verify_rpaths(data, member.filename)
+                        if mode == RpathMode.NORMALIZE:
+                            verify_rpaths(data, member.filename)
                         changes.append(RpathChange(member.filename, before, after))
                 output.writestr(member, data)
         if changes:

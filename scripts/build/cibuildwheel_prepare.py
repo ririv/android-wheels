@@ -1,15 +1,13 @@
 """Prepare the explicit host tools and target prefix used by cibuildwheel."""
 
 import argparse
-import json
 import os
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-from scripts.build.native_libraries import library_specs
 from scripts.build.native_model import NativeLibrary
+from scripts.build.native_prefix import install_libraries
 from scripts.tooling import configuration, requirements
 
 
@@ -36,12 +34,7 @@ def main() -> None:
     )
     if names:
         prepared = Path(os.environ["NATIVE_PREFIX"])
-        specs = library_specs(Path(__file__).with_name("native-libraries.toml"))
-        expected = [specs[name].to_dict() for name in names]
-        actual = json.loads((prepared / "native-libraries.json").read_text())
-        if actual != expected:
-            raise ValueError("提前编译的原生依赖与当前目标不一致")
-        shutil.copytree(prepared, prefix, dirs_exist_ok=True)
+        install_libraries(prepared, prefix, names)
     # tomli-w 由上面的固定 shared 依赖组安装，之后再加载 Cargo 配置模块。
     from scripts.pipeline.cargo_env import configure
 
