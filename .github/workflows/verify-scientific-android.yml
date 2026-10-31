@@ -4,8 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       build_runs:
-        description: 'Comma-separated build runs containing ContourPy, pandas and Matplotlib Python 3.13 wheels'
+        description: 'Comma-separated build runs containing every package of the selected Python 3.13 suite'
         type: string
+        required: true
+      suite:
+        description: 'Runtime suite to verify'
+        type: choice
+        options: [plotting, data]
+        default: plotting
         required: true
       artifact_layout:
         description: 'Artifact layout produced by the selected runs'
@@ -36,12 +42,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           BUILD_RUNS: ${{ inputs.build_runs }}
           ARTIFACT_LAYOUT: ${{ inputs.artifact_layout }}
+          RUNTIME_SUITE: ${{ inputs.suite }}
         with:
           api-level: 34
           arch: x86_64
           target: google_apis
           disable-animations: true
-          script: python -B -m scripts.testing.scientific_runtime --runs "$BUILD_RUNS" --layout "$ARTIFACT_LAYOUT" --abi x86_64 --output verification/inputs --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --toolchain "$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64" --report verification/scientific-x86_64.json
+          script: python -B -m scripts.testing.scientific_runtime --runs "$BUILD_RUNS" --layout "$ARTIFACT_LAYOUT" --suite "$RUNTIME_SUITE" --abi x86_64 --output verification/inputs --adb "$ANDROID_HOME/platform-tools/adb" --serial emulator-5554 --toolchain "$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64" --report verification/scientific-x86_64.json
       - uses: actions/upload-artifact@v4
         with:
           name: scientific-runtime-x86_64
