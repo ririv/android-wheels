@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Literal
 
 from scripts.build.android_python import AndroidABI, PythonVersion
+from scripts.build.maturin_settings import maturin_options
 from scripts.build.native_model import NativeLibrary
 from scripts.build.pep517_settings import workspace_settings
 from scripts.pipeline.compatibility import UpstreamUnsupported, upstream_unsupported
@@ -75,9 +76,8 @@ class Target:
 
     @property
     def builder(self) -> Builder:
-        if self.config_settings and self.source.backend == Backend.MATURIN:
-            raise ValueError("maturin 构建参数尚未接入 config-settings")
         if self.source.backend == Backend.MATURIN:
+            maturin_options(self.config_settings)
             return Builder.MATURIN
         if self.python in {
             PythonVersion.PY310,

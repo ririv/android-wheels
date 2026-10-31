@@ -20,10 +20,12 @@ from scripts.build.android_python import (
     setup_python_cross_build,
 )
 from scripts.build.link_flags import PAGE_LINK_FLAGS, rust_link_flags
+from scripts.build.maturin_settings import MaturinOptions, maturin_options
 from scripts.build.native_libraries import build_libraries
 from scripts.build.native_model import NativeLibrary
 from scripts.build.repair_android_wheel import repair
 from scripts.build.wheel_abi import constrain_abi
+from scripts.pipeline.model import load_plan
 
 
 def create_cargo_config(
@@ -148,6 +150,7 @@ def build_wheel(
     python_version: str,
     python_lib_dir: Path,
     output_dir: Path,
+    options: MaturinOptions = MaturinOptions(),
 ) -> None:
     """Build a maturin project with an explicit Android Python runtime."""
     print("--- Building wheel ---", flush=True)
@@ -199,6 +202,7 @@ def build_wheel(
         str(output_dir),
         "-i",
         interpreter_cli,
+        *options.arguments(),
     ]
     run(build_cmd, env=build_env, cwd=project_path)
 
@@ -264,6 +268,7 @@ def process_wheel(
 
 
 def main():
+    target = load_plan(Path.cwd() / "build-plan.json").target(os.environ["ARTIFACT"])
     # 读取环境变量（与现有 CI 对齐）
     library_name = os.environ["LIBRARY_NAME"]
     source_dir = os.environ["PROJECT_DIR"]
@@ -347,6 +352,7 @@ def main():
         python_version=target_python_version,
         python_lib_dir=runtime.lib_dir,
         output_dir=wheel_dir,
+        options=maturin_options(target.config_settings),
     )
 
     wheel = process_wheel(

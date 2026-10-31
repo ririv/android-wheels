@@ -4,8 +4,18 @@ directory = "."
 backend = "maturin"
 
 [android]
-python = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
-abis = ["arm64-v8a", "x86_64"]
+python = [
+    "3.10",
+    "3.11",
+    "3.12",
+    "3.13",
+    "3.14",
+    "3.15",
+]
+abis = [
+    "arm64-v8a",
+    "x86_64",
+]
 api = 24
 
 [environment]
@@ -13,3 +23,41 @@ CARGO_BUILD_JOBS = "2"
 CARGO_PROFILE_RELEASE_DEBUG = "0"
 CARGO_PROFILE_RELEASE_LTO = "off"
 JEMALLOC_SYS_WITH_LG_PAGE = "14"
+
+[config-settings]
+no-default-features = "true"
+features = [
+    "ffi_plugin",
+    "csv",
+    "polars_cloud_client",
+    "object",
+    "sql",
+    "trigonometry",
+    "parquet",
+    "ipc",
+    "catalog",
+    "performant",
+    "fast_alloc",
+    "nightly",
+    "polars-python/async",
+    "polars-python/pymethods",
+    "polars-python/optimizations",
+    "polars-python/json",
+    "polars-python/parquet",
+    "polars-python/ipc",
+    "polars-python/ipc_streaming",
+    "polars-python/avro",
+    "polars-python/csv",
+    "polars-python/scan_lines",
+    "polars-python/cloud",
+    "polars-python/operations",
+    "polars-python/dtypes",
+    "polars-python/meta",
+    "polars-python/decompress",
+    "polars-python/regex",
+    "polars-python/sql",
+    "polars-python/binary_encoding",
+    "polars-python/ffi_plugin",
+    "polars-python/polars_cloud_client",
+    "polars-python/streaming",
+]

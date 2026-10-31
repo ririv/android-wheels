@@ -53,6 +53,7 @@ def prepare_builder(pypi: Path, target: Target, workspace: Path):
         env["LDFLAGS"] += " " + " ".join(PAGE_LINK_FLAGS)
         prefix = Path(builder.host_env) / "chaquopy"
         env["PKG_CONFIG_PATH"] = str(prefix / "lib/pkgconfig")
+        env["PKG_CONFIG"] = str(pypi / "env/bin/pkg-config")
         env["PKG_CONFIG_ALLOW_CROSS"] = "1"
         env["NATIVE_PREFIX"] = str(prefix)
         # 使用当前编译器的 NDK，而不是宿主系统路径，供后端显式探测系统库。
