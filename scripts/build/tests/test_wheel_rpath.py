@@ -15,7 +15,7 @@ class WheelRpathTests(unittest.TestCase):
             ("pyarrow/libarrow.so.2600",),
             ("/tmp/target-sdk/lib",),
         )
-        self.assertEqual(paths, ("/tmp/target-sdk/lib", "$ORIGIN"))
+        self.assertEqual(paths, ("$ORIGIN", "/tmp/target-sdk/lib"))
         self.assertEqual(
             internal_paths(
                 data, "pyarrow/module.so", ("pyarrow/libarrow.so.2600",), paths

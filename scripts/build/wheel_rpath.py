@@ -79,7 +79,7 @@ def internal_paths(
         if len(candidates) != 1:
             raise ValueError(f"包内动态依赖存在歧义：{filename} → {tag.needed}")
         relative = relpath(str(Path(candidates[0]).parent), parent)
-        result.append("$ORIGIN" if relative == "." else "$ORIGIN/" + relative)
+        result.insert(0, "$ORIGIN" if relative == "." else "$ORIGIN/" + relative)
     return tuple(dict.fromkeys(result))
 
 
