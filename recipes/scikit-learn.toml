@@ -1,0 +1,16 @@
+name = "scikit-learn"
+pypi-version = "1.9.1"
+directory = "."
+backend = "mesonpy"
+
+[android]
+python = ["3.12", "3.13", "3.14", "3.15"]
+abis = ["arm64-v8a"]
+api = 26
+
+[environment]
+PIP_EXTRA_INDEX_URL = "https://ririv.github.io/py-extra-wheels"
+
+[config-settings]
+setup-args = ["--cross-file={workspace}/scripts/build/meson/{abi}.ini", "-Dc_args=-fopenmp", "-Dc_link_args=-fopenmp", "-Dcpp_args=-fopenmp", "-Dcpp_link_args=-fopenmp"]
+compile-args = ["-j2"]
