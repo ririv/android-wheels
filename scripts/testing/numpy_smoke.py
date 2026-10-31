@@ -69,6 +69,11 @@ def main() -> None:
     openblas = library.openblas_get_config().decode()
     assert "USE64BITINT" not in openblas, openblas
     assert "NO_LAPACK" not in openblas, openblas
+    wide = np.finfo(np.longdouble)
+    assert np.dtype(np.longdouble).itemsize == 16 and wide.nmant == 112, wide
+    one = np.longdouble(1)
+    increment = np.ldexp(one, -100)
+    assert (one + increment) - one == increment
     for dtype in ("float32", "float64", "complex64", "complex128"):
         check_dtype(dtype)
     with ThreadPoolExecutor(max_workers=4) as executor:
@@ -83,6 +88,7 @@ def main() -> None:
                 "machine": os.uname().machine,
                 "openblas": openblas,
                 "openblas_threads": library.openblas_get_num_threads(),
+                "longdouble_mantissa_bits": wide.nmant,
                 "dtypes": ["float32", "float64", "complex64", "complex128"],
                 "operations": [
                     "matmul",
