@@ -91,3 +91,31 @@ sha256 = "d5e5192a686d065eaed082de14dd26244c5c8e02bff16b2c6cce3265f648e00e"
 system = "cmake"
 args = ["-DBUILD_SHARED_LIBS=ON", "-DBUILD_TESTING=OFF", "-DBUILD_BENCHMARKS=OFF", "-DBUILD_DOCUMENTATION=OFF"]
 licenses = ["COPYING"]
+
+[arrow]
+version = "26.0.0"
+filename = "apache-arrow-26.0.0.tar.gz"
+url = "https://downloads.apache.org/arrow/arrow-26.0.0/apache-arrow-26.0.0.tar.gz"
+sha256 = "b153ef472dd89ef4cb84867ca238f2a3a9347d8f4a78913d16ca2201606f0425"
+system = "cmake"
+source-directory = "cpp"
+args = ["-DARROW_BUILD_SHARED=ON", "-DARROW_BUILD_STATIC=OFF", "-DARROW_BUILD_TESTS=OFF", "-DARROW_BUILD_BENCHMARKS=OFF", "-DARROW_DEPENDENCY_SOURCE=BUNDLED", "-DARROW_COMPUTE=ON", "-DARROW_CSV=ON", "-DARROW_JSON=ON", "-DARROW_DATASET=ON", "-DARROW_ACERO=ON", "-DARROW_FILESYSTEM=ON", "-DARROW_PARQUET=ON", "-DARROW_WITH_SNAPPY=ON", "-DARROW_WITH_ZLIB=ON", "-DARROW_WITH_ZSTD=ON", "-DARROW_WITH_LZ4=ON", "-DARROW_WITH_BROTLI=ON", "-DARROW_MIMALLOC=OFF", "-DARROW_JEMALLOC=OFF", "-DARROW_SIMD_LEVEL=NONE", "-DARROW_RUNTIME_SIMD_LEVEL=NONE", "-DARROW_CXX_FLAGS_RELEASE=-DBUILD_TZ_LIB=1", "-DOPENSSL_ROOT_DIR={prefix}", "-DCMAKE_PREFIX_PATH={prefix}"]
+licenses = ["LICENSE.txt", "NOTICE.txt"]
+
+[libpq]
+version = "18.6"
+filename = "postgresql-18.6.tar.bz2"
+url = "https://ftp.postgresql.org/pub/source/v18.6/postgresql-18.6.tar.bz2"
+sha256 = "555610c24d53e4316da5b7d3fc25c279d96856d5e0e23ee308c328c5fa881d9f"
+system = "postgresql-client"
+args = ["--with-ssl=openssl", "--with-includes={prefix}/include", "--with-libraries={prefix}/lib", "--without-readline", "--without-icu", "--without-zlib", "--without-lz4", "--without-zstd", "--without-gssapi", "--without-ldap", "--without-libxml", "--without-libxslt", "--without-libcurl", "--disable-rpath"]
+licenses = ["COPYRIGHT"]
+
+[openssl-shared]
+version = "3.5.9"
+filename = "openssl-3.5.9.tar.gz"
+url = "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz"
+sha256 = "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a"
+system = "openssl"
+args = ["shared", "no-tests"]
+licenses = ["LICENSE.txt"]

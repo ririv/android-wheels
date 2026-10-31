@@ -20,6 +20,28 @@ from scripts.testing.wheels import write_wheel
 
 
 class NativeLibraryTests(unittest.TestCase):
+    def test_arrow_uses_cpp_root_and_postgresql_builds_only_the_client(self):
+        root = Path(__file__).resolve().parents[3]
+        specs = library_specs(root / "scripts/build/native-libraries.toml")
+        arguments = (
+            Path("/source"),
+            Path("/build"),
+            Path("/prefix"),
+            Path("/ndk"),
+            AndroidABI.ARM64,
+            26,
+        )
+        arrow = commands(specs[NativeLibrary.ARROW], *arguments)
+        self.assertEqual(arrow[0][arrow[0].index("-S") + 1], "/source/cpp")
+        client = commands(specs[NativeLibrary.LIBPQ], *arguments)
+        self.assertEqual(client[1], ["make", "-j2", "-C", "src/interfaces/libpq"])
+        self.assertEqual(client[2], ["make", "-C", "src/interfaces/libpq", "install"])
+        self.assertEqual(client[3], ["make", "-C", "src/include", "install"])
+        self.assertEqual(
+            specs[NativeLibrary.ARROW].to_dict()["source-directory"], "cpp"
+        )
+        self.assertNotIn("source-directory", specs[NativeLibrary.OPENSSL].to_dict())
+
     def test_openblas_cross_targets_keep_lp64_and_c_lapack(self):
         root = Path(__file__).resolve().parents[3]
         specs = library_specs(root / "scripts/build/native-libraries.toml")

@@ -10,6 +10,7 @@ class NativeLibrary(StrEnum):
     LIBFFI = "libffi"
     LIBSODIUM = "libsodium"
     OPENSSL = "openssl"
+    OPENSSL_SHARED = "openssl-shared"
     CRC32C = "crc32c"
     JPEG = "jpeg"
     ICONV = "iconv"
@@ -17,12 +18,15 @@ class NativeLibrary(StrEnum):
     XSLT = "xslt"
     OPENBLAS = "openblas"
     GEOS = "geos"
+    ARROW = "arrow"
+    LIBPQ = "libpq"
 
 
 class BuildSystem(StrEnum):
     AUTOTOOLS = "autotools"
     OPENSSL = "openssl"
     CMAKE = "cmake"
+    POSTGRESQL_CLIENT = "postgresql-client"
 
 
 @dataclass(frozen=True)
@@ -45,10 +49,12 @@ class Library:
     args: tuple[str, ...]
     licenses: tuple[str, ...]
     abi_args: ABIArguments = ABIArguments()
+    source_directory: str = "."
 
     def to_dict(self) -> dict:
         data = asdict(self)
         del data["abi_args"]
+        del data["source_directory"]
         result = {
             **data,
             "args": list(self.args),
@@ -58,4 +64,6 @@ class Library:
             result["abi-args"] = {
                 abi.value: list(self.abi_args.for_abi(abi)) for abi in AndroidABI
             }
+        if self.source_directory != ".":
+            result["source-directory"] = self.source_directory
         return result

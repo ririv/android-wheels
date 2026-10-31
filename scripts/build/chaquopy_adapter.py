@@ -61,6 +61,7 @@ def prepare_builder(pypi: Path, target: Target, workspace: Path):
         env["LDFLAGS"] += " " + " ".join(PAGE_LINK_FLAGS)
         prefix = Path(builder.host_env) / "chaquopy"
         env["PKG_CONFIG_PATH"] = str(prefix / "lib/pkgconfig")
+        env["PATH"] = str(prefix / "host-tools/bin") + os.pathsep + env["PATH"]
         env["PKG_CONFIG"] = str(pypi / "env/bin/pkg-config")
         if any(
             canonicalize_name(Requirement(requirement).name) == "numpy"

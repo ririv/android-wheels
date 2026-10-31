@@ -7,7 +7,7 @@ import shutil
 import subprocess
 import tempfile
 import tomllib
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from scripts.build.android_python import AndroidABI
 from scripts.build.link_flags import PAGE_LINK_FLAGS
@@ -30,12 +30,23 @@ def library_specs(path: Path) -> dict[NativeLibrary, Library]:
         }
         if "abi-args" in row:
             fields.add("abi-args")
+        if "source-directory" in row:
+            fields.add("source-directory")
         if set(row) != fields:
             raise ValueError(f"原生依赖字段不完整：{name}")
         if Path(row["filename"]).name != row["filename"] or not re.fullmatch(
             r"[a-f0-9]{64}", row["sha256"]
         ):
             raise ValueError(f"无效的原生依赖来源：{name}")
+        directory = row.get("source-directory", ".")
+        if (
+            not isinstance(directory, str)
+            or not directory
+            or PurePosixPath(directory).is_absolute()
+            or ".." in PurePosixPath(directory).parts
+            or "\\" in directory
+        ):
+            raise ValueError(f"原生依赖源码目录必须位于压缩包内：{name}")
         abi_args = ABIArguments()
         if "abi-args" in row:
             values = row["abi-args"]
@@ -58,6 +69,7 @@ def library_specs(path: Path) -> dict[NativeLibrary, Library]:
             tuple(row["args"]),
             tuple(row["licenses"]),
             abi_args,
+            directory,
         )
     return result
 
@@ -93,20 +105,29 @@ def commands(
     abi: AndroidABI,
     api: int,
 ) -> tuple[list[str], ...]:
+    source = source / library.source_directory
     args = [
         argument.format(prefix=prefix)
         for argument in (*library.args, *library.abi_args.for_abi(abi))
     ]
     match library.system:
-        case BuildSystem.AUTOTOOLS:
+        case BuildSystem.AUTOTOOLS | BuildSystem.POSTGRESQL_CLIENT:
+            configure = [
+                str(source / "configure"),
+                f"--host={abi.triplet}",
+                f"--prefix={prefix}",
+                "--libdir=" + str(prefix / "lib"),
+                *args,
+            ]
+            if library.system == BuildSystem.POSTGRESQL_CLIENT:
+                return (
+                    configure,
+                    ["make", "-j2", "-C", "src/interfaces/libpq"],
+                    ["make", "-C", "src/interfaces/libpq", "install"],
+                    ["make", "-C", "src/include", "install"],
+                )
             return (
-                [
-                    str(source / "configure"),
-                    f"--host={abi.triplet}",
-                    f"--prefix={prefix}",
-                    "--libdir=" + str(prefix / "lib"),
-                    *args,
-                ],
+                configure,
                 ["make", "-j2"],
                 ["make", "install"],
             )
@@ -179,6 +200,10 @@ def build_libraries(
             for command in commands(library, source, build, prefix, ndk, abi, api):
                 print("编译原生依赖：", name, command, flush=True)
                 subprocess.run(command, cwd=build, env=env, check=True)
+            if library.system == BuildSystem.POSTGRESQL_CLIENT:
+                from scripts.build.pg_config import write_pg_config
+
+                write_pg_config(prefix, library.version)
             for license_file in library.licenses:
                 destination = prefix / "licenses" / name / license_file
                 destination.parent.mkdir(parents=True, exist_ok=True)
