@@ -49,6 +49,8 @@ ContourPy 1.4.0、pandas 3.1.0、Matplotlib 3.11.2 新增 **Python 3.12–3.15 �
 
 Shapely 2.2.0、DuckDB 2.0.0、polars-runtime-32 2.1.0、Thrift 0.25.0、SciPy 1.18.1 新增 **44 个 wheel**，recipe 总数达到 **63 个包**。SciPy 面向 ARM64 和 API 26；其他四个包面向双 ABI 和 API 24。Python 覆盖范围遵循上游及依赖要求。Python 3.13 数据套件在双 ABI 上通过，SciPy 在 ARM64 上通过数值检查。Polars 不包含桌面剪贴板功能。详见 [数据处理与科学计算扩展](docs/data-processing.md)。
 
+scikit-learn 1.9.1、PyArrow 26.0.0、psycopg2-binary 2.9.13 新增 **24 个 wheel**，recipe 总数达到 **66 个包**，三个包均要求 API 26。scikit-learn 覆盖 Python 3.12–3.15 ARM64，PyArrow 覆盖 3.12–3.15 双 ABI，psycopg2-binary 覆盖 3.10–3.15 双 ABI。机器学习与数据连接套件在 Android API 34 上通过 Python 3.13–3.15 ARM64 检查；数据连接套件还通过 Python 3.13 x86_64 检查。详见 [机器学习、Arrow 与 PostgreSQL 验证](docs/analytics.md)。
+
 ## 构建与发布
 
 GitHub Actions 执行统一流水线：

@@ -49,6 +49,8 @@ ContourPy 1.4.0, pandas 3.1.0, and Matplotlib 3.11.2 add **24 wheels for Python 
 
 Shapely 2.2.0, DuckDB 2.0.0, polars-runtime-32 2.1.0, Thrift 0.25.0, and SciPy 1.18.1 add **44 wheels**, bringing the recipe set to **63 packages**. SciPy targets ARM64 and API 26; the other four target both ABIs and API 24. Python coverage follows upstream and dependency requirements. The Python 3.13 data suite passed on both ABIs, and SciPy passed numerical checks on ARM64. Polars excludes desktop clipboard support. See [data processing and scientific extensions](docs/data-processing.md).
 
+scikit-learn 1.9.1, PyArrow 26.0.0, and psycopg2-binary 2.9.13 add **24 wheels**, bringing the recipe set to **66 packages**. All three target API 26. scikit-learn covers Python 3.12–3.15 on ARM64; PyArrow covers 3.12–3.15 on both ABIs; psycopg2-binary covers 3.10–3.15 on both ABIs. The learning and analytics suites passed on ARM64 with Python 3.13–3.15 using Android API 34; analytics also passed on x86_64 with Python 3.13. See [machine learning, Arrow, and PostgreSQL validation](docs/analytics.md).
+
 ## Build and publish
 
 GitHub Actions runs the shared pipeline:

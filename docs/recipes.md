@@ -137,19 +137,21 @@ abis = ["arm64-v8a", "x86_64"]
 api = 24
 ```
 
-依赖名由 `NativeLibrary` 枚举限制，固定源码 URL、版本、SHA-256、构建系统、配置参数和许可证文件在 `scripts/build/native-libraries.toml`。目前提供 libffi、libsodium、OpenSSL、CRC32C、libjpeg-turbo、libiconv、libxml2、libxslt、OpenBLAS、GEOS；它们是构建依赖，不计作新增 Python 包。
+依赖名由 `NativeLibrary` 枚举限制，固定源码 URL、版本、SHA-256、构建系统、配置参数和许可证文件在 `scripts/build/native-libraries.toml`。目前提供 libffi、libsodium、OpenSSL、CRC32C、libjpeg-turbo、libiconv、libxml2、libxslt、OpenBLAS、GEOS、Arrow C++、libpq，并为 OpenSSL 分别提供静态与共享配置；它们是构建依赖，不计作新增 Python 包。
 
 原生依赖的公共参数放在 `args`；需要区分架构时，使用该依赖的 `abi-args` 表，显式给出 `arm64-v8a` 和 `x86_64` 两组参数，构建时只追加当前 ABI 的一组。原有未声明该表的依赖继续只使用公共参数，来源清单保持原格式。OpenBLAS 显式选择 LP64、上游自带的 C 版 LAPACK，以及 ARMV8/NEHALEM CPU 目标，不需要 Fortran 编译器或源码补丁。
 
-每个矩阵任务使用自己的 NDK 工具链和目标 ABI/API；cibuildwheel 先在独立前缀编译依赖，使其在 PEP 517 依赖探测之前即可由 pkg-config 查询；目标 Python 开发环境建立后，核对固定来源清单并把依赖安装到该开发前缀。maturin 直接使用任务独立前缀。两者均下载并验证依赖源码后直接编译，不改源码。Autotools、OpenSSL Configure 和 CMake 使用互斥枚举分派；命令以参数数组调用；原生配置参数只支持显式 `{prefix}` 安装路径占位。依赖编译失败立即终止，不切换系统库或纯 Python 实现。静态库供 Python 扩展链接，非系统共享运行库仍由 auditwheel 打包。
+每个矩阵任务显式使用目标 NDK、ABI 和 API。cibuildwheel 与 Chaquopy 在后端依赖探测前编译或恢复 SDK，目标 Python 开发环境建立后核对来源清单并复制到各自开发前缀。maturin 使用任务独立前缀。原生库编译时只使用下载并校验的固定源码，不改源码。Autotools、OpenSSL Configure、CMake、固定 Android 工具链的 CMake superbuild、仅安装 PostgreSQL 客户端的构建系统使用互斥枚举分派；命令以参数数组调用；原生配置参数只支持显式 `{prefix}` 安装路径占位。依赖编译失败立即终止，不切换系统库或纯 Python 实现。静态库供 Python 扩展链接，非系统共享运行库仍由 auditwheel 打包。
+
+原生依赖可通过 `source-directory` 显式选择压缩包内的构建子目录，省略时为压缩包根目录；绝对路径与 `..` 被拒绝，许可证仍从原压缩包根目录读取。CMake superbuild 的子项目共用固定 ABI/API 工具链，并在安装时剥离调试符号。cibuildwheel 与 Chaquopy 的 SDK 缓存按固定依赖、目标和工具链复用，命中后校验完整文件清单与哈希，详见 [机器学习与数据连接扩展](analytics.md)。
 
 Android 交叉编译的宿主构建钩子使用显式 `/system/bin/sh` 到宿主 `/bin/sh` 的映射；NDK sysroot 的头文件与 ABI/API 库目录显式提供给构建器，避免搜索宿主 `/usr/include` 和 `/usr/lib`。
 
 所有新构建的 ELF 加载段都必须满足 16 KB 对齐。C/C++ 原生库和 Rust 链接显式设置页大小参数，auditwheel 使用任务临时的 patchelf CLI 适配器保留新增段的对齐；不修改第三方工具源码。发布校验逐个检查 wheel 内的 ELF 加载段，发现 4 KB 段或文件偏移与虚拟地址不匹配时直接失败。[Android 官方说明](https://developer.android.com/guide/practices/page-sizes) 同时要求检查代码中的页大小假设；默认构建流水线只进行构建和静态检查。NumPy 另有 [独立按需运行验证](numpy.md)，科学计算依赖栈另有 [组合运行检查](scientific.md)，覆盖 Python 3.13 的双 ABI、Android API 34 和 4 KB 页；尚未进行 16 KB 页设备运行验证。
 
-最终 wheel 的 `.dist-info/native-libraries.json` 记录实际依赖来源，`.dist-info/licenses/native/` 保存许可证；发布阶段核验这些记录与固定配置一致，并照常验证 RECORD 哈希。原生依赖接入三个构建器。旧版 Chaquopy 在建立目标 Python 开发前缀后编译依赖，再执行 PEP 517 依赖探测；最终 wheel 使用共用的 Android repair 与 16 KB 对齐校验。
+最终 wheel 的 `.dist-info/native-libraries.json` 记录实际依赖来源，`.dist-info/licenses/native/` 保存许可证；发布阶段核验这些记录与固定配置一致，并照常验证 RECORD 哈希。原生依赖接入三个构建器。旧版 Chaquopy 在建立目标 Python 开发前缀后核对并复制预先准备的 SDK，再执行 PEP 517 依赖探测；最终 wheel 使用共用的 Android repair 与 16 KB 对齐校验。
 
-上游在 wheel 中漏带捆绑库许可证时，使用 `scripts/build/bundled-licenses.toml` 显式固定 sdist、原生库压缩包和许可文件哈希；打包阶段补入文件及来源清单，保持二进制原样，发布阶段复核。目前用于 Matplotlib、DuckDB 和 SciPy，详见 [科学计算依赖栈](scientific.md) 与 [数据处理扩展](data-processing.md)。
+上游在 wheel 中漏带捆绑库许可证时，使用 `scripts/build/bundled-licenses.toml` 显式固定 sdist、原生库压缩包和许可文件哈希；打包阶段补入文件及来源清单，保持二进制原样，发布阶段复核。目前用于 Matplotlib、DuckDB、SciPy、scikit-learn 和 PyArrow，详见 [科学计算依赖栈](scientific.md)、[数据处理扩展](data-processing.md) 与 [机器学习与数据连接扩展](analytics.md)。
 
 maturin 构建还会读取原始 `build-system.requires`，在匹配目标版本的宿主 Python 环境安装其构建依赖，继续使用统一固定的 maturin 构建器。驱动 Python 与宿主、目标 Python 分离，保留已有 Python 3.10 构建路径。
 

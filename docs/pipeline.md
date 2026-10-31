@@ -13,7 +13,10 @@
 | `scripts/build` | Android 运行库、maturin/Chaquopy 构建与 wheel 修复 |
 | `scripts/build/chaquopy_adapter.py` | 组合旧版目标环境、原生依赖与共用 wheel 修复 |
 | `scripts/build/pep517_settings.py` | 将相同构建参数传入依赖发现和 wheel 构建 |
-| `scripts/build/cibuildwheel_native.py` | 在后端依赖探测之前准备目标原生库 |
+| `scripts/build/native_prepare.py` | 在后端依赖探测之前编译或校验目标原生库 |
+| `scripts/build/native_prefix.py` | 核对并复制固定 SDK 到不同构建器的目标 Python 前缀 |
+| `scripts/build/native_cache.py` | 生成与 Python 无关的 SDK 缓存身份，核对文件、权限和符号链接 |
+| `scripts/build/pg_config.py` | 提供可迁移的宿主查询工具，定位交叉编译的 libpq |
 | `scripts/build/cibuildwheel_prepare.py` | 核对并安装已编译依赖，组合宿主工具与 Cargo 环境 |
 | `scripts/build/native_model.py` | 原生依赖名、互斥构建系统和固定来源数据 |
 | `scripts/build/native_libraries.py` | 验证并直接编译固定原生依赖，不改源码 |
@@ -38,6 +41,8 @@
 构建计划记录在 `build-plan` artifact 内的 `build-plan.json`，源码使用 `GitSource | SdistSource` 和类型建模。Git ref 在规划时解析为完整 SHA；PyPI 源明确固定版本、地址、文件名和 SHA-256。不同 Python 和 ABI 使用同一固定来源，构建器在编译前重新校验 checkout 或源码包哈希、后端、`PKG-INFO`。sdist 的产物版本还必须等于所选发行版本。临时仓库入口未填写 ref 时，显式读取上游默认分支后固定其提交。
 
 每个目标使用独立 runner 编译。后端与 Python 版本决定 maturin、cibuildwheel 或 Chaquopy 路由，不改变原有交叉编译能力。驱动 Python 与目标 Python 分开设置。cibuildwheel 使用仓库独立配置文件，避免上游针对其他平台的发布选项影响本流水线；不改写上游源码或构建元数据。maturin 产物显式链接目标 Python，与 cibuildwheel 共用 auditwheel 修复步骤来打包外部运行库；实际依赖版本专用 `libpython3.x.so` 时，把过宽的 `abi3` 标签收窄为该解释器版本，同时更新 WHEEL 与 RECORD。
+
+cibuildwheel 与 Chaquopy 的原生 SDK 按 ABI、API、固定依赖、工具链和构建实现缓存，与 Python 版本分离；缓存命中后完整校验文件哈希、权限和符号链接，校验失败直接终止。SDK 成功后立即保存，使后续 Python 绑定构建失败不会丢弃已完成的 SDK。两个构建器通过同一安装模块，将 SDK 复制到各自目标 Python 前缀。
 
 所有目标成功后才进入汇总发布。发布会验证每个预期 artifact，缺少产物、源码错配、哈希不符、目标标签错误、同名内容冲突都会失败。校验通过后以一个提交更新 `wheels`，保留已有文件。不同工作流运行并发提交时，仅在远端确实前进后重新组合提交，最多三次；网络或权限失败直接报告。
 

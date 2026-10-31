@@ -128,6 +128,14 @@ NumPy 2.5.4 使用未修改的官方 sdist，通过外部 OpenBLAS 0.3.34、LP64
 
 所有配置均通过外部工具链、环境和上游参数完成，不修改包源码。Polars 不启用桌面剪贴板；SciPy x86_64 受当前固定 Boost 的浮点类型假设限制，暂缓。完整配置、功能边界、许可证与构建/运行记录见 [科学计算与数据处理扩展](data-processing.md)。
 
+## 机器学习与数据连接扩展
+
+继续收录 PyArrow 26.0.0、psycopg2-binary 2.9.13、scikit-learn 1.9.1，分别位于原生扩展快照的第 20、34、38 名。本批新增 24 个 wheel，recipe 总数达到 66。三个包选取时的全部 PyPI 发行记录均无官方 Android wheel。
+
+配置与源码保持分离，继续使用原始构建后端。通过外部 Arrow C++、OpenSSL、libpq SDK，以及上游参数、构建目录和共享库加载路径配置完成移植。当前依赖栈使 PyArrow 与 scikit-learn 从 Python 3.12 开始；scikit-learn 随 SciPy 仅提供 ARM64，psycopg2-binary 支持 3.10–3.15 双 ABI。三个包均显式要求 API 26。
+
+完整目标、SDK 缓存、许可来源及 Android 机器学习、数据处理和真实 PostgreSQL TLS 检查见 [机器学习、Arrow 与 PostgreSQL 扩展](analytics.md)。
+
 ## 暂缓项目
 
 | 包或类别 | 本次处理 |
@@ -137,7 +145,7 @@ NumPy 2.5.4 使用未修改的官方 sdist，通过外部 OpenBLAS 0.3.34、LP64
 | mypy 2.4.0 | librt、ast-serialize 已在第五批收录；Android 下的 mypyc 自举类型检查仍失败，暂缓主包 |
 | psutil | 上游明确拒绝 Android 平台，不修改源码中的平台判断 |
 | uvloop | 外部配置已解决 libuv 交叉编译识别，但上游仍硬编码链接 Android 不提供的独立 pthread 库 |
-| SciPy x86_64、PyArrow、scikit-learn 等 | SciPy ARM64 已收录；x86_64 受当前 Boost 限制，其余仍需专项适配 |
+| SciPy x86_64 与依赖它的 scikit-learn x86_64 | 当前固定 Boost 的浮点类型假设与 Android x86_64 不兼容；两个包的 ARM64 及 PyArrow 已收录 |
 | 其余前 50 项目 | 保留在审计表中，本轮尚未收录 |
 
 ## 预验证记录
