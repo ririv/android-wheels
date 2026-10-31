@@ -114,6 +114,20 @@ NumPy 2.5.4 使用未修改的官方 sdist，通过外部 OpenBLAS 0.3.34、LP64
 
 当前 NumPy 与 ContourPy 的最低 Python 要求为 3.12，因此完整依赖栈不提供 3.10/3.11 组合。构建参数、捆绑库来源、许可证补充和运行验证边界见 [科学计算依赖栈](scientific.md)。
 
+## 科学计算与数据处理扩展
+
+继续收录当前 PyPI 发行版的 SciPy、Shapely、DuckDB、polars-runtime-32 和 Thrift，共 44 个 wheel、5 个 recipe，recipe 总数达到 63。五个候选仍位于既有原生扩展下载量前 100；核查其 PyPI 全部发行记录均无官方 Android wheel。
+
+| 原生候选名次 | 包与版本 | 默认覆盖 |
+| --- | --- | --- |
+| 27 | SciPy 1.18.1 | Python 3.12–3.15 / API 26 / ARM64 |
+| 83 | Shapely 2.2.0 | Python 3.12–3.15 / API 24 / 双 ABI |
+| 86 | DuckDB 2.0.0 | Python 3.11–3.15 / API 24 / 双 ABI |
+| 96 | polars-runtime-32 2.1.0 | Python 3.11–3.15 / API 24 / 双 ABI |
+| 97 | Thrift 0.25.0 | Python 3.10–3.15 / API 24 / 双 ABI |
+
+所有配置均通过外部工具链、环境和上游参数完成，不修改包源码。Polars 不启用桌面剪贴板；SciPy x86_64 受当前固定 Boost 的浮点类型假设限制，暂缓。完整配置、功能边界、许可证与构建/运行记录见 [科学计算与数据处理扩展](data-processing.md)。
+
 ## 暂缓项目
 
 | 包或类别 | 本次处理 |
@@ -123,7 +137,7 @@ NumPy 2.5.4 使用未修改的官方 sdist，通过外部 OpenBLAS 0.3.34、LP64
 | mypy 2.4.0 | librt、ast-serialize 已在第五批收录；Android 下的 mypyc 自举类型检查仍失败，暂缓主包 |
 | psutil | 上游明确拒绝 Android 平台，不修改源码中的平台判断 |
 | uvloop | 外部配置已解决 libuv 交叉编译识别，但上游仍硬编码链接 Android 不提供的独立 pthread 库 |
-| SciPy、PyArrow、scikit-learn 等 | 数值/图形依赖需专项适配 |
+| SciPy x86_64、PyArrow、scikit-learn 等 | SciPy ARM64 已收录；x86_64 受当前 Boost 限制，其余仍需专项适配 |
 | 其余前 50 项目 | 保留在审计表中，本轮尚未收录 |
 
 ## 预验证记录

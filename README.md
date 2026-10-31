@@ -45,7 +45,9 @@ The matrix validated on **2026-10-29** contains **624 wheels across 54 packages*
 
 On **2026-10-31**, NumPy 2.5.4 adds **eight Android wheels for Python 3.12–3.15**. Its Python 3.13 wheels passed numerical smoke tests on both ABIs using Android API 34 emulators. See [NumPy and OpenBLAS validation](docs/numpy.md).
 
-ContourPy 1.4.0, pandas 3.1.0, and Matplotlib 3.11.2 add **24 wheels for Python 3.12–3.15**, bringing the recipe set to **58 packages**. The final Python 3.13 stack passed Android API 34 smoke tests on both ABIs, including DataFrame operations and headless PNG/SVG/PDF output. See [scientific stack validation](docs/scientific.md).
+ContourPy 1.4.0, pandas 3.1.0, and Matplotlib 3.11.2 add **24 wheels for Python 3.12–3.15**. The final Python 3.13 stack passed Android API 34 smoke tests on both ABIs, including DataFrame operations and headless PNG/SVG/PDF output. See [scientific stack validation](docs/scientific.md).
+
+Shapely 2.2.0, DuckDB 2.0.0, polars-runtime-32 2.1.0, Thrift 0.25.0, and SciPy 1.18.1 add **44 wheels**, bringing the recipe set to **63 packages**. SciPy targets ARM64 and API 26; the other four target both ABIs and API 24. Python coverage follows upstream and dependency requirements. The Python 3.13 data suite passed on both ABIs, and SciPy passed numerical checks on ARM64. Polars excludes desktop clipboard support. See [data processing and scientific extensions](docs/data-processing.md).
 
 ## Build and publish
 

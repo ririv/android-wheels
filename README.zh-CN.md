@@ -45,7 +45,9 @@ xxhash
 
 **2026-10-31**，NumPy 2.5.4 新增 **Python 3.12–3.15 的 8 个 Android wheel**。其 Python 3.13 产物已在 Android API 34 模拟器上通过双 ABI 数值冒烟测试。详见 [NumPy 与 OpenBLAS 验证记录](docs/numpy.md)。
 
-ContourPy 1.4.0、pandas 3.1.0、Matplotlib 3.11.2 新增 **Python 3.12–3.15 的 24 个 wheel**，recipe 总数达到 **58 个包**。最终 Python 3.13 依赖栈在 Android API 34 双 ABI 上通过运行检查，包括 DataFrame 操作和无界面的 PNG/SVG/PDF 导出。详见 [科学计算依赖栈验证](docs/scientific.md)。
+ContourPy 1.4.0、pandas 3.1.0、Matplotlib 3.11.2 新增 **Python 3.12–3.15 的 24 个 wheel**。最终 Python 3.13 依赖栈在 Android API 34 双 ABI 上通过运行检查，包括 DataFrame 操作和无界面的 PNG/SVG/PDF 导出。详见 [科学计算依赖栈验证](docs/scientific.md)。
+
+Shapely 2.2.0、DuckDB 2.0.0、polars-runtime-32 2.1.0、Thrift 0.25.0、SciPy 1.18.1 新增 **44 个 wheel**，recipe 总数达到 **63 个包**。SciPy 面向 ARM64 和 API 26；其他四个包面向双 ABI 和 API 24。Python 覆盖范围遵循上游及依赖要求。Python 3.13 数据套件在双 ABI 上通过，SciPy 在 ARM64 上通过数值检查。Polars 不包含桌面剪贴板功能。详见 [数据处理与科学计算扩展](docs/data-processing.md)。
 
 ## 构建与发布
 

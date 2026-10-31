@@ -149,7 +149,7 @@ Android 交叉编译的宿主构建钩子使用显式 `/system/bin/sh` 到宿主
 
 最终 wheel 的 `.dist-info/native-libraries.json` 记录实际依赖来源，`.dist-info/licenses/native/` 保存许可证；发布阶段核验这些记录与固定配置一致，并照常验证 RECORD 哈希。原生依赖接入三个构建器。旧版 Chaquopy 在建立目标 Python 开发前缀后编译依赖，再执行 PEP 517 依赖探测；最终 wheel 使用共用的 Android repair 与 16 KB 对齐校验。
 
-上游在 wheel 中漏带捆绑库许可证时，使用 `scripts/build/bundled-licenses.toml` 显式固定 sdist、原生库压缩包和许可文件哈希；打包阶段补入文件及来源清单，保持二进制原样，发布阶段复核。目前用于 Matplotlib，详见 [科学计算依赖栈](scientific.md)。
+上游在 wheel 中漏带捆绑库许可证时，使用 `scripts/build/bundled-licenses.toml` 显式固定 sdist、原生库压缩包和许可文件哈希；打包阶段补入文件及来源清单，保持二进制原样，发布阶段复核。目前用于 Matplotlib、DuckDB 和 SciPy，详见 [科学计算依赖栈](scientific.md) 与 [数据处理扩展](data-processing.md)。
 
 maturin 构建还会读取原始 `build-system.requires`，在匹配目标版本的宿主 Python 环境安装其构建依赖，继续使用统一固定的 maturin 构建器。驱动 Python 与宿主、目标 Python 分离，保留已有 Python 3.10 构建路径。
 
@@ -157,7 +157,7 @@ maturin 构建还会读取原始 `build-system.requires`，在匹配目标版本
 
 需要 Fortran 的 recipe 在顶层显式声明 `build-tools = ["fortran"]`，工具名由 `BuildTool` 枚举限制。Android cibuildwheel 使用其内置 Flang 工具链准备过程；旧版 Chaquopy 通过独立启动器将同一过程绑定到实际 NDK 编译器，避免把编译器 wrapper 误当作 NDK 路径。目标 API、ABI 和包源码保持原声明，工具准备失败即停止。
 
-旧版构建器显式启用 `-O2`，保留既有平台参数。声明 NumPy 构建依赖的项目通过构建环境中官方 `numpy-config --pkgconfigdir` 提供 Meson 查询目录。maturin 的当前项目目录中提供链接脚本，将旧 `libgcc` 名称映射到 NDK `libunwind`，将 `libpython3` 映射到目标版本动态库；不会修改 NDK 或宿主 SDK。
+旧版构建器显式启用 `-O2`，保留既有平台参数。目标 CPython 的头文件与动态库通过项目独立的 `python3.pc`、`python-X.Y.pc` 提供给 Meson；声明 NumPy 构建依赖的项目通过构建环境中官方 `numpy-config --pkgconfigdir` 提供 Meson 查询目录。maturin 的当前项目目录中提供链接脚本，将旧 `libgcc` 名称映射到 NDK `libunwind`，将 `libpython3` 映射到目标版本动态库；不会修改 NDK 或宿主 SDK。
 
 ## 自动选择构建范围
 
