@@ -149,7 +149,12 @@ def commands(
                 ["make", "-j2"],
                 ["make", "install_sw"],
             )
-        case BuildSystem.CMAKE:
+        case BuildSystem.CMAKE | BuildSystem.CMAKE_SUPERBUILD:
+            toolchain = (
+                build / "android-target.cmake"
+                if library.system == BuildSystem.CMAKE_SUPERBUILD
+                else ndk / "build/cmake/android.toolchain.cmake"
+            )
             return (
                 [
                     "cmake",
@@ -157,8 +162,7 @@ def commands(
                     str(source),
                     "-B",
                     str(build),
-                    "-DCMAKE_TOOLCHAIN_FILE="
-                    + str(ndk / "build" / "cmake" / "android.toolchain.cmake"),
+                    "-DCMAKE_TOOLCHAIN_FILE=" + str(toolchain),
                     f"-DANDROID_ABI={abi.value}",
                     f"-DANDROID_PLATFORM=android-{api}",
                     f"-DCMAKE_INSTALL_PREFIX={prefix}",
@@ -197,6 +201,8 @@ def build_libraries(
             source = extract(archive, root / (name + "-source"))
             build = root / (name + "-build")
             build.mkdir()
+            if library.system == BuildSystem.CMAKE_SUPERBUILD:
+                write_cmake_target(build / "android-target.cmake", ndk, abi, api)
             for command in commands(library, source, build, prefix, ndk, abi, api):
                 print("编译原生依赖：", name, command, flush=True)
                 subprocess.run(command, cwd=build, env=env, check=True)
@@ -211,4 +217,15 @@ def build_libraries(
             metadata.append(library.to_dict())
     (prefix / "native-libraries.json").write_text(
         json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
+    )
+
+
+def write_cmake_target(path: Path, ndk: Path, abi: AndroidABI, api: int) -> None:
+    """Keep nested CMake projects on the same explicit Android target."""
+    path.write_text(
+        f'set(ANDROID_ABI "{abi.value}" CACHE STRING "" FORCE)\n'
+        f'set(ANDROID_PLATFORM "android-{api}" CACHE STRING "" FORCE)\n'
+        'set(ANDROID_STL "c++_shared" CACHE STRING "" FORCE)\n'
+        'set(ANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES ON CACHE BOOL "" FORCE)\n'
+        f"include({json.dumps(str(ndk / 'build/cmake/android.toolchain.cmake'))})\n"
     )

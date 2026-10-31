@@ -26,6 +26,7 @@ class BuildSystem(StrEnum):
     AUTOTOOLS = "autotools"
     OPENSSL = "openssl"
     CMAKE = "cmake"
+    CMAKE_SUPERBUILD = "cmake-superbuild"
     POSTGRESQL_CLIENT = "postgresql-client"
 
 
